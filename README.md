@@ -17,7 +17,11 @@
 </p>
 
 <h3 align="center">
-  **W**eighted **A**daptive **V**ariance-Aware **E**xpert **S**election for Speech Enhancement
+  <strong>W</strong>eighted
+  <strong>A</strong>daptive
+  <strong>V</strong>ariance-Aware
+  <strong>E</strong>xpert
+  <strong>S</strong>election for Speech Enhancement
 </h3>
 
 <p align="center">
