@@ -66,12 +66,62 @@
 
 ## Authors
 
-WAVES is developed by:
+<p align="center">
+  WAVES is developed by:
+</p>
 
-- **Ksenia Zolina**
-- **Dmitry Ryumin**
-- **Denis Ivanko**
-- **Alexey Karpov**
+<table align="center">
+  <tr>
+    <td align="center" width="25%">
+      <strong>
+        <a href="https://github.com/nixiieee">Ksenia Zolina</a>
+      </strong>
+      <br><br>
+      <a href="https://github.com/nixiieee">
+        <img
+          src="https://img.shields.io/badge/GitHub-Profile-181717?style=flat-square&logo=github&logoColor=white"
+          alt="Ksenia Zolina — GitHub"
+        >
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <strong>
+        <a href="https://dmitryryumin.github.io/">Dmitry Ryumin</a>
+      </strong>
+      <br><br>
+      <a href="https://dmitryryumin.github.io/">
+        <img
+          src="https://img.shields.io/badge/Website-Profile-2563EB?style=flat-square&logo=googlechrome&logoColor=white"
+          alt="Dmitry Ryumin — Website"
+        >
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <strong>
+        <a href="https://scholar.google.com/citations?hl=ru&user=CyE3W0oAAAAJ&view_op=list_works">Denis Ivanko</a>
+      </strong>
+      <br><br>
+      <a href="https://scholar.google.com/citations?hl=ru&user=CyE3W0oAAAAJ&view_op=list_works">
+        <img
+          src="https://img.shields.io/badge/Google%20Scholar-Profile-4285F4?style=flat-square&logo=googlescholar&logoColor=white"
+          alt="Denis Ivanko — Google Scholar"
+        >
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <strong>
+        <a href="https://scholar.google.com/citations?hl=ru&user=Q0C3f1oAAAAJ&view_op=list_works">Alexey Karpov</a>
+      </strong>
+      <br><br>
+      <a href="https://scholar.google.com/citations?hl=ru&user=Q0C3f1oAAAAJ&view_op=list_works">
+        <img
+          src="https://img.shields.io/badge/Google%20Scholar-Profile-4285F4?style=flat-square&logo=googlescholar&logoColor=white"
+          alt="Alexey Karpov — Google Scholar"
+        >
+      </a>
+    </td>
+  </tr>
+</table>
 
 ---
 
