@@ -76,7 +76,7 @@ ban-relative-imports = "all"
 
 [tool.mypy]
 python_version = "3.14"
-files = [ "app.py", "waves" ]
+files = [ "app.py", "waves", "scripts" ]
 exclude = "(^\\.venv/|^build/|^dist/)"
 strict = true
 pretty = true

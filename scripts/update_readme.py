@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import html
 import json
 from pathlib import Path
@@ -10,6 +11,10 @@ import tomllib
 from typing import Any
 from urllib.parse import quote
 
+type Config = dict[str, Any]
+type DependencyMap = dict[str, str]
+
+
 ROOT = Path(__file__).resolve().parents[1]
 
 PYPROJECT_PATH = ROOT / "pyproject.toml"
@@ -17,7 +22,6 @@ PACKAGE_JSON_PATH = ROOT / "package.json"
 PYTHON_VERSION_PATH = ROOT / ".python-version"
 NODE_VERSION_PATH = ROOT / ".nvmrc"
 DOCKERFILE_PATH = ROOT / "Dockerfile"
-LICENSE_PATH = ROOT / "LICENSE"
 README_PATH = ROOT / "README.md"
 
 README_BLOCK_START = "<!-- BEGIN PROJECT BADGES -->"
@@ -26,20 +30,108 @@ README_BLOCK_END = "<!-- END PROJECT BADGES -->"
 PRETTIER_IGNORE_START = "<!-- prettier-ignore-start -->"
 PRETTIER_IGNORE_END = "<!-- prettier-ignore-end -->"
 
-GITHUB_REPOSITORY = "DmitryRyumin/WAVES"
-HUGGING_FACE_SPACE = "DmitryRyumin/WAVES"
+GITHUB_OWNER = "DmitryRyumin"
+HUGGING_FACE_OWNER = GITHUB_OWNER
+
+PYTHON_DEPENDENCY_PATTERN = re.compile(
+    r"^([A-Za-z0-9_.-]+)(?:\[[^\]]+\])?\s*(.*)$",
+)
+
+MINIMUM_VERSION_PATTERN = re.compile(
+    r">=\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
+)
+
+EXACT_VERSION_PATTERN = re.compile(
+    r"==\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
+)
+
+COMPATIBLE_VERSION_PATTERN = re.compile(
+    r"~=\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
+)
+
+NPM_PACKAGE_MANAGER_PATTERN = re.compile(r"npm@(.+)")
 
 
-def _load_toml(path: Path) -> dict[str, Any]:
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class ProjectMetadata:
+    """Canonical project naming and repository metadata."""
+
+    package_name: str
+    display_name: str
+    github_repository: str
+    hugging_face_space: str
+    hugging_face_app_url: str
+
+    @classmethod
+    def from_pyproject(
+        cls,
+        pyproject: Config,
+    ) -> ProjectMetadata:
+        """Create project metadata from pyproject.toml."""
+
+        package_name = _get_project_name(pyproject)
+
+        display_name = package_name.upper()
+
+        github_repository = f"{GITHUB_OWNER}/{display_name}"
+
+        hugging_face_space = f"{HUGGING_FACE_OWNER}/{display_name}"
+
+        app_slug = f"{HUGGING_FACE_OWNER}-{package_name}".lower().replace("_", "-")
+
+        return cls(
+            package_name=package_name,
+            display_name=display_name,
+            github_repository=github_repository,
+            hugging_face_space=hugging_face_space,
+            hugging_face_app_url=f"https://{app_slug}.hf.space",
+        )
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class Badge:
+    """Description of a static Shields.io badge."""
+
+    label: str
+    message: str
+    color: str
+    alt: str
+    logo: str | None = None
+    logo_color: str | None = None
+
+    def render(self) -> str:
+        """Render the badge as an HTML image."""
+
+        return _image(
+            _badge_url(
+                self.label,
+                self.message,
+                self.color,
+                logo=self.logo,
+                logo_color=self.logo_color,
+            ),
+            self.alt,
+        )
+
+
+def _load_toml(
+    path: Path,
+) -> Config:
     """Load a TOML document."""
 
     with path.open("rb") as file:
-        data = tomllib.load(file)
-
-    return data
+        return tomllib.load(file)
 
 
-def _load_json(path: Path) -> dict[str, Any]:
+def _load_json(
+    path: Path,
+) -> Config:
     """Load a JSON object."""
 
     with path.open(
@@ -48,17 +140,16 @@ def _load_json(path: Path) -> dict[str, Any]:
     ) as file:
         data = json.load(file)
 
-    if not isinstance(
-        data,
-        dict,
-    ):
+    if not isinstance(data, dict):
         msg = f"Expected a JSON object in {path}."
         raise TypeError(msg)
 
     return data
 
 
-def _read_text_value(path: Path) -> str:
+def _read_text_value(
+    path: Path,
+) -> str:
     """Read a required one-line text value."""
 
     value = path.read_text(encoding="utf-8").strip()
@@ -70,8 +161,65 @@ def _read_text_value(path: Path) -> str:
     return value
 
 
-def _normalize_package_name(name: str) -> str:
-    """Normalize a Python package name for matching."""
+def _get_project_table(
+    pyproject: Config,
+) -> Config:
+    """Return the required [project] table."""
+
+    project = pyproject.get("project")
+
+    if not isinstance(project, dict):
+        msg = "Missing [project] table in pyproject.toml."
+        raise ValueError(msg)
+
+    return project
+
+
+def _get_required_string(
+    mapping: Config,
+    key: str,
+    *,
+    source: str,
+) -> str:
+    """Return a required non-empty string from a configuration mapping."""
+
+    value = mapping.get(key)
+
+    if not isinstance(value, str) or not value.strip():
+        msg = f"Missing {key!r} in {source}."
+        raise ValueError(msg)
+
+    return value.strip()
+
+
+def _get_project_name(
+    pyproject: Config,
+) -> str:
+    """Return the canonical project package name."""
+
+    return _get_required_string(
+        _get_project_table(pyproject),
+        "name",
+        source="pyproject.toml [project]",
+    )
+
+
+def _get_project_version(
+    pyproject: Config,
+) -> str:
+    """Return the project version."""
+
+    return _get_required_string(
+        _get_project_table(pyproject),
+        "version",
+        source="pyproject.toml [project]",
+    )
+
+
+def _normalize_package_name(
+    name: str,
+) -> str:
+    """Normalize a Python package name according to PEP-style matching."""
 
     return re.sub(
         r"[-_.]+",
@@ -80,148 +228,95 @@ def _normalize_package_name(name: str) -> str:
     )
 
 
-def _parse_python_dependency(dependency: str) -> tuple[str, str]:
+def _parse_python_dependency(
+    dependency: str,
+) -> tuple[str, str]:
     """Split a Python dependency into normalized name and version specifier."""
 
-    dependency = dependency.strip()
-
-    match = re.match(
-        r"^([A-Za-z0-9_.-]+)(?:\[[^\]]+\])?\s*(.*)$",
-        dependency,
-    )
+    match = PYTHON_DEPENDENCY_PATTERN.match(dependency.strip())
 
     if match is None:
-        return (
-            "",
-            "",
-        )
+        return "", ""
 
     name = _normalize_package_name(match.group(1))
 
     specification = match.group(2).strip()
 
     if ";" in specification:
-        specification = specification.split(
-            ";",
-            maxsplit=1,
-        )[0].strip()
+        specification = specification.partition(";")[0].strip()
 
-    return (
-        name,
-        specification,
-    )
+    return name, specification
+
+
+def _add_python_dependencies(
+    destination: DependencyMap,
+    values: object,
+) -> None:
+    """Add string dependency specifications from a sequence."""
+
+    if not isinstance(values, list):
+        return
+
+    for dependency in values:
+        if not isinstance(dependency, str):
+            continue
+
+        name, specification = _parse_python_dependency(dependency)
+
+        if name:
+            destination[name] = specification
 
 
 def _collect_python_dependencies(
-    pyproject: dict[str, Any],
-) -> dict[str, str]:
-    """Collect project and development Python dependencies."""
+    pyproject: Config,
+) -> DependencyMap:
+    """Collect runtime, optional, and development Python dependencies."""
 
-    dependencies: dict[str, str] = {}
+    dependencies: DependencyMap = {}
 
-    project = pyproject.get("project", {})
+    project = pyproject.get("project")
 
-    if isinstance(
-        project,
-        dict,
-    ):
-        project_dependencies = project.get("dependencies", [])
+    if isinstance(project, dict):
+        _add_python_dependencies(
+            dependencies,
+            project.get("dependencies"),
+        )
 
-        if isinstance(
-            project_dependencies,
-            list,
-        ):
-            for dependency in project_dependencies:
-                if not isinstance(
-                    dependency,
-                    str,
-                ):
-                    continue
+        optional_dependencies = project.get("optional-dependencies")
 
-                name, specification = _parse_python_dependency(dependency)
+        if isinstance(optional_dependencies, dict):
+            for group in optional_dependencies.values():
+                _add_python_dependencies(
+                    dependencies,
+                    group,
+                )
 
-                if name:
-                    dependencies[name] = specification
+    dependency_groups = pyproject.get("dependency-groups")
 
-        optional_dependencies = project.get("optional-dependencies", {})
-
-        if isinstance(
-            optional_dependencies,
-            dict,
-        ):
-            for group_dependencies in optional_dependencies.values():
-                if not isinstance(
-                    group_dependencies,
-                    list,
-                ):
-                    continue
-
-                for dependency in group_dependencies:
-                    if not isinstance(
-                        dependency,
-                        str,
-                    ):
-                        continue
-
-                    name, specification = _parse_python_dependency(dependency)
-
-                    if name:
-                        dependencies[name] = specification
-
-    dependency_groups = pyproject.get("dependency-groups", {})
-
-    if isinstance(
-        dependency_groups,
-        dict,
-    ):
-        for group_dependencies in dependency_groups.values():
-            if not isinstance(
-                group_dependencies,
-                list,
-            ):
-                continue
-
-            for dependency in group_dependencies:
-                if not isinstance(
-                    dependency,
-                    str,
-                ):
-                    continue
-
-                name, specification = _parse_python_dependency(dependency)
-
-                if name:
-                    dependencies[name] = specification
+    if isinstance(dependency_groups, dict):
+        for group in dependency_groups.values():
+            _add_python_dependencies(
+                dependencies,
+                group,
+            )
 
     return dependencies
 
 
-def _minimum_version(specification: str) -> str | None:
-    """Extract the minimum or exact version from a Python version specifier."""
+def _minimum_version(
+    specification: str,
+) -> tuple[str, bool] | None:
+    """Return a displayable version and whether it represents a minimum."""
 
-    minimum_match = re.search(
-        r">=\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
-        specification,
-    )
+    for pattern, minimum in (
+        (MINIMUM_VERSION_PATTERN, True),
+        (EXACT_VERSION_PATTERN, False),
+        (COMPATIBLE_VERSION_PATTERN, True),
+    ):
+        match = pattern.search(specification)
 
-    if minimum_match is not None:
-        return minimum_match.group(1)
-
-    exact_match = re.search(
-        r"==\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
-        specification,
-    )
-
-    if exact_match is not None:
-        return exact_match.group(1)
-
-    compatible_match = re.search(
-        r"~=\s*([0-9]+(?:\.[0-9A-Za-z]+)*)",
-        specification,
-    )
-
-    if compatible_match is not None:
-        return compatible_match.group(1)
+        if match is not None:
+            return match.group(1), minimum
 
     return None
 
@@ -231,130 +326,92 @@ def _dependency_badge_version(
 ) -> str | None:
     """Convert a dependency specification into a compact badge version."""
 
-    version = _minimum_version(specification)
+    result = _minimum_version(specification)
 
-    if version is None:
+    if result is None:
         return None
 
-    if ">=" in specification or "~=" in specification:
-        return f"{version}+"
+    version, minimum = result
 
-    return version
+    return f"{version}+" if minimum else version
 
 
-def _get_project_version(
-    pyproject: dict[str, Any],
+def _strip_version_prefix(
+    value: str,
 ) -> str:
-    """Return the project version."""
+    """Remove a conventional leading v from a version."""
 
-    project = pyproject.get("project")
-
-    if not isinstance(
-        project,
-        dict,
-    ):
-        msg = "Missing [project] table in pyproject.toml."
-        raise ValueError(msg)
-
-    version = project.get("version")
-
-    if (
-        not isinstance(
-            version,
-            str,
-        )
-        or not version.strip()
-    ):
-        msg = "Missing project.version in pyproject.toml."
-        raise ValueError(msg)
-
-    return version.strip()
+    return value.removeprefix("v").strip()
 
 
 def _get_uv_version(
-    pyproject: dict[str, Any],
+    pyproject: Config,
 ) -> str | None:
-    """Return a configured minimum uv version, if available."""
+    """Return the configured uv version requirement."""
 
     tool = pyproject.get("tool")
 
-    if not isinstance(
-        tool,
-        dict,
-    ):
+    if not isinstance(tool, dict):
         return None
 
     uv = tool.get("uv")
 
-    if not isinstance(
-        uv,
-        dict,
-    ):
+    if not isinstance(uv, dict):
         return None
 
     value = uv.get("required-version")
 
-    if not isinstance(
-        value,
-        str,
-    ):
+    if not isinstance(value, str):
         value = uv.get("required_version")
 
-    if not isinstance(
-        value,
-        str,
-    ):
+    if not isinstance(value, str):
         return None
 
     return _dependency_badge_version(value.strip())
 
 
-def _strip_version_prefix(value: str) -> str:
-    """Remove a leading v from a tool version."""
+def _get_engine_version(
+    package_json: Config,
+    engine_name: str,
+) -> str | None:
+    """Return a displayable package.json engine version."""
 
-    return value.removeprefix("v").strip()
+    engines = package_json.get("engines")
+
+    if not isinstance(engines, dict):
+        return None
+
+    specification = engines.get(engine_name)
+
+    if not isinstance(specification, str):
+        return None
+
+    return _dependency_badge_version(specification.strip())
 
 
 def _get_npm_version(
-    package_json: dict[str, Any],
+    package_json: Config,
 ) -> str | None:
-    """Return the npm version declared in package.json."""
+    """Return the canonical npm version."""
 
     package_manager = package_json.get("packageManager")
 
-    if isinstance(
-        package_manager,
-        str,
-    ):
-        match = re.fullmatch(
-            r"npm@(.+)",
+    if isinstance(package_manager, str):
+        match = NPM_PACKAGE_MANAGER_PATTERN.fullmatch(
             package_manager.strip(),
         )
 
         if match is not None:
             return match.group(1).strip()
 
-    engines = package_json.get("engines")
-
-    if not isinstance(
-        engines,
-        dict,
-    ):
-        return None
-
-    specification = engines.get("npm")
-
-    if not isinstance(
-        specification,
-        str,
-    ):
-        return None
-
-    return _dependency_badge_version(specification)
+    return _get_engine_version(
+        package_json,
+        "npm",
+    )
 
 
 def _get_node_version(
-    package_json: dict[str, Any],
+    package_json: Config,
 ) -> str:
     """Return the canonical Node.js version."""
 
@@ -363,32 +420,23 @@ def _get_node_version(
             _read_text_value(NODE_VERSION_PATH),
         )
 
-    engines = package_json.get("engines")
+    version = _get_engine_version(
+        package_json,
+        "node",
+    )
 
-    if isinstance(
-        engines,
-        dict,
-    ):
-        specification = engines.get("node")
-
-        if isinstance(
-            specification,
-            str,
-        ):
-            version = _dependency_badge_version(specification)
-
-            if version is not None:
-                return version
+    if version is not None:
+        return version
 
     msg = "Node.js version was not found in .nvmrc or package.json."
     raise ValueError(msg)
 
 
 def _get_javascript_dependency_version(
-    package_json: dict[str, Any],
+    package_json: Config,
     package_name: str,
 ) -> str | None:
-    """Return a JavaScript package version from package.json."""
+    """Return a JavaScript dependency version from package.json."""
 
     for section_name in (
         "dependencies",
@@ -397,29 +445,15 @@ def _get_javascript_dependency_version(
     ):
         section = package_json.get(section_name)
 
-        if not isinstance(
-            section,
-            dict,
-        ):
+        if not isinstance(section, dict):
             continue
 
         value = section.get(package_name)
 
-        if not isinstance(
-            value,
-            str,
-        ):
+        if not isinstance(value, str):
             continue
 
-        cleaned = value.strip()
-
-        cleaned = re.sub(
-            r"^[~^]",
-            "",
-            cleaned,
-        )
-
-        return cleaned
+        return value.strip().lstrip("^~")
 
     return None
 
@@ -434,17 +468,7 @@ def _badge_url(
 ) -> str:
     """Build a static Shields.io badge URL."""
 
-    encoded_label = quote(
-        label,
-        safe="",
-    )
-
-    encoded_message = quote(
-        message,
-        safe="",
-    )
-
-    url = f"https://img.shields.io/badge/{encoded_label}-{encoded_message}-{color}?style=flat-square"
+    url = f"https://img.shields.io/badge/{quote(label, safe='')}-{quote(message, safe='')}-{color}?style=flat-square"
 
     if logo is not None:
         url += f"&logo={quote(logo, safe='')}"
@@ -473,31 +497,20 @@ def _link(
     return f'<a href="{html.escape(href, quote=True)}">{content}</a>'
 
 
-def _static_badge(
-    label: str,
-    message: str,
-    color: str,
-    alt: str,
-    *,
-    logo: str | None = None,
-    logo_color: str | None = None,
+def _linked_badge(
+    href: str,
+    badge: Badge,
 ) -> str:
-    """Build a complete static badge image."""
+    """Render a badge wrapped in a link."""
 
-    return _image(
-        _badge_url(
-            label,
-            message,
-            color,
-            logo=logo,
-            logo_color=logo_color,
-        ),
-        alt,
+    return _link(
+        href,
+        badge.render(),
     )
 
 
 def _python_dependency_badge(
-    dependencies: dict[str, str],
+    dependencies: DependencyMap,
     package_name: str,
     *,
     label: str,
@@ -505,7 +518,7 @@ def _python_dependency_badge(
     logo: str | None = None,
     logo_color: str | None = None,
 ) -> str | None:
-    """Build a badge for a configured Python dependency."""
+    """Build a configured Python dependency badge."""
 
     specification = dependencies.get(
         _normalize_package_name(package_name),
@@ -519,18 +532,18 @@ def _python_dependency_badge(
     if version is None:
         return None
 
-    return _static_badge(
-        label,
-        version,
-        color,
-        label,
+    return Badge(
+        label=label,
+        message=version,
+        color=color,
+        alt=label,
         logo=logo,
         logo_color=logo_color,
-    )
+    ).render()
 
 
 def _javascript_dependency_badge(
-    package_json: dict[str, Any],
+    package_json: Config,
     package_name: str,
     *,
     label: str,
@@ -538,7 +551,7 @@ def _javascript_dependency_badge(
     logo: str | None = None,
     logo_color: str | None = None,
 ) -> str | None:
-    """Build a badge for a configured JavaScript dependency."""
+    """Build a configured JavaScript dependency badge."""
 
     version = _get_javascript_dependency_version(
         package_json,
@@ -548,257 +561,312 @@ def _javascript_dependency_badge(
     if version is None:
         return None
 
-    return _static_badge(
-        label,
-        version,
-        color,
-        label,
+    return Badge(
+        label=label,
+        message=version,
+        color=color,
+        alt=label,
         logo=logo,
         logo_color=logo_color,
-    )
+    ).render()
+
+
+def _existing_badges(
+    badges: tuple[str | None, ...],
+) -> list[str]:
+    """Filter optional badge values."""
+
+    return [badge for badge in badges if badge is not None]
 
 
 def _build_project_badges(
-    pyproject: dict[str, Any],
+    pyproject: Config,
+    metadata: ProjectMetadata,
 ) -> list[str]:
     """Build project metadata badges."""
-
-    project_version = _get_project_version(pyproject)
 
     python_version = _strip_version_prefix(
         _read_text_value(PYTHON_VERSION_PATH),
     )
 
     return [
-        _static_badge(
-            "version",
-            project_version,
-            "2F81F7",
-            "Version",
-        ),
+        Badge(
+            label="version",
+            message=_get_project_version(pyproject),
+            color="2F81F7",
+            alt="Version",
+        ).render(),
         _link(
             "LICENSE",
             _image(
-                (f"https://img.shields.io/github/license/{GITHUB_REPOSITORY}?style=flat-square"),
+                (
+                    f"https://img.shields.io/github/license/{metadata.github_repository}?style=flat-square"
+                ),
                 "License",
             ),
         ),
-        _static_badge(
-            "Python",
-            python_version,
-            "3776AB",
-            "Python",
+        Badge(
+            label="Python",
+            message=python_version,
+            color="3776AB",
+            alt="Python",
             logo="python",
             logo_color="white",
-        ),
+        ).render(),
     ]
 
 
 def _build_runtime_badges(
-    pyproject: dict[str, Any],
-    package_json: dict[str, Any],
-    dependencies: dict[str, str],
+    pyproject: Config,
+    package_json: Config,
+    dependencies: DependencyMap,
 ) -> list[str]:
     """Build runtime technology badges."""
 
-    badges: list[str] = []
-
-    for badge in (
-        _python_dependency_badge(
-            dependencies,
-            "torch",
-            label="PyTorch",
-            color="EE4C2C",
-            logo="pytorch",
-            logo_color="white",
-        ),
-        _python_dependency_badge(
-            dependencies,
-            "torchcodec",
-            label="TorchCodec",
-            color="EE4C2C",
-        ),
-        _python_dependency_badge(
-            dependencies,
-            "gradio",
-            label="Gradio",
-            color="F97316",
-        ),
-    ):
-        if badge is not None:
-            badges.append(badge)
+    badges = _existing_badges(
+        (
+            _python_dependency_badge(
+                dependencies,
+                "torch",
+                label="PyTorch",
+                color="EE4C2C",
+                logo="pytorch",
+                logo_color="white",
+            ),
+            _python_dependency_badge(
+                dependencies,
+                "torchcodec",
+                label="TorchCodec",
+                color="EE4C2C",
+            ),
+            _python_dependency_badge(
+                dependencies,
+                "gradio",
+                label="Gradio",
+                color="F97316",
+            ),
+        )
+    )
 
     if DOCKERFILE_PATH.is_file():
         badges.append(
-            _static_badge(
-                "Docker",
-                "enabled",
-                "2496ED",
-                "Docker",
+            Badge(
+                label="Docker",
+                message="enabled",
+                color="2496ED",
+                alt="Docker",
                 logo="docker",
                 logo_color="white",
-            )
+            ).render()
         )
 
     uv_version = _get_uv_version(pyproject)
 
     if uv_version is not None:
         badges.append(
-            _static_badge(
-                "uv",
-                uv_version,
-                "261230",
-                "uv",
-            )
+            Badge(
+                label="uv",
+                message=uv_version,
+                color="261230",
+                alt="uv",
+            ).render()
         )
-
-    node_version = _get_node_version(package_json)
 
     badges.append(
-        _static_badge(
-            "Node.js",
-            node_version,
-            "5FA04E",
-            "Node.js",
+        Badge(
+            label="Node.js",
+            message=_get_node_version(package_json),
+            color="5FA04E",
+            alt="Node.js",
             logo="nodedotjs",
             logo_color="white",
-        )
+        ).render()
     )
 
     npm_version = _get_npm_version(package_json)
 
     if npm_version is not None:
         badges.append(
-            _static_badge(
-                "npm",
-                npm_version,
-                "CB3837",
-                "npm",
+            Badge(
+                label="npm",
+                message=npm_version,
+                color="CB3837",
+                alt="npm",
                 logo="npm",
                 logo_color="white",
-            )
+            ).render()
         )
 
     return badges
 
 
 def _build_code_quality_badges(
-    package_json: dict[str, Any],
-    dependencies: dict[str, str],
+    package_json: Config,
+    dependencies: DependencyMap,
 ) -> list[str]:
     """Build code-quality tool badges."""
 
-    badges: list[str] = []
-
-    for badge in (
-        _python_dependency_badge(
-            dependencies,
-            "ruff",
-            label="Ruff",
-            color="D7FF64",
-        ),
-        _python_dependency_badge(
-            dependencies,
-            "mypy",
-            label="mypy",
-            color="2A6DB2",
-        ),
-        _python_dependency_badge(
-            dependencies,
-            "deptry",
-            label="deptry",
-            color="6B7280",
-        ),
-        _python_dependency_badge(
-            dependencies,
-            "pre-commit",
-            label="pre-commit",
-            color="FAB040",
-            logo="precommit",
-            logo_color="black",
-        ),
-        _javascript_dependency_badge(
-            package_json,
-            "stylelint",
-            label="Stylelint",
-            color="263238",
-        ),
-        _javascript_dependency_badge(
-            package_json,
-            "prettier",
-            label="Prettier",
-            color="F7B93E",
-            logo="prettier",
-            logo_color="black",
-        ),
-    ):
-        if badge is not None:
-            badges.append(badge)
-
-    return badges
+    return _existing_badges(
+        (
+            _python_dependency_badge(
+                dependencies,
+                "ruff",
+                label="Ruff",
+                color="D7FF64",
+            ),
+            _python_dependency_badge(
+                dependencies,
+                "mypy",
+                label="mypy",
+                color="2A6DB2",
+            ),
+            _python_dependency_badge(
+                dependencies,
+                "deptry",
+                label="deptry",
+                color="6B7280",
+            ),
+            _python_dependency_badge(
+                dependencies,
+                "pre-commit",
+                label="pre-commit",
+                color="FAB040",
+                logo="precommit",
+                logo_color="black",
+            ),
+            _javascript_dependency_badge(
+                package_json,
+                "stylelint",
+                label="Stylelint",
+                color="263238",
+            ),
+            _javascript_dependency_badge(
+                package_json,
+                "prettier",
+                label="Prettier",
+                color="F7B93E",
+                logo="prettier",
+                logo_color="black",
+            ),
+        )
+    )
 
 
-def _build_repository_badges() -> list[str]:
+def _github_badge_url(
+    metric: str,
+    metadata: ProjectMetadata,
+) -> str:
+    """Build a dynamic GitHub Shields.io badge URL."""
+
+    return f"https://img.shields.io/github/{metric}/{metadata.github_repository}?style=flat-square"
+
+
+def _github_url(
+    metadata: ProjectMetadata,
+    suffix: str = "",
+) -> str:
+    """Build a GitHub repository URL."""
+
+    return f"https://github.com/{metadata.github_repository}{suffix}"
+
+
+def _build_repository_badges(
+    metadata: ProjectMetadata,
+) -> list[str]:
     """Build live GitHub repository badges."""
 
     return [
         _image(
-            (f"https://img.shields.io/github/repo-size/{GITHUB_REPOSITORY}?style=flat-square"),
+            _github_badge_url(
+                "repo-size",
+                metadata,
+            ),
             "Repository size",
         ),
         _image(
-            (f"https://img.shields.io/github/last-commit/{GITHUB_REPOSITORY}?style=flat-square"),
+            _github_badge_url(
+                "last-commit",
+                metadata,
+            ),
             "Last commit",
         ),
         _link(
-            f"https://github.com/{GITHUB_REPOSITORY}/graphs/contributors",
+            _github_url(
+                metadata,
+                "/graphs/contributors",
+            ),
             _image(
-                (f"https://img.shields.io/github/contributors/{GITHUB_REPOSITORY}?style=flat-square"),
+                _github_badge_url(
+                    "contributors",
+                    metadata,
+                ),
                 "Contributors",
             ),
         ),
     ]
 
 
-def _build_community_badges() -> list[str]:
+def _build_community_badges(
+    metadata: ProjectMetadata,
+) -> list[str]:
     """Build live GitHub community badges."""
 
     return [
         _link(
-            f"https://github.com/{GITHUB_REPOSITORY}/stargazers",
+            _github_url(
+                metadata,
+                "/stargazers",
+            ),
             _image(
-                (f"https://img.shields.io/github/stars/{GITHUB_REPOSITORY}?style=flat-square"),
+                _github_badge_url(
+                    "stars",
+                    metadata,
+                ),
                 "Stars",
             ),
         ),
         _link(
-            f"https://github.com/{GITHUB_REPOSITORY}/forks",
+            _github_url(
+                metadata,
+                "/forks",
+            ),
             _image(
-                (f"https://img.shields.io/github/forks/{GITHUB_REPOSITORY}?style=flat-square"),
+                _github_badge_url(
+                    "forks",
+                    metadata,
+                ),
                 "Forks",
             ),
         ),
         _link(
-            f"https://github.com/{GITHUB_REPOSITORY}/issues",
+            _github_url(
+                metadata,
+                "/issues",
+            ),
             _image(
-                (f"https://img.shields.io/github/issues/{GITHUB_REPOSITORY}?style=flat-square"),
+                _github_badge_url(
+                    "issues",
+                    metadata,
+                ),
                 "Issues",
             ),
         ),
     ]
 
 
-def _build_application_badges() -> list[str]:
+def _build_application_badges(
+    metadata: ProjectMetadata,
+) -> list[str]:
     """Build application badges."""
 
     return [
-        _link(
-            f"https://huggingface.co/spaces/{HUGGING_FACE_SPACE}",
-            _static_badge(
-                "🤗 Space",
-                "WAVES",
-                "FFD21E",
-                "WAVES on Hugging Face",
+        _linked_badge(
+            metadata.hugging_face_app_url,
+            Badge(
+                label="🤗 Space",
+                message=metadata.display_name,
+                color="FFD21E",
+                alt=(f"{metadata.display_name} on Hugging Face"),
             ),
         )
     ]
@@ -825,64 +893,60 @@ def _build_badge_block() -> str:
 
     package_json = _load_json(PACKAGE_JSON_PATH)
 
+    metadata = ProjectMetadata.from_pyproject(pyproject)
+
     dependencies = _collect_python_dependencies(pyproject)
 
-    rows: list[str] = [
+    rows = [
         PRETTIER_IGNORE_START,
         '<table align="center">',
     ]
 
-    rows.extend(
-        _table_row(
+    sections = (
+        (
             "Project",
-            _build_project_badges(pyproject),
-        )
-    )
-
-    rows.extend(
-        _table_row(
+            _build_project_badges(
+                pyproject,
+                metadata,
+            ),
+        ),
+        (
             "Runtime",
             _build_runtime_badges(
                 pyproject,
                 package_json,
                 dependencies,
             ),
-        )
-    )
-
-    code_quality_badges = _build_code_quality_badges(
-        package_json,
-        dependencies,
-    )
-
-    if code_quality_badges:
-        rows.extend(
-            _table_row(
-                "Code Quality",
-                code_quality_badges,
-            )
-        )
-
-    rows.extend(
-        _table_row(
+        ),
+        (
+            "Code Quality",
+            _build_code_quality_badges(
+                package_json,
+                dependencies,
+            ),
+        ),
+        (
             "Repository",
-            _build_repository_badges(),
-        )
-    )
-
-    rows.extend(
-        _table_row(
+            _build_repository_badges(metadata),
+        ),
+        (
             "Community",
-            _build_community_badges(),
-        )
+            _build_community_badges(metadata),
+        ),
+        (
+            "Application",
+            _build_application_badges(metadata),
+        ),
     )
 
-    rows.extend(
-        _table_row(
-            "Application",
-            _build_application_badges(),
-        )
-    )
+    for title, badges in sections:
+        if badges:
+            rows.extend(
+                _table_row(
+                    title,
+                    badges,
+                )
+            )
 
     rows.extend(
         (
@@ -906,37 +970,35 @@ def _render_readme(
         msg = f"README marker not found: {README_BLOCK_START}"
         raise ValueError(msg)
 
+    content_start = start_index + len(README_BLOCK_START)
+
     end_index = source.find(
         README_BLOCK_END,
-        start_index + len(README_BLOCK_START),
+        content_start,
     )
 
     if end_index < 0:
         msg = f"README marker not found: {README_BLOCK_END}"
         raise ValueError(msg)
 
-    prefix_end = start_index + len(README_BLOCK_START)
-
-    prefix = source[:prefix_end]
-
-    suffix = source[end_index:]
-
-    return f"{prefix}\n\n{generated_block}\n\n{suffix}"
+    return (
+        source[:content_start] + "\n\n" + generated_block + "\n\n" + source[end_index:]
+    )
 
 
 def _update_readme(
     *,
     check: bool,
 ) -> bool:
-    """Update the README or verify that its generated metadata is current."""
+    """Update README or verify that generated metadata is current."""
 
-    source = README_PATH.read_text(encoding="utf-8")
-
-    generated_block = _build_badge_block()
+    source = README_PATH.read_text(
+        encoding="utf-8",
+    )
 
     rendered = _render_readme(
         source,
-        generated_block,
+        _build_badge_block(),
     )
 
     if rendered == source:
@@ -960,17 +1022,21 @@ def _update_readme(
     return True
 
 
-def _parse_arguments() -> argparse.Namespace:
+def _parse_arguments(
+    project_name: str,
+) -> argparse.Namespace:
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description="Generate the technical metadata table in the WAVES README.",
+        description=(
+            f"Generate the technical metadata table in the {project_name} README."
+        ),
     )
 
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Check README metadata without modifying README.md.",
+        help=("Check README metadata without modifying README.md."),
     )
 
     return parser.parse_args()
@@ -979,12 +1045,23 @@ def _parse_arguments() -> argparse.Namespace:
 def main() -> int:
     """Run the README metadata generator."""
 
-    arguments = _parse_arguments()
-
     try:
+        pyproject = _load_toml(
+            PYPROJECT_PATH,
+        )
+
+        metadata = ProjectMetadata.from_pyproject(
+            pyproject,
+        )
+
+        arguments = _parse_arguments(
+            metadata.display_name,
+        )
+
         success = _update_readme(
             check=arguments.check,
         )
+
     except (
         OSError,
         TypeError,

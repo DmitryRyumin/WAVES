@@ -55,7 +55,7 @@
   </tr>
   <tr>
     <td><strong>Application</strong></td>
-    <td><a href="https://huggingface.co/spaces/DmitryRyumin/WAVES"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Space-WAVES-FFD21E?style=flat-square" alt="WAVES on Hugging Face"></a></td>
+    <td><a href="https://dmitryryumin-waves.hf.space"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Space-WAVES-FFD21E?style=flat-square" alt="WAVES on Hugging Face"></a></td>
   </tr>
 </table>
 <!-- prettier-ignore-end -->
