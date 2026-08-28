@@ -17,7 +17,7 @@
 </p>
 
 <h3 align="center">
-  Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement
+  **W**eighted **A**daptive **V**ariance-Aware **E**xpert **S**election for Speech Enhancement
 </h3>
 
 <p align="center">
