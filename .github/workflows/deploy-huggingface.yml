@@ -5,11 +5,12 @@ on:
         branches:
             - main
         paths:
+            - ".dockerignore"
+            - "Dockerfile"
+            - "LICENSE"
             - "app.py"
             - "app.css"
             - "config.toml"
-            - "Dockerfile"
-            - "LICENSE"
             - "pyproject.toml"
             - "uv.lock"
             - "waves/**"
@@ -21,41 +22,115 @@ on:
     workflow_dispatch:
 
 concurrency:
-    group: huggingface-deployment
+    group: deploy-hugging-face-${{ github.ref }}
     cancel-in-progress: true
 
 permissions:
     contents: read
 
+env:
+    HF_REPO_ID: DmitryRyumin/WAVES
+    HF_REPO_TYPE: space
+    DEPLOY_DIR: .huggingface-deploy
+
 jobs:
     deploy:
         name: Deploy Space
         runs-on: ubuntu-latest
+        timeout-minutes: 15
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v4
 
             - name: Set up Python
-              uses: actions/setup-python@v6
+              uses: actions/setup-python@v5
               with:
                   python-version: "3.14"
 
             - name: Install Hugging Face CLI
-              run: python -m pip install --upgrade huggingface-hub
+              run: |
+                  python -m pip install \
+                    --disable-pip-version-check \
+                    "huggingface-hub==1.28.0"
+
+            - name: Validate Hugging Face assets
+              env:
+                  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+
+                  python <<'PY'
+                  import os
+                  from pathlib import Path
+                  import tomllib
+
+                  from huggingface_hub import HfApi
+
+
+                  config_path = Path("config.toml")
+
+                  with config_path.open("rb") as file:
+                      config = tomllib.load(file)
+
+                  model = config["Model"]
+                  static_paths = config["StaticPaths"]
+                  examples = config["Examples"]
+
+                  model_path = (
+                      Path(model["ROOT"])
+                      / model["DEFAULT_MODEL"]
+                      / model["WEIGHTS_FILENAME"]
+                  )
+
+                  examples_root = Path(static_paths["EXAMPLES"])
+
+                  required_files = {
+                      model_path.as_posix(),
+                      *(
+                          (examples_root / filename).as_posix()
+                          for filename in examples["AUDIO"]
+                      ),
+                  }
+
+                  api = HfApi(token=os.environ["HF_TOKEN"])
+
+                  remote_files = set(
+                      api.list_repo_files(
+                          repo_id=os.environ["HF_REPO_ID"],
+                          repo_type=os.environ["HF_REPO_TYPE"],
+                      )
+                  )
+
+                  missing_files = sorted(required_files - remote_files)
+
+                  if missing_files:
+                      formatted = "\n".join(
+                          f"  - {path}"
+                          for path in missing_files
+                      )
+
+                      raise SystemExit(
+                          "Required Hugging Face-only assets are missing:\n"
+                          f"{formatted}"
+                      )
+
+                  print("Required Hugging Face-only assets are present.")
+                  PY
 
             - name: Prepare deployment
               shell: bash
               run: |
                   set -euo pipefail
 
-                  DEPLOY_DIR=".huggingface-deploy"
-
                   rm -rf "${DEPLOY_DIR}"
 
                   mkdir -p \
+                    "${DEPLOY_DIR}" \
                     "${DEPLOY_DIR}/models/waves"
 
+                  cp .dockerignore "${DEPLOY_DIR}/"
                   cp Dockerfile "${DEPLOY_DIR}/"
                   cp LICENSE "${DEPLOY_DIR}/"
                   cp app.py "${DEPLOY_DIR}/"
@@ -75,6 +150,9 @@ jobs:
                     deploy/huggingface/README.md \
                     "${DEPLOY_DIR}/README.md"
 
+                  echo "Deployment contents:"
+                  find "${DEPLOY_DIR}" -type f -print | sort
+
             - name: Deploy to Hugging Face
               env:
                   HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -83,9 +161,13 @@ jobs:
                   set -euo pipefail
 
                   hf upload \
-                    DmitryRyumin/WAVES \
-                    .huggingface-deploy \
+                    "${HF_REPO_ID}" \
+                    "${DEPLOY_DIR}" \
                     . \
-                    --repo-type space \
+                    --repo-type "${HF_REPO_TYPE}" \
+                    --exclude ".gitattributes" \
+                    --exclude "examples/*" \
+                    --exclude "models/waves/model.safetensors" \
+                    --delete "*" \
                     --token "${HF_TOKEN}" \
                     --commit-message "Deploy from GitHub ${GITHUB_SHA::7}"

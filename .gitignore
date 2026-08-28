@@ -89,12 +89,6 @@ models/**/*.safetensors
 # Application examples
 examples/
 
-# Model weights
-models/**/*.pt
-models/**/*.pth
-models/**/*.ckpt
-models/**/*.safetensors
-
 # Local databases
 *.sqlite
 *.sqlite3
