@@ -86,14 +86,14 @@ LANGUAGES = [ "flags/en.svg", "flags/ru.svg" ]
 
 [Examples]
 AUDIO = [
-    "p226_001.wav",
-    "p226_002.wav",
-    "p226_003.wav",
-    "p226_004.wav",
-    "p226_005.wav",
-    "p226_006.wav",
-    "p226_007.wav",
-    "p226_008.wav",
+    "p232_001.wav",
+    "p232_002.wav",
+    "p257_001.wav",
+    "p257_002.wav",
+    "p232_003.wav",
+    "p232_005.wav",
+    "p257_003.wav",
+    "p257_004.wav",
 ]
 
 

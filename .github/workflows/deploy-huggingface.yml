@@ -41,10 +41,10 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7.0.1
 
             - name: Set up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v7.0.0
               with:
                   python-version: "3.14"
 
@@ -52,72 +52,7 @@ jobs:
               run: |
                   python -m pip install \
                     --disable-pip-version-check \
-                    "huggingface-hub==1.28.0"
-
-            - name: Validate Hugging Face assets
-              env:
-                  HF_TOKEN: ${{ secrets.HF_TOKEN }}
-              shell: bash
-              run: |
-                  set -euo pipefail
-
-                  python <<'PY'
-                  import os
-                  from pathlib import Path
-                  import tomllib
-
-                  from huggingface_hub import HfApi
-
-
-                  config_path = Path("config.toml")
-
-                  with config_path.open("rb") as file:
-                      config = tomllib.load(file)
-
-                  model = config["Model"]
-                  static_paths = config["StaticPaths"]
-                  examples = config["Examples"]
-
-                  model_path = (
-                      Path(model["ROOT"])
-                      / model["DEFAULT_MODEL"]
-                      / model["WEIGHTS_FILENAME"]
-                  )
-
-                  examples_root = Path(static_paths["EXAMPLES"])
-
-                  required_files = {
-                      model_path.as_posix(),
-                      *(
-                          (examples_root / filename).as_posix()
-                          for filename in examples["AUDIO"]
-                      ),
-                  }
-
-                  api = HfApi(token=os.environ["HF_TOKEN"])
-
-                  remote_files = set(
-                      api.list_repo_files(
-                          repo_id=os.environ["HF_REPO_ID"],
-                          repo_type=os.environ["HF_REPO_TYPE"],
-                      )
-                  )
-
-                  missing_files = sorted(required_files - remote_files)
-
-                  if missing_files:
-                      formatted = "\n".join(
-                          f"  - {path}"
-                          for path in missing_files
-                      )
-
-                      raise SystemExit(
-                          "Required Hugging Face-only assets are missing:\n"
-                          f"{formatted}"
-                      )
-
-                  print("Required Hugging Face-only assets are present.")
-                  PY
+                    "huggingface-hub==1.29.0"
 
             - name: Prepare deployment
               shell: bash
@@ -165,9 +100,5 @@ jobs:
                     "${DEPLOY_DIR}" \
                     . \
                     --repo-type "${HF_REPO_TYPE}" \
-                    --exclude ".gitattributes" \
-                    --exclude "examples/*" \
-                    --exclude "models/waves/model.safetensors" \
-                    --delete "*" \
                     --token "${HF_TOKEN}" \
                     --commit-message "Deploy from GitHub ${GITHUB_SHA::7}"
