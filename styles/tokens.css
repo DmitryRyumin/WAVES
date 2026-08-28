@@ -1,0 +1,18 @@
+:root {
+    --waves-color-accent: #ff7a1a;
+    --waves-color-danger: #ef4444;
+    --waves-color-validation-error: #ff6b6b;
+    --waves-color-success: #32d583;
+    --waves-color-warning: #fbbf24;
+    --waves-color-plot-hover-text: #f9fafb;
+    --waves-radius-xs: 4px;
+    --waves-radius-sm: 6px;
+    --waves-radius-md: 8px;
+    --waves-radius-lg: 10px;
+    --waves-radius-xl: 12px;
+    --waves-radius-pill: 999px;
+    --waves-icon-size: 20px;
+    --waves-status-height: 48px;
+    --waves-plot-padding: 6px;
+    --waves-plot-padding-mobile: 3px;
+}

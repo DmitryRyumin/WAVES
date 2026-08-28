@@ -1,0 +1,324 @@
+/* Audio information column */
+
+div.application-audio-info-button-column {
+    display: flex !important;
+    align-items: stretch !important;
+    min-width: 260px;
+}
+
+/* Audio information button */
+
+#audio-info-button {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    gap: 9px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: var(--waves-status-height) !important;
+    min-height: var(--waves-status-height) !important;
+    max-height: var(--waves-status-height) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-weight: 650 !important;
+    white-space: nowrap !important;
+}
+
+#audio-info-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    min-width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/audio-lines.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+#audio-info-button:focus,
+#audio-info-button:focus-visible,
+#audio-info-button:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Collapse the audio information column when hidden */
+
+#audio-info-button-column.hide,
+#audio-info-button-column.hidden,
+#audio-info-button-column[style*="display: none"] {
+    display: none !important;
+    flex: 0 0 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Let status occupy the whole row while Audio information is hidden */
+
+div.application-status-row:has(#audio-info-button-column.hide) div.application-status-column,
+div.application-status-row:has(#audio-info-button-column.hidden) div.application-status-column,
+div.application-status-row:has(#audio-info-button-column[style*="display: none"]) div.application-status-column {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+div.application-audio-info-button-column div[data-testid="status-tracker"] {
+    display: none !important;
+}
+
+/* Audio information modal */
+
+div.audio-info-modal-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    padding: 24px !important;
+    background: rgb(0 0 0 / 55%) !important;
+}
+
+div.audio-info-modal-backdrop.hide,
+div.audio-info-modal-backdrop.hidden {
+    display: none !important;
+}
+
+div.audio-info-modal-card {
+    flex: 0 1 auto !important;
+    align-self: center !important;
+    width: min(720px, calc(100vw - 48px)) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 48px) !important;
+    padding: 18px 20px 20px !important;
+    overflow: auto !important;
+    background: var(--background-fill-primary) !important;
+    border: 1px solid var(--border-color-primary) !important;
+    border-radius: var(--waves-radius-xl) !important;
+    box-shadow: 0 24px 80px rgb(0 0 0 / 45%) !important;
+}
+
+div.audio-info-modal-header {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 16px !important;
+}
+
+div.audio-info-modal-title-column {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+}
+
+div.audio-info-modal-close-column {
+    flex: 0 0 42px !important;
+    align-items: flex-end !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+}
+
+div.audio-info-modal-title h3 {
+    margin: 0 !important;
+}
+
+#audio-info-modal-close-button {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+}
+
+#audio-info-modal-close-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/x.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+div.audio-info-modal-content .html-container {
+    padding: 0 !important;
+}
+
+div.audio-info-modal-backdrop div[data-testid="status-tracker"],
+div.audio-info-modal-card div[data-testid="status-tracker"] {
+    display: none !important;
+}
+
+/* Audio metadata */
+
+section.audio-info-card {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    padding: 2px 0;
+}
+
+section.audio-info-card p {
+    margin: 0;
+}
+
+div.audio-info-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 38%) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-color-primary);
+}
+
+div.audio-info-row:last-child {
+    border-bottom: none;
+}
+
+div.audio-info-label {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+div.audio-info-value {
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+div.audio-info-value code {
+    padding: 2px 5px;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    background: color-mix(in srgb, var(--background-fill-secondary) 80%, transparent);
+    border-radius: var(--waves-radius-xs);
+}
+
+/* Audio validation */
+
+section.audio-validation-card {
+    padding-top: 12px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border-color-primary);
+}
+
+section.audio-validation-card h4 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+section.audio-validation-card h5 {
+    margin: 10px 0 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+section.audio-validation-card ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+section.audio-validation-card li {
+    margin: 4px 0;
+}
+
+p.audio-validation-ok {
+    margin: 0;
+    font-weight: 600;
+    color: var(--waves-color-success);
+}
+
+li.audio-validation-error {
+    color: var(--waves-color-validation-error);
+}
+
+li.audio-validation-warning {
+    color: var(--waves-color-warning);
+}
+
+/* Invalid audio validation state */
+
+section.audio-validation-card:has(li.audio-validation-error) {
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--waves-color-danger) 8%, var(--background-fill-secondary));
+    border: 1px solid color-mix(in srgb, var(--waves-color-danger) 55%, var(--border-color-primary));
+    border-radius: var(--waves-radius-lg);
+}
+
+section.audio-validation-card:has(li.audio-validation-error) h4 {
+    color: var(--waves-color-danger);
+}
+
+div.audio-info-unavailable-error {
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--waves-color-danger) 8%, var(--background-fill-secondary));
+    border: 1px solid color-mix(in srgb, var(--waves-color-danger) 55%, var(--border-color-primary));
+    border-radius: var(--waves-radius-lg);
+}
+
+div.audio-info-unavailable-error section.audio-info-card {
+    padding: 0;
+}
+
+div.audio-info-unavailable-error p {
+    font-weight: 600;
+    color: var(--waves-color-danger);
+}
+
+/* Mobile */
+
+@media (width <= 768px) {
+    div.application-audio-info-button-column {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    div.audio-info-modal-backdrop {
+        padding: 12px !important;
+    }
+
+    div.audio-info-modal-card {
+        width: calc(100vw - 24px) !important;
+        max-height: calc(100vh - 24px) !important;
+        padding: 16px !important;
+    }
+
+    div.audio-info-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    div.audio-info-value {
+        text-align: left;
+    }
+}

@@ -1,0 +1,118 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+.github
+
+# Python environments
+.venv
+venv
+env
+ENV
+
+# Python caches
+__pycache__
+*.py[cod]
+*$py.class
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.pyre
+.pytype
+.hypothesis
+
+# Coverage
+.coverage
+.coverage.*
+coverage.xml
+htmlcov
+
+# Python build artifacts
+build
+dist
+*.egg-info
+.eggs
+wheels
+
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Frontend development sources and tooling
+styles
+package.json
+package-lock.json
+.nvmrc
+.browserslistrc
+.prettierignore
+.prettierrc.json
+stylelint.config.mjs
+
+# Python development tooling
+.pre-commit-config.yaml
+.python-version
+justfile
+taplo.toml
+
+# IDEs and editors
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Operating systems
+._*
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Environment and secrets
+.env
+.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp
+temp
+
+# Runtime outputs
+outputs
+output
+results
+artifacts
+
+# Training checkpoints
+checkpoints
+
+# Local model weights
+models/**/*.pt
+models/**/*.pth
+models/**/*.ckpt
+models/**/*.safetensors
+
+# Canonical WAVES model
+!models/waves/model.safetensors
+
+# Local audio files
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.ogg
+
+# Repository example audio
+!examples/p226_*.wav
+
+# Documentation not required at runtime
+README.md
+CODE_OF_CONDUCT.md
+
+# Docker metadata
+Dockerfile
+.dockerignore

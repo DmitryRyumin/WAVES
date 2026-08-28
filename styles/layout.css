@@ -1,0 +1,49 @@
+/* App layout */
+
+div.app-shell {
+    position: relative;
+    width: 100%;
+    padding: 0 32px 32px;
+}
+
+/* Tabs */
+
+div.app-tabs {
+    padding-top: 0;
+    margin-top: 24px;
+}
+
+/* Tab content */
+
+div.app-tab h1,
+div.settings-tab h1,
+div.about-app-tab h1,
+div.authors-tab h1,
+div.requirements-tab h1 {
+    margin-top: 0;
+}
+
+div.app-tab h2,
+div.settings-tab h2,
+div.about-app-tab h2,
+div.authors-tab h2,
+div.requirements-tab h2,
+div.app-tab p,
+div.settings-tab p,
+div.about-app-tab p,
+div.authors-tab p,
+div.requirements-tab p {
+    max-width: 960px;
+}
+
+/* Mobile */
+
+@media (width <= 768px) {
+    div.app-shell {
+        padding: 0 16px 24px;
+    }
+
+    div.app-tabs {
+        margin-top: 12px;
+    }
+}

@@ -1,0 +1,16 @@
+repos:
+    - repo: local
+      hooks:
+          - id: waves-fix
+            name: WAVES autofix
+            entry: just fix
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          - id: waves-check
+            name: WAVES checks
+            entry: just check
+            language: system
+            pass_filenames: false
+            always_run: true

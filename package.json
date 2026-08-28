@@ -1,0 +1,31 @@
+{
+    "name": "waves-app",
+    "version": "1.0.0",
+    "description": "Development tooling for WAVES: Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement.",
+    "private": true,
+    "engines": {
+        "node": ">=26.7.0 <27",
+        "npm": ">=11.19.0 <12"
+    },
+    "packageManager": "npm@11.19.0",
+    "scripts": {
+        "format": "npm run lint:css:fix && prettier --write . && taplo fmt",
+        "format:check": "npm run lint:css && prettier --check . && taplo fmt --check",
+        "lint:css": "stylelint \"styles/**/*.css\"",
+        "lint:css:fix": "stylelint \"styles/**/*.css\" --fix",
+        "lint:toml": "taplo lint",
+        "build:css": "lightningcss --bundle --minify --browserslist styles/app.css -o app.css"
+    },
+    "devDependencies": {
+        "@taplo/cli": "0.7.0",
+        "lightningcss-cli": "1.33.0",
+        "prettier": "3.9.6",
+        "stylelint": "17.14.1",
+        "stylelint-config-recess-order": "7.8.0",
+        "stylelint-config-standard": "40.0.0",
+        "stylelint-order": "8.1.1"
+    },
+    "allowScripts": {
+        "lightningcss-cli@1.33.0": true
+    }
+}

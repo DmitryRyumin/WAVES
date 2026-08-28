@@ -1,0 +1,227 @@
+/* Spectrogram container */
+
+#spectrogram-comparison-plot {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: var(--waves-plot-padding) !important;
+    margin-top: 18px !important;
+    overflow: hidden !important;
+    background: var(--background-fill-secondary) !important;
+    border: 1px solid var(--border-color-primary) !important;
+    border-radius: var(--waves-radius-xl) !important;
+}
+
+/* Routing plot containers */
+
+.application-routing-plot {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: var(--waves-plot-padding) !important;
+    overflow: hidden !important;
+    background: var(--background-fill-secondary) !important;
+    border: 1px solid var(--border-color-primary) !important;
+    border-radius: var(--waves-radius-xl) !important;
+    box-shadow: none !important;
+}
+
+/* Shared transparent Plotly backgrounds */
+
+#spectrogram-comparison-plot .plot-container,
+#spectrogram-comparison-plot .svg-container,
+#spectrogram-comparison-plot .main-svg,
+.application-routing-plot .plot-container,
+.application-routing-plot .svg-container,
+.application-routing-plot .main-svg {
+    background: transparent !important;
+}
+
+/* Shared axis lines and ticks */
+
+#spectrogram-comparison-plot .main-svg .xlines-above path,
+#spectrogram-comparison-plot .main-svg .ylines-above path,
+#spectrogram-comparison-plot .main-svg .xtick line,
+#spectrogram-comparison-plot .main-svg .ytick line,
+.application-routing-plot .main-svg .xlines-above path,
+.application-routing-plot .main-svg .ylines-above path,
+.application-routing-plot .main-svg .xtick line,
+.application-routing-plot .main-svg .ytick line {
+    stroke: var(--body-text-color-subdued) !important;
+}
+
+/* Shared Plotly modebar */
+
+#spectrogram-comparison-plot .modebar,
+.application-routing-plot .modebar {
+    background: transparent !important;
+}
+
+#spectrogram-comparison-plot .modebar-btn,
+.application-routing-plot .modebar-btn {
+    opacity: 0.72;
+}
+
+#spectrogram-comparison-plot .modebar-btn path,
+.application-routing-plot .modebar-btn path {
+    fill: var(--body-text-color-subdued) !important;
+}
+
+#spectrogram-comparison-plot .modebar-btn:hover,
+#spectrogram-comparison-plot .modebar-btn.active,
+.application-routing-plot .modebar-btn:hover,
+.application-routing-plot .modebar-btn.active {
+    opacity: 1;
+}
+
+#spectrogram-comparison-plot .modebar-btn:hover path,
+#spectrogram-comparison-plot .modebar-btn.active path,
+.application-routing-plot .modebar-btn:hover path,
+.application-routing-plot .modebar-btn.active path {
+    fill: var(--body-text-color) !important;
+}
+
+/* Force readable hover labels on both light and dark themes */
+
+#spectrogram-comparison-plot .hoverlayer .hovertext rect,
+.application-routing-plot .hoverlayer .hovertext rect {
+    fill: rgb(17 24 39 / 96%) !important;
+    stroke: rgb(255 255 255 / 18%) !important;
+}
+
+#spectrogram-comparison-plot .hoverlayer .hovertext text,
+#spectrogram-comparison-plot .hoverlayer .hovertext tspan,
+.application-routing-plot .hoverlayer .hovertext text,
+.application-routing-plot .hoverlayer .hovertext tspan {
+    color: #f9fafb !important;
+    fill: #f9fafb !important;
+}
+
+/* Spectrogram comparison */
+
+div.application-spectrogram-plot {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Spectrogram text follows the active Gradio theme */
+
+#spectrogram-comparison-plot .main-svg text,
+#spectrogram-comparison-plot .main-svg tspan,
+#spectrogram-comparison-plot .svg-container text,
+#spectrogram-comparison-plot .svg-container tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/* Spectrogram axis ticks and colorbar ticks */
+
+#spectrogram-comparison-plot .main-svg .xtick text,
+#spectrogram-comparison-plot .main-svg .ytick text,
+#spectrogram-comparison-plot .main-svg .cbaxis text {
+    color: var(--body-text-color-subdued) !important;
+    fill: var(--body-text-color-subdued) !important;
+}
+
+/* Main-page MoE routing visualizations */
+
+.application-routing-row {
+    gap: 14px !important;
+    width: 100% !important;
+    margin-top: 14px !important;
+}
+
+.application-routing-column {
+    min-width: 0 !important;
+}
+
+/*
+ * Do not apply a global fill to every routing SVG text element.
+ *
+ * Layer-routing heatmap annotations define their own foreground colors
+ * in routing.py so that light cells use dark text and dark cells use
+ * light text.
+ */
+
+/* Routing Plotly titles */
+
+.application-routing-plot .main-svg .gtitle,
+.application-routing-plot .main-svg .gtitle tspan,
+.application-routing-plot .main-svg .xtitle,
+.application-routing-plot .main-svg .xtitle tspan,
+.application-routing-plot .main-svg .ytitle,
+.application-routing-plot .main-svg .ytitle tspan,
+.application-routing-plot .main-svg .cbtitle text,
+.application-routing-plot .main-svg .cbtitle tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/* Routing x-axis ticks and colorbar ticks */
+
+.application-routing-plot .main-svg .xtick text,
+.application-routing-plot .main-svg .xtick tspan,
+.application-routing-plot .main-svg .cbaxis text,
+.application-routing-plot .main-svg .cbaxis tspan {
+    color: var(--body-text-color-subdued) !important;
+    fill: var(--body-text-color-subdued) !important;
+}
+
+/* Layer-routing expert labels */
+
+.application-layer-routing-plot .main-svg .xtick text,
+.application-layer-routing-plot .main-svg .xtick tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/* Routing y-axis ticks (expert labels and layer labels) */
+
+.application-routing-plot .main-svg .ytick text,
+.application-routing-plot .main-svg .ytick tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/*
+ * Scatter text belongs to the occupancy/lollipop visualization.
+ *
+ * Unlike heatmap annotations, scatter labels do not use per-cell
+ * contrast colors and should follow the active Gradio theme.
+ */
+
+.application-routing-plot .main-svg .scatterlayer text,
+.application-routing-plot .main-svg .scatterlayer tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/* Routing legend follows the active Gradio theme */
+
+.application-routing-plot .legend text,
+.application-routing-plot .legend tspan {
+    color: var(--body-text-color) !important;
+    fill: var(--body-text-color) !important;
+}
+
+/* Spectrogram mobile layout */
+
+@media (width <= 768px) {
+    #spectrogram-comparison-plot {
+        padding: var(--waves-plot-padding-mobile) !important;
+        margin-top: 14px !important;
+        border-radius: var(--waves-radius-lg) !important;
+    }
+}
+
+/* Routing responsive layout */
+
+@media (width <= 900px) {
+    .application-routing-row {
+        gap: 10px !important;
+        margin-top: 10px !important;
+    }
+
+    .application-routing-plot {
+        padding: var(--waves-plot-padding-mobile) !important;
+        border-radius: var(--waves-radius-lg) !important;
+    }
+}

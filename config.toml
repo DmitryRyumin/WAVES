@@ -1,0 +1,339 @@
+[App]
+TITLE = "WAVES"
+VERSION = "1.0.0"
+CSS_PATH = "app.css"
+
+
+[Server]
+NAME = "127.0.0.1"
+PORT = 7860
+
+
+[Logging]
+LEVEL = "INFO"
+FORMAT = "[%(levelname)s] %(name)s: %(message)s"
+
+
+[AudioValidation]
+MIN_DURATION_SECONDS = 0.1
+MAX_DURATION_SECONDS = 300.0
+
+
+[AudioDecoding]
+TARGET_SAMPLE_RATE = 16000
+TARGET_NUM_CHANNELS = 1
+
+
+[AudioPreprocessing]
+ENABLE_NORMALIZATION = true
+NORMALIZATION_EPS = 1e-8
+
+
+[Inference]
+DEVICE = "auto"
+ENABLE_AMP = true
+AMP_DTYPE = "bfloat16"
+WINDOW_SECONDS = 2.0
+HOP_SECONDS = 1.0
+
+
+[AudioPostprocessing]
+MATCH_INPUT_RMS = true
+RMS_EPS = 1e-6
+ENABLE_PEAK_LIMITING = true
+PEAK_LIMIT = 0.99
+
+
+[Model]
+ROOT = "models"
+WEIGHTS_FILENAME = "model.safetensors"
+CONFIG_FILENAME = "config.yaml"
+DEFAULT_MODEL = "waves"
+CACHE_MODELS = true
+
+
+[MoERouting]
+ENABLE = true
+PROCESS_FULL_AUDIO = true
+SHOW_EXPERT_OCCUPANCY = true
+SHOW_EXPERT_LOAD_BY_FREQUENCY = true
+SHOW_LAYER_ROUTING = true
+SHOW_EXPERT_LOAD_OVER_TIME = true
+
+
+[Visualization]
+SPECTROGRAM_N_FFT = 2048
+SPECTROGRAM_NUM_MELS = 80
+SPECTROGRAM_MAX_FREQUENCY = 8000
+SPECTROGRAM_HOP_LENGTH = 512
+SPECTROGRAM_TOP_DB = 80.0
+SPECTROGRAM_MAX_TIME_BINS = 2000
+SPECTROGRAM_DELTA_MAX_DB = 20.0
+SPECTROGRAM_COLORSCALE = "Cividis"
+
+SHOW_SPECTROGRAM = true
+SHOW_ROUTING = true
+
+
+[StaticPaths]
+EXAMPLES = "examples"
+IMAGES = "static/images"
+
+
+[Images]
+LANGUAGES = [ "flags/en.svg", "flags/ru.svg" ]
+
+
+[Examples]
+AUDIO = [
+    "p226_001.wav",
+    "p226_002.wav",
+    "p226_003.wav",
+    "p226_004.wav",
+    "p226_005.wav",
+    "p226_006.wav",
+    "p226_007.wav",
+    "p226_008.wav",
+]
+
+
+[Languages]
+CHOICES = [ "English", "Русский" ]
+DEFAULT = "English"
+
+
+[Tabs]
+APP = [ "⭐ Application", "⭐ Приложение" ]
+SETTINGS = [ "⚙️ Settings", "⚙️ Настройки" ]
+ABOUT_APP = [ "💡 About", "💡 О WAVES" ]
+AUTHORS = [ "🎭 About the Authors", "🎭 Об авторах" ]
+REQUIREMENTS = [ "📋 Requirements", "📋 Системные требования" ]
+
+
+[TabCreators]
+APP = "create_application_tab"
+SETTINGS = "create_settings_tab"
+ABOUT_APP = "create_about_app_tab"
+AUTHORS = "create_authors_tab"
+REQUIREMENTS = "create_requirements_tab"
+
+
+[TabStates]
+APP = "enabled"
+SETTINGS = "hidden"
+ABOUT_APP = "disabled"
+AUTHORS = "disabled"
+REQUIREMENTS = "disabled"
+
+
+[Texts]
+
+APP_TITLE = [ "WAVES", "WAVES" ]
+
+APP_SUBTITLE = [
+    "WAVES: Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
+    "WAVES: взвешенный адаптивный выбор экспертов с учетом вариативности для повышения качества речи",
+]
+
+ABOUT_TITLE = [ "About WAVES", "О WAVES" ]
+
+ABOUT_DESCRIPTION = [
+    "WAVES is a neural speech enhancement framework based on weighted adaptive variance-aware expert selection within a Mixture-of-Experts architecture.",
+    "WAVES — нейросетевой фреймворк для повышения качества речи на основе взвешенного адаптивного выбора экспертов с учетом вариативности в архитектуре Mixture-of-Experts.",
+]
+
+ABOUT_PLACEHOLDER = [
+    "A detailed description of the framework, models, intended use cases, and limitations will be added here.",
+    "Здесь будет представлено подробное описание фреймворка, моделей, сценариев применения и ограничений.",
+]
+
+REQUIREMENTS_TITLE = [ "Requirements", "Системные требования" ]
+
+REQUIREMENTS_PLACEHOLDER = [
+    "Application requirements will be added here.",
+    "Системные требования и зависимости приложения будут добавлены позже.",
+]
+
+STATUS_READY = [
+    "Ready. Upload or record a noisy speech sample to start.",
+    "Готово. Загрузите или запишите зашумленный речевой сигнал.",
+]
+
+STATUS_PROCESSING = [ "Speech enhancement is running.", "Выполняется повышение качества речи." ]
+
+STATUS_COMPLETED = [ "Speech enhancement completed successfully.", "Повышение качества речи успешно завершено." ]
+
+STATUS_ENHANCEMENT_FAILED = [ "Speech enhancement failed.", "Не удалось выполнить повышение качества речи." ]
+
+SETTINGS_TITLE = [ "Settings", "Настройки" ]
+
+SETTINGS_DESCRIPTION = [ "Runtime and model settings for WAVES.", "Параметры выполнения и конфигурации модели WAVES." ]
+
+SETTINGS_PLACEHOLDER = [ "Application settings will be added here.", "Настройки приложения будут добавлены позже." ]
+
+EXAMPLES_PLACEHOLDER = [ "No example audio files are available.", "Примеры речевых сигналов отсутствуют." ]
+
+STATUS_AUDIO_READY = [
+    "Audio sample is ready. Run speech enhancement.",
+    "Речевой сигнал готов к обработке. Запустите повышение качества речи.",
+]
+
+STATUS_AUDIO_INVALID = [ "The audio sample cannot be processed.", "Речевой сигнал не может быть обработан." ]
+
+AUDIO_INFO_UNAVAILABLE = [ "Audio information is unavailable.", "Информация об аудиосигнале недоступна." ]
+
+AUDIO_VALIDATION_OK = [
+    "The audio sample is valid for speech enhancement.",
+    "Речевой сигнал соответствует требованиям для обработки.",
+]
+
+AUDIO_VALIDATION_FILE_NOT_FOUND = [ "The audio file was not found.", "Аудиофайл не найден." ]
+
+AUDIO_VALIDATION_READ_FAILED = [ "The audio file could not be read.", "Не удалось прочитать аудиофайл." ]
+
+AUDIO_VALIDATION_EMPTY_FILE = [ "The audio file is empty.", "Аудиофайл не содержит данных." ]
+
+AUDIO_VALIDATION_DURATION_UNAVAILABLE = [
+    "Audio duration could not be determined.",
+    "Не удалось определить длительность аудиосигнала.",
+]
+
+AUDIO_VALIDATION_TOO_SHORT = [
+    "Audio duration ({actual} s) is shorter than the minimum allowed duration ({expected} s).",
+    "Длительность аудиосигнала ({actual} с) меньше минимально допустимой ({expected} с).",
+]
+
+AUDIO_VALIDATION_TOO_LONG = [
+    "Audio duration ({actual} s) exceeds the maximum allowed duration ({expected} s).",
+    "Длительность аудиосигнала ({actual} с) превышает максимально допустимую ({expected} с).",
+]
+
+AUDIO_VALIDATION_SAMPLE_RATE_UNAVAILABLE = [
+    "The sample rate could not be determined.",
+    "Не удалось определить частоту дискретизации.",
+]
+
+AUDIO_VALIDATION_SAMPLE_RATE_WARNING = [
+    "The input sample rate is {actual} Hz; it will be converted to {expected} Hz.",
+    "Частота дискретизации входного сигнала составляет {actual} Гц; сигнал будет передискретизирован до {expected} Гц.",
+]
+
+AUDIO_VALIDATION_CHANNELS_UNAVAILABLE = [
+    "The number of audio channels could not be determined.",
+    "Не удалось определить количество аудиоканалов.",
+]
+
+AUDIO_VALIDATION_CHANNELS_WARNING = [
+    "The input contains {actual} channel(s); it will be converted to {expected} channel(s).",
+    "Входной сигнал содержит {actual} канал(а); число каналов будет преобразовано к {expected}.",
+]
+
+
+[Labels]
+NOISY_AUDIO = [ "Noisy speech", "Зашумленная речь" ]
+ENHANCED_AUDIO = [ "Enhanced speech", "Речь после обработки" ]
+
+RUN = [ "Enhance speech", "Повысить качество речи" ]
+CLEAR = [ "Clear", "Очистить" ]
+
+SPECTROGRAM = [ "Spectrogram comparison", "Сравнение спектрограмм" ]
+
+ROUTING_LAYERS = [ "Routing by layer and axis", "Маршрутизация по слоям и направлениям" ]
+
+ROUTING_LOAD = [ "Expert load over time", "Загрузка экспертов во времени" ]
+
+ROUTING_TIME_SUBTITLE = [
+    "Aggregated per overlapping inference window",
+    "Агрегация по перекрывающимся окнам инференса",
+]
+
+ROUTING_WINDOW = [ "Window", "Окно" ]
+
+ROUTING_WINDOW_RANGE = [ "Window range", "Временной диапазон окна" ]
+
+ROUTING_WINDOW_CENTER = [ "Window center", "Центр окна" ]
+
+EXAMPLES = [ "Examples", "Примеры" ]
+
+AUDIO_INFO_TITLE = [ "Audio information", "Информация об аудиосигнале" ]
+
+AUDIO_INFO_FILENAME = [ "File", "Файл" ]
+AUDIO_INFO_DURATION = [ "Duration", "Длительность" ]
+AUDIO_INFO_SAMPLE_RATE = [ "Sample rate", "Частота дискретизации" ]
+AUDIO_INFO_CHANNELS = [ "Channels", "Число каналов" ]
+AUDIO_INFO_CODEC = [ "Codec", "Кодек" ]
+AUDIO_INFO_BIT_RATE = [ "Bit rate", "Битрейт" ]
+AUDIO_INFO_FORMAT = [ "Sample format", "Формат отсчетов" ]
+AUDIO_INFO_SIZE = [ "File size", "Размер файла" ]
+
+AUDIO_VALIDATION_TITLE = [ "Audio validation", "Проверка аудиосигнала" ]
+
+AUDIO_VALIDATION_ERRORS = [ "Errors", "Ошибки" ]
+AUDIO_VALIDATION_WARNINGS = [ "Warnings", "Предупреждения" ]
+
+SPECTROGRAM_TIME = [ "Time, s", "Время, с" ]
+SPECTROGRAM_FREQUENCY = [ "Frequency, kHz", "Частота, кГц" ]
+
+SPECTROGRAM_POWER = [ "Spectral energy, dB", "Спектральная энергия, дБ" ]
+
+SPECTROGRAM_DELTA = [ "Change, dB", "Изменение, дБ" ]
+
+SPECTROGRAM_EFFECT = [ "Spectral change after enhancement", "Изменение спектра после обработки" ]
+
+SPECTROGRAM_CHANGE_REDUCED = [ "Reduced", "Уменьшение" ]
+SPECTROGRAM_CHANGE_NONE = [ "No change", "Без изменений" ]
+SPECTROGRAM_CHANGE_INCREASED = [ "Increased", "Увеличение" ]
+
+ROUTING_OCCUPANCY = [ "Expert occupancy balance", "Распределение нагрузки между экспертами" ]
+
+ROUTING_EXPERT = [ "Expert", "Эксперт" ]
+
+ROUTING_OCCUPANCY_SHARE = [ "Occupancy", "Доля назначений" ]
+
+ROUTING_DEVIATION_FROM_UNIFORM = [ "Δ from uniform", "Δ относительно равномерного распределения" ]
+
+ROUTING_RELATIVE_DEVIATION = [ "Relative Δ", "Относительное отклонение" ]
+
+ROUTING_WINDOW_SD = [ "Window SD", "СКО по окнам" ]
+
+ROUTING_UNIFORM_SHORT = [ "Uniform", "Равномерное распределение" ]
+
+ROUTING_WINDOWS_SHORT = [ "Windows", "Окна" ]
+
+ROUTING_MAX_DELTA = [ "Max |Δ|", "Макс. |Δ|" ]
+
+ROUTING_LAYER_AXIS_SUBTITLE = [
+    "Cell = Δ from uniform; parentheses = occupancy",
+    "Ячейка — Δ относительно равномерного распределения; в скобках — доля назначений",
+]
+
+ROUTING_LAYER = [ "TS Block", "TS-блок" ]
+
+ROUTING_TIME_AXIS = [ "Time", "Временное направление" ]
+
+ROUTING_FREQUENCY_AXIS = [ "Frequency", "Частотное направление" ]
+
+ROUTING_ASSIGNMENTS = [ "Assignments", "Число назначений" ]
+
+ROUTING_FREQUENCY = [ "Expert load by frequency", "Загрузка экспертов по частоте" ]
+
+ROUTING_FREQUENCY_SUBTITLE = [
+    "Color = Δ from uniform occupancy",
+    "Цвет — отклонение от равномерного распределения нагрузки",
+]
+
+ROUTING_FREQUENCY_CENTER = [ "Encoded frequency, kHz", "Частота в скрытом представлении, кГц" ]
+
+ROUTING_FREQUENCY_POSITION = [ "Encoded position", "Позиция в частотном представлении" ]
+
+ROUTING_FREQUENCY_POSITIONS = [ "frequency positions", "частотных позиций" ]
+
+
+[Units]
+SECONDS = [ "s", "с" ]
+HERTZ = [ "Hz", "Гц" ]
+KILOBITS_PER_SECOND = [ "kbps", "кбит/с" ]
+BYTES = [ "B", "Б" ]
+KILOBYTES = [ "KB", "КБ" ]
+MEGABYTES = [ "MB", "МБ" ]
+PERCENTAGE_POINTS = [ "pp", "п.п." ]

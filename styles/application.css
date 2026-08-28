@@ -1,0 +1,332 @@
+/* Compact application header */
+
+#tab-app > div.column {
+    gap: 0 !important;
+}
+
+#tab-app div.application-compact-title {
+    margin: 0 0 6px !important;
+}
+
+#tab-app div.application-compact-title h3 {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    align-items: center !important;
+    margin: 0 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.01em !important;
+}
+
+#tab-app div.application-input-row {
+    margin: 0 !important;
+}
+
+/* Application version badge */
+
+#tab-app span.application-version {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    padding: 0 8px !important;
+    font-size: 0.72rem !important;
+    font-weight: 750 !important;
+    line-height: 1 !important;
+    color: var(--waves-color-accent) !important;
+    letter-spacing: 0.02em !important;
+    white-space: nowrap !important;
+    background: color-mix(in srgb, var(--waves-color-accent) 14%, var(--background-fill-secondary)) !important;
+    border: 1px solid color-mix(in srgb, var(--waves-color-accent) 65%, var(--border-color-primary)) !important;
+    border-radius: var(--waves-radius-pill) !important;
+}
+
+/* Application status */
+
+div.block.application-status {
+    box-sizing: border-box !important;
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--waves-status-height) !important;
+    min-height: var(--waves-status-height) !important;
+    max-height: var(--waves-status-height) !important;
+    padding: 0 14px !important;
+    margin: 14px 0 0 !important;
+    overflow: hidden !important;
+    background: color-mix(in srgb, var(--background-fill-secondary) 70%, transparent);
+    border-right: 3px solid var(--waves-color-accent);
+    border-left: 3px solid var(--waves-color-accent);
+    border-radius: var(--waves-radius-sm);
+    opacity: 0.9;
+}
+
+div.block.application-status::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    min-width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: var(--waves-color-accent) !important;
+    mask-image: url("/gradio_api/file=static/images/icons/info.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+div.block.application-status > div[data-testid="markdown-wrapper"] {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    height: 100% !important;
+}
+
+div.prose.application-status {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    opacity: 1;
+}
+
+div.prose.application-status span.md {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+div.prose.application-status p {
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+}
+
+/* Application error status */
+
+.application-status-error-marker {
+    display: none !important;
+}
+
+div.block.application-status:has(.application-status-error-marker) {
+    background: color-mix(in srgb, var(--waves-color-danger) 10%, var(--background-fill-secondary)) !important;
+    border-right-color: var(--waves-color-danger) !important;
+    border-left-color: var(--waves-color-danger) !important;
+}
+
+div.block.application-status:has(.application-status-error-marker)::before {
+    background-color: var(--waves-color-danger) !important;
+}
+
+/* Enhanced audio output */
+
+#enhanced-audio-output {
+    margin-top: 16px !important;
+}
+
+/* Application input */
+
+div.application-input-row {
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 0 !important;
+}
+
+div.application-audio-column {
+    min-width: 360px;
+}
+
+div.application-examples-column {
+    min-width: 260px;
+}
+
+div.application-examples-title h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+div.application-examples-placeholder {
+    display: flex;
+    align-items: center;
+    min-height: 72px;
+    padding: 18px 22px;
+    border: none;
+    border-radius: 0;
+    opacity: 0.8;
+}
+
+/* Application examples */
+
+#application-examples {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#application-examples div.label {
+    display: none !important;
+}
+
+#application-examples div.gallery {
+    gap: 3px !important;
+}
+
+#application-examples div.gallery button {
+    justify-content: flex-start !important;
+    width: 100% !important;
+    padding: 3px 6px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    border-radius: var(--waves-radius-md) !important;
+}
+
+#application-examples table {
+    width: 100% !important;
+    border-spacing: 0 6px !important;
+    border-collapse: separate !important;
+}
+
+#application-examples td,
+#application-examples th {
+    width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Examples pagination */
+
+#application-examples div.paginate {
+    display: flex !important;
+    gap: 6px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    margin-top: 6px !important;
+    font-size: 0.9rem !important;
+}
+
+#application-examples div.paginate button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    border-radius: var(--waves-radius-sm) !important;
+}
+
+#application-examples div.paginate button.current-page {
+    color: var(--body-text-color) !important;
+    background: color-mix(in srgb, var(--waves-color-accent) 22%, var(--background-fill-secondary)) !important;
+}
+
+/* Application actions */
+
+div.application-action-row {
+    gap: 12px;
+    margin-top: 12px;
+}
+
+#run-button,
+#clear-button {
+    display: inline-flex !important;
+    gap: 9px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 52px;
+    font-weight: 650;
+}
+
+#clear-button {
+    min-width: 140px;
+}
+
+/* Application action button icons */
+
+#run-button::before,
+#clear-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+#run-button::before {
+    mask-image: url("/gradio_api/file=static/images/icons/audio-waveform.svg") !important;
+}
+
+#clear-button::before {
+    mask-image: url("/gradio_api/file=static/images/icons/rotate-ccw.svg") !important;
+}
+
+/* Status and audio information row */
+
+div.application-status-row {
+    gap: 16px;
+    align-items: stretch;
+    margin-top: 14px;
+}
+
+div.application-status-column {
+    min-width: 360px;
+}
+
+div.application-status-row div.block.application-status {
+    margin-top: 0 !important;
+}
+
+/* Application audio component */
+
+div.audio-container > button {
+    max-height: 180px !important;
+}
+
+#application-audio-input div[data-testid="status-tracker"] {
+    display: none !important;
+}
+
+#application-audio-input p,
+#application-audio-input span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Mobile */
+
+@media (width <= 768px) {
+    div.application-status-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    div.application-status-column {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+}

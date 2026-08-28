@@ -1,0 +1,26 @@
+data:
+    sampling_rate: 16000
+    n_fft: 400
+    hop_size: 100
+    win_size: 400
+
+model:
+    dense_channel: 64
+    dense_depth: 4
+    beta: 2.0
+    compress_factor: 0.3
+    n_heads: 4
+    num_tsblocks: 4
+
+    moe:
+        apply_to:
+            - 3
+        num_experts: 6
+        top_k: 2
+        expert_ffn_dim: 171
+        expert_type: mlp_only
+        use_expert_bias: false
+        separate_mag_phase: false
+        noise_ctx_dim: 64
+        noise_injection: concat
+        noise_source: mean_std_spectrum

@@ -1,0 +1,99 @@
+[project]
+name = "waves"
+version = "1.0.0"
+description = "WAVES: Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement."
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "gradio>=6.26.0,<7.0.0",
+    "librosa>=1.0.0,<2.0.0",
+    "numpy>=2.5.2,<3.0.0",
+    "plotly>=7.0.0,<8.0.0",
+    "psutil>=7.2.2",
+    "pyyaml>=6.0.3",
+    "safetensors>=0.8.0,<1.0",
+    "torch>=2.13.0",
+    "torchcodec>=0.16.0",
+]
+
+
+[dependency-groups]
+dev = [
+    "deptry>=0.25.1,<0.26.0",
+    "mypy>=2.3.1,<3.0.0",
+    "pre-commit>=4.6.2",
+    "ruff>=0.16.4",
+    "types-psutil>=7.2.2.20260827",
+    "types-pyyaml>=6.0.12.20260815",
+]
+
+
+[tool.uv]
+package = false
+required-version = ">=0.12.5"
+default-groups = [ "dev" ]
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+show-fixes = true
+src = [ "." ]
+
+exclude = [ ".venv", "__pycache__", ".mypy_cache", ".ruff_cache", ".pytest_cache", "build", "dist" ]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+
+[tool.ruff.lint]
+select = [ "E", "W", "F", "I", "B", "UP", "SIM", "C4", "A", "TID", "RUF" ]
+
+ignore = [ "E501", "E111", "E114", "E117", "W191", "RUF003" ]
+
+fixable = [ "ALL" ]
+unfixable = [  ]
+
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [ "F401" ]
+
+
+[tool.ruff.lint.isort]
+known-first-party = [ "waves" ]
+combine-as-imports = true
+force-sort-within-sections = true
+split-on-trailing-comma = true
+
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+
+[tool.mypy]
+python_version = "3.14"
+files = [ "app.py", "waves" ]
+exclude = "(^\\.venv/|^build/|^dist/)"
+strict = true
+pretty = true
+show_error_codes = true
+show_column_numbers = true
+warn_unused_ignores = true
+disallow_any_generics = true
+no_implicit_reexport = true
+warn_return_any = true
+namespace_packages = true
+explicit_package_bases = true
+
+
+[[tool.mypy.overrides]]
+module = [ "librosa", "librosa.*", "plotly", "plotly.*" ]
+ignore_missing_imports = true
+
+
+[tool.deptry.per_rule_ignores]
+DEP002 = [ "librosa", "numpy", "plotly", "torchcodec" ]
