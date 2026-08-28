@@ -34,27 +34,27 @@
 <!-- prettier-ignore-start -->
 <table align="center">
   <tr>
-    <td><strong>Project</strong></td>
+    <td width="150"><strong>Project</strong></td>
     <td><img src="https://img.shields.io/badge/version-1.0.0-2F81F7?style=flat-square" alt="Version"> <a href="LICENSE"><img src="https://img.shields.io/github/license/DmitryRyumin/WAVES?style=flat-square" alt="License"></a> <img src="https://img.shields.io/badge/Python-3.14.7-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python"></td>
   </tr>
   <tr>
-    <td><strong>Runtime</strong></td>
+    <td width="150"><strong>Runtime</strong></td>
     <td><img src="https://img.shields.io/badge/PyTorch-2.13.0%2B-EE4C2C?style=flat-square&amp;logo=pytorch&amp;logoColor=white" alt="PyTorch"> <img src="https://img.shields.io/badge/TorchCodec-0.16.0%2B-EE4C2C?style=flat-square" alt="TorchCodec"> <img src="https://img.shields.io/badge/Gradio-6.26.0%2B-F97316?style=flat-square" alt="Gradio"> <img src="https://img.shields.io/badge/Docker-enabled-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker"> <img src="https://img.shields.io/badge/uv-0.12.5%2B-261230?style=flat-square" alt="uv"> <img src="https://img.shields.io/badge/Node.js-26.7.0-5FA04E?style=flat-square&amp;logo=nodedotjs&amp;logoColor=white" alt="Node.js"> <img src="https://img.shields.io/badge/npm-11.19.0-CB3837?style=flat-square&amp;logo=npm&amp;logoColor=white" alt="npm"></td>
   </tr>
   <tr>
-    <td><strong>Code Quality</strong></td>
+    <td width="150"><strong>Code&nbsp;Quality</strong></td>
     <td><img src="https://img.shields.io/badge/Ruff-0.16.4%2B-D7FF64?style=flat-square" alt="Ruff"> <img src="https://img.shields.io/badge/mypy-2.3.1%2B-2A6DB2?style=flat-square" alt="mypy"> <img src="https://img.shields.io/badge/deptry-0.25.1%2B-6B7280?style=flat-square" alt="deptry"> <img src="https://img.shields.io/badge/pre--commit-4.6.2%2B-FAB040?style=flat-square" alt="pre-commit"> <img src="https://img.shields.io/badge/Stylelint-17.14.1-263238?style=flat-square" alt="Stylelint"> <img src="https://img.shields.io/badge/Prettier-3.9.6-F7B93E?style=flat-square&amp;logo=prettier&amp;logoColor=black" alt="Prettier"></td>
   </tr>
   <tr>
-    <td><strong>Repository</strong></td>
+    <td width="150"><strong>Repository</strong></td>
     <td><img src="https://img.shields.io/github/repo-size/DmitryRyumin/WAVES?style=flat-square" alt="Repository size"> <img src="https://img.shields.io/github/last-commit/DmitryRyumin/WAVES?style=flat-square" alt="Last commit"> <a href="https://github.com/DmitryRyumin/WAVES/graphs/contributors"><img src="https://img.shields.io/github/contributors/DmitryRyumin/WAVES?style=flat-square" alt="Contributors"></a></td>
   </tr>
   <tr>
-    <td><strong>Community</strong></td>
+    <td width="150"><strong>Community</strong></td>
     <td><a href="https://github.com/DmitryRyumin/WAVES/stargazers"><img src="https://img.shields.io/github/stars/DmitryRyumin/WAVES?style=flat-square" alt="Stars"></a> <a href="https://github.com/DmitryRyumin/WAVES/forks"><img src="https://img.shields.io/github/forks/DmitryRyumin/WAVES?style=flat-square" alt="Forks"></a> <a href="https://github.com/DmitryRyumin/WAVES/issues"><img src="https://img.shields.io/github/issues/DmitryRyumin/WAVES?style=flat-square" alt="Issues"></a></td>
   </tr>
   <tr>
-    <td><strong>Application</strong></td>
+    <td width="150"><strong>Application</strong></td>
     <td><a href="https://dmitryryumin-waves.hf.space"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Space-WAVES-FFD21E?style=flat-square" alt="WAVES on Hugging Face"></a></td>
   </tr>
 </table>

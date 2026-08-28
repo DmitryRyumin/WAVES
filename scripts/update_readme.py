@@ -891,9 +891,11 @@ def _table_row(
 ) -> list[str]:
     """Build one README metadata table row."""
 
+    title_html = html.escape(title).replace(" ", "&nbsp;")
+
     return [
         "  <tr>",
-        f"    <td><strong>{html.escape(title)}</strong></td>",
+        f'    <td width="150"><strong>{title_html}</strong></td>',
         f"    <td>{' '.join(badges)}</td>",
         "  </tr>",
     ]
