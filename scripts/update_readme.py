@@ -458,6 +458,17 @@ def _get_javascript_dependency_version(
     return None
 
 
+def _encode_badge_part(
+    value: str,
+) -> str:
+    """Encode text for the Shields.io static badge path."""
+
+    return quote(
+        value,
+        safe="",
+    ).replace("-", "--")
+
+
 def _badge_url(
     label: str,
     message: str,
@@ -468,7 +479,13 @@ def _badge_url(
 ) -> str:
     """Build a static Shields.io badge URL."""
 
-    url = f"https://img.shields.io/badge/{quote(label, safe='')}-{quote(message, safe='')}-{color}?style=flat-square"
+    url = (
+        "https://img.shields.io/badge/"
+        f"{_encode_badge_part(label)}-"
+        f"{_encode_badge_part(message)}-"
+        f"{color}"
+        "?style=flat-square"
+    )
 
     if logo is not None:
         url += f"&logo={quote(logo, safe='')}"

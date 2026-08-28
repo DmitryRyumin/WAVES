@@ -43,7 +43,7 @@
   </tr>
   <tr>
     <td><strong>Code Quality</strong></td>
-    <td><img src="https://img.shields.io/badge/Ruff-0.16.4%2B-D7FF64?style=flat-square" alt="Ruff"> <img src="https://img.shields.io/badge/mypy-2.3.1%2B-2A6DB2?style=flat-square" alt="mypy"> <img src="https://img.shields.io/badge/deptry-0.25.1%2B-6B7280?style=flat-square" alt="deptry"> <img src="https://img.shields.io/badge/pre-commit-4.6.2%2B-FAB040?style=flat-square" alt="pre-commit"> <img src="https://img.shields.io/badge/Stylelint-17.14.1-263238?style=flat-square" alt="Stylelint"> <img src="https://img.shields.io/badge/Prettier-3.9.6-F7B93E?style=flat-square&amp;logo=prettier&amp;logoColor=black" alt="Prettier"></td>
+    <td><img src="https://img.shields.io/badge/Ruff-0.16.4%2B-D7FF64?style=flat-square" alt="Ruff"> <img src="https://img.shields.io/badge/mypy-2.3.1%2B-2A6DB2?style=flat-square" alt="mypy"> <img src="https://img.shields.io/badge/deptry-0.25.1%2B-6B7280?style=flat-square" alt="deptry"> <img src="https://img.shields.io/badge/pre--commit-4.6.2%2B-FAB040?style=flat-square" alt="pre-commit"> <img src="https://img.shields.io/badge/Stylelint-17.14.1-263238?style=flat-square" alt="Stylelint"> <img src="https://img.shields.io/badge/Prettier-3.9.6-F7B93E?style=flat-square&amp;logo=prettier&amp;logoColor=black" alt="Prettier"></td>
   </tr>
   <tr>
     <td><strong>Repository</strong></td>
