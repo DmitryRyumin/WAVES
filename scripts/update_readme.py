@@ -729,8 +729,6 @@ def _build_code_quality_badges(
                 "pre-commit",
                 label="pre-commit",
                 color="FAB040",
-                logo="pre-commit",
-                logo_color="black",
             ),
             _javascript_dependency_badge(
                 package_json,
