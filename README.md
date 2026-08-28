@@ -2,14 +2,14 @@
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://capsule-render.vercel.app/api?type=waving&height=170&color=0D1117&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35"
+      srcset="https://capsule-render.vercel.app/api?type=waving&height=170&color=0F172A&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35"
     >
     <source
       media="(prefers-color-scheme: light)"
-      srcset="https://capsule-render.vercel.app/api?type=waving&height=170&color=F3F4F6&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=111827&animation=fadeIn&fontAlignY=35"
+      srcset="https://capsule-render.vercel.app/api?type=waving&height=170&color=D1D5DB&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=0F172A&animation=fadeIn&fontAlignY=35"
     >
     <img
-      src="https://capsule-render.vercel.app/api?type=waving&height=170&color=0D1117&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35"
+      src="https://capsule-render.vercel.app/api?type=waving&height=170&color=D1D5DB&text=WAVES&section=header&fontAlign=50&fontSize=52&fontColor=0F172A&animation=fadeIn&fontAlignY=35"
       alt="WAVES"
       width="100%"
     >
@@ -43,7 +43,7 @@
   </tr>
   <tr>
     <td><strong>Code Quality</strong></td>
-    <td><img src="https://img.shields.io/badge/Ruff-0.16.4%2B-D7FF64?style=flat-square" alt="Ruff"> <img src="https://img.shields.io/badge/mypy-2.3.1%2B-2A6DB2?style=flat-square" alt="mypy"> <img src="https://img.shields.io/badge/deptry-0.25.1%2B-6B7280?style=flat-square" alt="deptry"> <img src="https://img.shields.io/badge/pre-commit-4.6.2%2B-FAB040?style=flat-square&amp;logo=precommit&amp;logoColor=black" alt="pre-commit"> <img src="https://img.shields.io/badge/Stylelint-17.14.1-263238?style=flat-square" alt="Stylelint"> <img src="https://img.shields.io/badge/Prettier-3.9.6-F7B93E?style=flat-square&amp;logo=prettier&amp;logoColor=black" alt="Prettier"></td>
+    <td><img src="https://img.shields.io/badge/Ruff-0.16.4%2B-D7FF64?style=flat-square" alt="Ruff"> <img src="https://img.shields.io/badge/mypy-2.3.1%2B-2A6DB2?style=flat-square" alt="mypy"> <img src="https://img.shields.io/badge/deptry-0.25.1%2B-6B7280?style=flat-square" alt="deptry"> <img src="https://img.shields.io/badge/pre-commit-4.6.2%2B-FAB040?style=flat-square&amp;logo=pre-commit&amp;logoColor=black" alt="pre-commit"> <img src="https://img.shields.io/badge/Stylelint-17.14.1-263238?style=flat-square" alt="Stylelint"> <img src="https://img.shields.io/badge/Prettier-3.9.6-F7B93E?style=flat-square&amp;logo=prettier&amp;logoColor=black" alt="Prettier"></td>
   </tr>
   <tr>
     <td><strong>Repository</strong></td>

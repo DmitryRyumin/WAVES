@@ -599,9 +599,7 @@ def _build_project_badges(
         _link(
             "LICENSE",
             _image(
-                (
-                    f"https://img.shields.io/github/license/{metadata.github_repository}?style=flat-square"
-                ),
+                (f"https://img.shields.io/github/license/{metadata.github_repository}?style=flat-square"),
                 "License",
             ),
         ),
@@ -731,7 +729,7 @@ def _build_code_quality_badges(
                 "pre-commit",
                 label="pre-commit",
                 color="FAB040",
-                logo="precommit",
+                logo="pre-commit",
                 logo_color="black",
             ),
             _javascript_dependency_badge(
@@ -981,9 +979,7 @@ def _render_readme(
         msg = f"README marker not found: {README_BLOCK_END}"
         raise ValueError(msg)
 
-    return (
-        source[:content_start] + "\n\n" + generated_block + "\n\n" + source[end_index:]
-    )
+    return source[:content_start] + "\n\n" + generated_block + "\n\n" + source[end_index:]
 
 
 def _update_readme(
@@ -1028,9 +1024,7 @@ def _parse_arguments(
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description=(
-            f"Generate the technical metadata table in the {project_name} README."
-        ),
+        description=(f"Generate the technical metadata table in the {project_name} README."),
     )
 
     parser.add_argument(
