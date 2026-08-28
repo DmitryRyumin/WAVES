@@ -1,0 +1,91 @@
+name: Deploy to Hugging Face
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "app.py"
+            - "app.css"
+            - "config.toml"
+            - "Dockerfile"
+            - "LICENSE"
+            - "pyproject.toml"
+            - "uv.lock"
+            - "waves/**"
+            - "static/**"
+            - "models/waves/config.yaml"
+            - "deploy/huggingface/README.md"
+            - ".github/workflows/deploy-huggingface.yml"
+
+    workflow_dispatch:
+
+concurrency:
+    group: huggingface-deployment
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    deploy:
+        name: Deploy Space
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: "3.14"
+
+            - name: Install Hugging Face CLI
+              run: python -m pip install --upgrade huggingface-hub
+
+            - name: Prepare deployment
+              shell: bash
+              run: |
+                  set -euo pipefail
+
+                  DEPLOY_DIR=".huggingface-deploy"
+
+                  rm -rf "${DEPLOY_DIR}"
+
+                  mkdir -p \
+                    "${DEPLOY_DIR}/models/waves"
+
+                  cp Dockerfile "${DEPLOY_DIR}/"
+                  cp LICENSE "${DEPLOY_DIR}/"
+                  cp app.py "${DEPLOY_DIR}/"
+                  cp app.css "${DEPLOY_DIR}/"
+                  cp config.toml "${DEPLOY_DIR}/"
+                  cp pyproject.toml "${DEPLOY_DIR}/"
+                  cp uv.lock "${DEPLOY_DIR}/"
+
+                  cp -R waves "${DEPLOY_DIR}/waves"
+                  cp -R static "${DEPLOY_DIR}/static"
+
+                  cp \
+                    models/waves/config.yaml \
+                    "${DEPLOY_DIR}/models/waves/config.yaml"
+
+                  cp \
+                    deploy/huggingface/README.md \
+                    "${DEPLOY_DIR}/README.md"
+
+            - name: Deploy to Hugging Face
+              env:
+                  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+
+                  hf upload \
+                    DmitryRyumin/WAVES \
+                    .huggingface-deploy \
+                    . \
+                    --repo-type space \
+                    --token "${HF_TOKEN}" \
+                    --commit-message "Deploy from GitHub ${GITHUB_SHA::7}"
