@@ -13,6 +13,7 @@ from html import escape
 from pathlib import Path
 
 import gradio as gr
+from gradio.helpers import Examples as GradioExamples
 
 from waves.config import (
     PROJECT_ROOT,
@@ -21,6 +22,8 @@ from waves.config import (
 )
 from waves.localization import get_localized_text
 
+EXAMPLES_PER_PAGE = 4
+
 
 @dataclass(frozen=True, slots=True)
 class ApplicationTabComponents:
@@ -28,7 +31,9 @@ class ApplicationTabComponents:
 
     title: gr.Markdown
     audio_input: gr.Audio
+    audio_filename_state: gr.State
 
+    examples: GradioExamples | None
     examples_title: gr.Markdown
     examples_placeholder: gr.Markdown
 
@@ -106,6 +111,7 @@ def get_example_audio_labels(
 
         if len(parts) == 2:
             index, name = parts
+
             labels.append(f"{index} · {name.replace('_', ' ').title()}")
         else:
             labels.append(
@@ -156,7 +162,13 @@ def create_application_tab(
         elem_classes="application-compact-title",
     )
 
-    routing_state = gr.State(value=None)
+    audio_filename_state = gr.State(
+        value=None,
+    )
+
+    routing_state = gr.State(
+        value=None,
+    )
 
     with gr.Row(
         elem_classes="application-input-row",
@@ -193,18 +205,20 @@ def create_application_tab(
             example_audio_paths = get_existing_example_audio_paths()
 
             examples_title = gr.Markdown(
-                value=f"### {get_localized_text('Labels_EXAMPLES', language_index)}",
+                value=(f"### {get_localized_text('Labels_EXAMPLES', language_index)}"),
                 elem_classes="application-examples-title",
             )
 
+            examples: GradioExamples | None = None
+
             if example_audio_paths:
-                gr.Examples(
+                examples = gr.Examples(
                     examples=example_audio_paths,
                     inputs=[
                         audio_input,
                     ],
                     cache_examples=False,
-                    examples_per_page=4,
+                    examples_per_page=EXAMPLES_PER_PAGE,
                     label="",
                     example_labels=get_example_audio_labels(example_audio_paths),
                     elem_id="application-examples",
@@ -213,7 +227,7 @@ def create_application_tab(
                 examples_placeholder = gr.Markdown(
                     value="",
                     visible=False,
-                    elem_classes="application-examples-placeholder",
+                    elem_classes=("application-examples-placeholder"),
                 )
             else:
                 examples_placeholder = gr.Markdown(
@@ -222,7 +236,7 @@ def create_application_tab(
                         language_index,
                     ),
                     visible=True,
-                    elem_classes="application-examples-placeholder",
+                    elem_classes=("application-examples-placeholder"),
                 )
 
     with gr.Row(
@@ -273,7 +287,7 @@ def create_application_tab(
             min_width=260,
             visible=False,
             elem_id="audio-info-button-column",
-            elem_classes="application-audio-info-button-column",
+            elem_classes=("application-audio-info-button-column"),
         ) as audio_info_button_column:
             audio_info_button = gr.Button(
                 value=get_localized_text(
@@ -285,7 +299,7 @@ def create_application_tab(
                 interactive=False,
                 visible=True,
                 elem_id="audio-info-button",
-                elem_classes="application-audio-info-button",
+                elem_classes=("application-audio-info-button"),
             )
 
     with (
@@ -304,24 +318,24 @@ def create_application_tab(
             with gr.Column(
                 scale=1,
                 min_width=0,
-                elem_classes="audio-info-modal-title-column",
+                elem_classes=("audio-info-modal-title-column"),
             ):
                 audio_info_modal_title = gr.Markdown(
-                    value=f"### {get_localized_text('Labels_AUDIO_INFO_TITLE', language_index)}",
+                    value=(f"### {get_localized_text('Labels_AUDIO_INFO_TITLE', language_index)}"),
                     elem_classes="audio-info-modal-title",
                 )
 
             with gr.Column(
                 scale=0,
                 min_width=42,
-                elem_classes="audio-info-modal-close-column",
+                elem_classes=("audio-info-modal-close-column"),
             ):
                 audio_info_modal_close_button = gr.Button(
                     value="Close",
                     variant="secondary",
                     size="sm",
-                    elem_id="audio-info-modal-close-button",
-                    elem_classes="audio-info-modal-close-button",
+                    elem_id=("audio-info-modal-close-button"),
+                    elem_classes=("audio-info-modal-close-button"),
                 )
 
         audio_info_modal_content = gr.HTML(
@@ -430,17 +444,19 @@ def create_application_tab(
     return ApplicationTabComponents(
         title=title,
         audio_input=audio_input,
+        audio_filename_state=audio_filename_state,
+        examples=examples,
         examples_title=examples_title,
         examples_placeholder=examples_placeholder,
         run_button=run_button,
         clear_button=clear_button,
         status=status,
-        audio_info_button_column=audio_info_button_column,
+        audio_info_button_column=(audio_info_button_column),
         audio_info_button=audio_info_button,
         audio_info_modal=audio_info_modal,
-        audio_info_modal_title=audio_info_modal_title,
-        audio_info_modal_content=audio_info_modal_content,
-        audio_info_modal_close_button=audio_info_modal_close_button,
+        audio_info_modal_title=(audio_info_modal_title),
+        audio_info_modal_content=(audio_info_modal_content),
+        audio_info_modal_close_button=(audio_info_modal_close_button),
         enhanced_audio=enhanced_audio,
         spectrogram_plot=spectrogram_plot,
         routing_state=routing_state,

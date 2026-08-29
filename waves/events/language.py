@@ -14,7 +14,10 @@ from typing import Any
 import gradio as gr
 
 from waves.config import get_config_str_mapping
-from waves.events.audio_state import create_audio_state_content
+from waves.events.audio_state import (
+    create_audio_component_label,
+    create_audio_state_content,
+)
 from waves.events.visualization import (
     RoutingPlotUpdates,
     create_routing_plot_updates,
@@ -86,6 +89,7 @@ def handle_language_change(
     audio_path: str | None,
     enhanced_audio_path: str | None,
     routing: RoutingTelemetry | None,
+    audio_filename: str | None,
 ) -> LanguageChangeUpdates:
     """Create named UI updates after language selection."""
 
@@ -120,9 +124,10 @@ def handle_language_change(
             value=audio_state.status_text,
         ),
         audio_input=gr.update(
-            label=get_localized_text(
+            label=create_audio_component_label(
                 "Labels_NOISY_AUDIO",
                 language_index,
+                audio_filename,
             ),
         ),
         examples_title=gr.update(
@@ -159,9 +164,10 @@ def handle_language_change(
             value=audio_state.audio_info_html,
         ),
         enhanced_audio=gr.update(
-            label=get_localized_text(
+            label=create_audio_component_label(
                 "Labels_ENHANCED_AUDIO",
                 language_index,
+                audio_filename,
             ),
         ),
         spectrogram_plot=spectrogram_update,

@@ -32,29 +32,41 @@ def create_gradio_app() -> gr.Blocks:
         "StaticPaths_IMAGES",
         "static/images",
     )
+
     app_title = get_config_str(
         "App_TITLE",
         "WAVES",
     )
 
-    gr.set_static_paths(paths=[static_images_path])
+    gr.set_static_paths(
+        paths=[
+            static_images_path,
+        ]
+    )
 
     with (
         gr.Blocks(
             title=app_title,
             fill_width=True,
         ) as gradio_app,
-        gr.Column(elem_classes="app-shell"),
+        gr.Column(
+            elem_classes="app-shell",
+        ),
     ):
         language_selector = create_language_selector()
+
         app_tabs = create_app_tabs()
 
         setup_app_event_handlers(
+            gradio_app=gradio_app,
             language_selector=language_selector,
             app_tabs=app_tabs,
         )
 
-    return cast(gr.Blocks, gradio_app)
+    return cast(
+        gr.Blocks,
+        gradio_app,
+    )
 
 
 def main() -> None:
@@ -64,6 +76,7 @@ def main() -> None:
         "Server_NAME",
         "127.0.0.1",
     )
+
     configured_server_port = get_config_int(
         "Server_PORT",
         7860,
@@ -96,7 +109,9 @@ def main() -> None:
         port=server_port,
     )
 
-    create_gradio_app().queue(api_open=False).launch(
+    create_gradio_app().queue(
+        api_open=False,
+    ).launch(
         theme="default",
         css_paths=app_css_path,
         share=False,

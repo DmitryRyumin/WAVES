@@ -196,16 +196,17 @@ div.application-examples-placeholder {
     border-radius: var(--waves-radius-md) !important;
 }
 
+#application-examples div.gallery > button.gallery-item.waves-selected-example {
+    cursor: default !important;
+    background: color-mix(in srgb, var(--waves-color-accent) 18%, var(--background-fill-secondary)) !important;
+    border-color: color-mix(in srgb, var(--waves-color-accent) 72%, var(--border-color-primary)) !important;
+    opacity: 1 !important;
+}
+
 #application-examples table {
     width: 100% !important;
     border-spacing: 0 6px !important;
     border-collapse: separate !important;
-}
-
-#application-examples td,
-#application-examples th {
-    width: 100% !important;
-    padding: 0 !important;
 }
 
 /* Examples pagination */

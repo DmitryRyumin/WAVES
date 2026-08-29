@@ -9,6 +9,7 @@ License: MIT License
 """
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from waves.audio.formatting import (
     create_unavailable_audio_metadata_html,
@@ -26,6 +27,37 @@ class AudioStateContent:
     status_text: str
     audio_info_html: str
     is_valid: bool
+
+
+def get_audio_display_filename(
+    audio_path: str | None,
+) -> str | None:
+    """Return a safe display filename for an audio path."""
+
+    if not audio_path:
+        return None
+
+    filename = Path(audio_path).name.strip()
+
+    return filename or None
+
+
+def create_audio_component_label(
+    config_field: str,
+    language_index: int,
+    audio_filename: str | None,
+) -> str:
+    """Create a localized audio-component label with an optional filename."""
+
+    label = get_localized_text(
+        config_field,
+        language_index,
+    ).strip()
+
+    if not audio_filename:
+        return label
+
+    return f"{label} ({audio_filename})"
 
 
 def create_audio_state_content(

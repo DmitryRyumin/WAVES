@@ -10,14 +10,21 @@ License: MIT License
 
 from collections.abc import Iterator
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import gradio as gr
 
-from waves.audio.encoder import remove_temporary_encoded_audio_file
+from waves.audio.encoder import (
+    remove_temporary_encoded_audio_file,
+)
 from waves.audio.validation import validate_audio_file
 from waves.config import get_config_str
-from waves.events.audio_state import create_audio_state_content
+from waves.events.audio_state import (
+    create_audio_component_label,
+    create_audio_state_content,
+    get_audio_display_filename,
+)
 from waves.events.visualization import (
     RoutingPlotUpdates,
     create_hidden_plot_update,
@@ -38,11 +45,15 @@ LOGGER = get_logger(__name__)
 
 ERROR_STATUS_MARKER = '<span class="application-status-error-marker"></span>'
 
+RECORDED_AUDIO_FILENAME = "recording.wav"
+
 
 @dataclass(frozen=True, slots=True)
 class AudioChangeUpdates:
     """Named UI updates produced by an input-audio change."""
 
+    audio_input: Any
+    audio_filename_state: str | None
     status: Any
     run_button: Any
     clear_button: Any
@@ -75,6 +86,7 @@ class ClearApplicationUpdates:
     """Named UI updates produced when clearing the application."""
 
     audio_input: Any
+    audio_filename_state: str | None
     status: Any
     run_button: Any
     clear_button: Any
@@ -86,6 +98,24 @@ class ClearApplicationUpdates:
     spectrogram_plot: Any
     routing_state: RoutingTelemetry | None
     routing_plots: RoutingPlotUpdates
+
+
+def resolve_audio_display_filename(
+    audio_path: str | None,
+    audio_filename: str | None,
+) -> str | None:
+    """Resolve the display filename for the current audio sample."""
+
+    if not audio_path:
+        return None
+
+    if audio_filename:
+        normalized_filename = Path(audio_filename).name.strip()
+
+        if normalized_filename:
+            return normalized_filename
+
+    return get_audio_display_filename(audio_path)
 
 
 def resolve_application_model() -> str:
@@ -116,6 +146,8 @@ def handle_audio_change(
     audio_path: str | None,
     enhanced_audio_path: str | None,
     language: str,
+    *,
+    audio_filename: str | None = None,
 ) -> AudioChangeUpdates:
     """Handle an uploaded, recorded, selected, or removed audio sample."""
 
@@ -123,15 +155,36 @@ def handle_audio_change(
 
     remove_temporary_encoded_audio_file(enhanced_audio_path)
 
+    resolved_audio_filename = resolve_audio_display_filename(
+        audio_path=audio_path,
+        audio_filename=audio_filename,
+    )
+
     audio_state = create_audio_state_content(
         audio_path=audio_path,
         language_index=language_index,
+    )
+
+    noisy_audio_label = create_audio_component_label(
+        "Labels_NOISY_AUDIO",
+        language_index,
+        resolved_audio_filename,
+    )
+
+    enhanced_audio_label = create_audio_component_label(
+        "Labels_ENHANCED_AUDIO",
+        language_index,
+        resolved_audio_filename,
     )
 
     routing_plot_updates = create_hidden_routing_plot_updates()
 
     if not audio_path:
         return AudioChangeUpdates(
+            audio_input=gr.update(
+                label=noisy_audio_label,
+            ),
+            audio_filename_state=None,
             status=gr.update(
                 value=audio_state.status_text,
             ),
@@ -155,14 +208,19 @@ def handle_audio_change(
             ),
             enhanced_audio=gr.update(
                 value=None,
+                label=enhanced_audio_label,
                 visible=False,
             ),
-            spectrogram_plot=create_hidden_plot_update(),
+            spectrogram_plot=(create_hidden_plot_update()),
             routing_state=None,
             routing_plots=routing_plot_updates,
         )
 
     return AudioChangeUpdates(
+        audio_input=gr.update(
+            label=noisy_audio_label,
+        ),
+        audio_filename_state=(resolved_audio_filename),
         status=gr.update(
             value=audio_state.status_text,
         ),
@@ -186,9 +244,10 @@ def handle_audio_change(
         ),
         enhanced_audio=gr.update(
             value=None,
+            label=enhanced_audio_label,
             visible=False,
         ),
-        spectrogram_plot=create_hidden_plot_update(),
+        spectrogram_plot=(create_hidden_plot_update()),
         routing_state=None,
         routing_plots=routing_plot_updates,
     )
@@ -198,14 +257,33 @@ def handle_run_enhancement(
     audio_path: str | None,
     enhanced_audio_path: str | None,
     language: str,
+    audio_filename: str | None,
 ) -> Iterator[EnhancementUpdates]:
     """Run speech enhancement and stream named UI state updates."""
 
     language_index = get_language_index(language)
 
+    resolved_audio_filename = resolve_audio_display_filename(
+        audio_path=audio_path,
+        audio_filename=audio_filename,
+    )
+
+    noisy_audio_label = create_audio_component_label(
+        "Labels_NOISY_AUDIO",
+        language_index,
+        resolved_audio_filename,
+    )
+
+    enhanced_audio_label = create_audio_component_label(
+        "Labels_ENHANCED_AUDIO",
+        language_index,
+        resolved_audio_filename,
+    )
+
     yield EnhancementUpdates(
         audio_input=gr.update(
             interactive=False,
+            label=noisy_audio_label,
         ),
         status=gr.update(
             value=get_localized_text(
@@ -221,11 +299,12 @@ def handle_run_enhancement(
         ),
         enhanced_audio=gr.update(
             value=None,
+            label=enhanced_audio_label,
             visible=False,
         ),
-        spectrogram_plot=create_hidden_plot_update(),
+        spectrogram_plot=(create_hidden_plot_update()),
         routing_state=None,
-        routing_plots=create_hidden_routing_plot_updates(),
+        routing_plots=(create_hidden_routing_plot_updates()),
     )
 
     try:
@@ -250,8 +329,8 @@ def handle_run_enhancement(
 
         spectrogram_update = create_spectrogram_plot_update_from_enhancement(
             audio_path=audio_path,
-            enhanced_waveform=result.audio.waveform,
-            sample_rate=result.audio.sample_rate,
+            enhanced_waveform=(result.audio.waveform),
+            sample_rate=(result.audio.sample_rate),
             language_index=language_index,
         )
 
@@ -260,7 +339,7 @@ def handle_run_enhancement(
         routing_plot_updates = create_routing_plot_updates(
             routing=routing,
             language_index=language_index,
-            sample_rate=result.audio.sample_rate,
+            sample_rate=(result.audio.sample_rate),
         )
 
         LOGGER.info(
@@ -281,6 +360,7 @@ def handle_run_enhancement(
         yield EnhancementUpdates(
             audio_input=gr.update(
                 interactive=True,
+                label=noisy_audio_label,
             ),
             status=gr.update(
                 value=get_localized_text(
@@ -296,11 +376,12 @@ def handle_run_enhancement(
             ),
             enhanced_audio=gr.update(
                 value=result.encoded.path,
+                label=enhanced_audio_label,
                 visible=True,
             ),
-            spectrogram_plot=spectrogram_update,
+            spectrogram_plot=(spectrogram_update),
             routing_state=routing,
-            routing_plots=routing_plot_updates,
+            routing_plots=(routing_plot_updates),
         )
 
     except Exception:
@@ -311,6 +392,7 @@ def handle_run_enhancement(
         yield EnhancementUpdates(
             audio_input=gr.update(
                 interactive=True,
+                label=noisy_audio_label,
             ),
             status=gr.update(
                 value=status_text,
@@ -323,11 +405,12 @@ def handle_run_enhancement(
             ),
             enhanced_audio=gr.update(
                 value=None,
+                label=enhanced_audio_label,
                 visible=False,
             ),
-            spectrogram_plot=create_hidden_plot_update(),
+            spectrogram_plot=(create_hidden_plot_update()),
             routing_state=None,
-            routing_plots=create_hidden_routing_plot_updates(),
+            routing_plots=(create_hidden_routing_plot_updates()),
         )
 
 
@@ -339,6 +422,18 @@ def handle_clear_application(
 
     language_index = get_language_index(language)
 
+    noisy_audio_label = create_audio_component_label(
+        "Labels_NOISY_AUDIO",
+        language_index,
+        None,
+    )
+
+    enhanced_audio_label = create_audio_component_label(
+        "Labels_ENHANCED_AUDIO",
+        language_index,
+        None,
+    )
+
     remove_temporary_encoded_audio_file(enhanced_audio_path)
 
     audio_state = create_audio_state_content(
@@ -349,7 +444,9 @@ def handle_clear_application(
     return ClearApplicationUpdates(
         audio_input=gr.update(
             value=None,
+            label=noisy_audio_label,
         ),
+        audio_filename_state=None,
         status=gr.update(
             value=audio_state.status_text,
         ),
@@ -373,11 +470,12 @@ def handle_clear_application(
         ),
         enhanced_audio=gr.update(
             value=None,
+            label=enhanced_audio_label,
             visible=False,
         ),
-        spectrogram_plot=create_hidden_plot_update(),
+        spectrogram_plot=(create_hidden_plot_update()),
         routing_state=None,
-        routing_plots=create_hidden_routing_plot_updates(),
+        routing_plots=(create_hidden_routing_plot_updates()),
     )
 
 
