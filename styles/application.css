@@ -58,12 +58,11 @@ div.block.application-status {
     min-height: var(--waves-status-height) !important;
     max-height: var(--waves-status-height) !important;
     padding: 0 14px !important;
-    margin: 14px 0 0 !important;
+    margin: 0 !important;
     overflow: hidden !important;
-    background: color-mix(in srgb, var(--background-fill-secondary) 70%, transparent);
-    border-right: 3px solid var(--waves-color-accent);
-    border-left: 3px solid var(--waves-color-accent);
-    border-radius: var(--waves-radius-sm);
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     opacity: 0.9;
 }
 
@@ -97,9 +96,9 @@ div.prose.application-status {
     height: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
-    background: transparent;
-    border: none;
-    border-radius: 0;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     opacity: 1;
 }
 
@@ -123,7 +122,7 @@ div.prose.application-status p {
     display: none !important;
 }
 
-div.block.application-status:has(.application-status-error-marker) {
+div.application-status-panel:has(.application-status-error-marker) {
     background: color-mix(in srgb, var(--waves-color-danger) 10%, var(--background-fill-secondary)) !important;
     border-right-color: var(--waves-color-danger) !important;
     border-left-color: var(--waves-color-danger) !important;
@@ -285,20 +284,63 @@ div.application-action-row {
     mask-image: url("/gradio_api/file=static/images/icons/rotate-ccw.svg") !important;
 }
 
-/* Status and audio information row */
+/* Status and action panel */
 
 div.application-status-row {
-    gap: 16px;
-    align-items: stretch;
-    margin-top: 14px;
+    box-sizing: border-box !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+    min-height: var(--waves-status-height) !important;
+    margin-top: 14px !important;
+}
+
+div.application-status-panel-column {
+    display: flex !important;
+    min-width: 560px;
+}
+
+div.application-status-panel {
+    box-sizing: border-box !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-height: var(--waves-status-height) !important;
+    overflow: hidden !important;
+    background: color-mix(in srgb, var(--background-fill-secondary) 70%, transparent) !important;
+    border-right: 3px solid var(--waves-color-accent) !important;
+    border-left: 3px solid var(--waves-color-accent) !important;
+    border-radius: var(--waves-radius-sm) !important;
 }
 
 div.application-status-column {
-    min-width: 360px;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    align-items: stretch !important;
+    min-width: 0 !important;
 }
 
-div.application-status-row div.block.application-status {
-    margin-top: 0 !important;
+div.application-status-panel div.block.application-status {
+    height: 100% !important;
+    margin: 0 !important;
+}
+
+div.application-audio-info-button-column {
+    display: flex !important;
+    align-items: stretch !important;
+    min-width: 300px;
+}
+
+#audio-info-button {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: var(--waves-status-height) !important;
+    min-height: var(--waves-status-height) !important;
+    max-height: var(--waves-status-height) !important;
+    margin: 0 !important;
+    font-weight: 650 !important;
 }
 
 /* Application audio component */
@@ -317,17 +359,741 @@ div.audio-container > button {
     text-overflow: ellipsis;
 }
 
+/* Processing time button */
+
+div.application-processing-time-button-column {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    min-width: 360px;
+    max-width: 440px;
+    padding: 7px 8px 7px 0 !important;
+}
+
+#processing-time-button {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    gap: 9px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: calc(var(--waves-status-height) - 14px) !important;
+    min-height: calc(var(--waves-status-height) - 14px) !important;
+    max-height: calc(var(--waves-status-height) - 14px) !important;
+    padding: 0 14px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-weight: 650 !important;
+    white-space: nowrap !important;
+    border-radius: var(--waves-radius-md) !important;
+}
+
+#processing-time-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/clock-3.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+#processing-time-button-column.hide,
+#processing-time-button-column.hidden,
+#processing-time-button-column[style*="display: none"] {
+    display: none !important;
+    flex: 0 0 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Processing modal */
+
+div.processing-modal-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 11000 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    gap: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    padding: 24px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    background: rgb(0 0 0 / 62%) !important;
+    backdrop-filter: blur(7px);
+    animation: waves-modal-backdrop-enter 180ms ease-out;
+}
+
+div.processing-modal-backdrop.hide,
+div.processing-modal-backdrop.hidden {
+    display: none !important;
+}
+
+div.processing-modal-card {
+    position: relative !important;
+    flex: 0 1 auto !important;
+    width: min(780px, calc(100vw - 48px)) !important;
+    min-width: 0 !important;
+    max-width: 780px !important;
+    max-height: calc(100vh - 48px) !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    overflow: auto !important;
+    background: var(--background-fill-primary) !important;
+    border: 1px solid var(--border-color-primary) !important;
+    border-radius: var(--waves-radius-xl) !important;
+    box-shadow: 0 24px 80px rgb(0 0 0 / 45%) !important;
+    animation: waves-modal-card-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+div.processing-modal-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+div.processing-modal-content .html-container {
+    padding: 0 !important;
+}
+
+div.processing-modal-backdrop div[data-testid="status-tracker"],
+div.processing-modal-card div[data-testid="status-tracker"] {
+    display: none !important;
+}
+
+div.processing-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+div.processing-modal-heading {
+    padding-right: 44px;
+}
+
+div.processing-modal-body.is-running div.processing-modal-heading {
+    padding-right: 0;
+}
+
+div.processing-modal-title {
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+div.processing-modal-subtitle {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    opacity: 0.72;
+}
+
+/* Processing metrics */
+
+div.processing-modal-metrics {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 2.2fr)
+        repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+div.processing-modal-metric {
+    min-width: 0;
+    padding: 9px 10px;
+    background: var(--background-fill-secondary);
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-lg);
+}
+
+div.processing-modal-metric-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0.68;
+}
+
+div.processing-modal-metric-value {
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.86rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+div.processing-modal-metric-value.waves-current-stage-changed {
+    animation: waves-processing-current-stage-change 260ms ease-out;
+}
+
+/* Processing progress */
+
+div.processing-modal-progress-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+div.processing-modal-progress-track {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 28px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--body-text-color) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color-primary) 82%, transparent);
+    border-radius: var(--waves-radius-lg);
+}
+
+div.processing-modal-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 1;
+    width: 0%;
+    height: 100%;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--waves-color-accent) 48%, transparent);
+    border-radius: inherit;
+    transition: width 0.25s ease;
+}
+
+div.processing-modal-progress-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    z-index: 2;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgb(255 255 255 / 8%) 28%,
+        rgb(255 255 255 / 34%) 50%,
+        rgb(255 255 255 / 8%) 72%,
+        transparent 100%
+    );
+    border-radius: inherit;
+    animation: waves-processing-progress-slide 1.2s ease-in-out infinite;
+}
+
+div.processing-modal-body.is-completed div.processing-modal-progress-fill {
+    background: color-mix(in srgb, var(--waves-color-accent) 58%, transparent);
+    animation: waves-processing-progress-finish 420ms ease-out;
+}
+
+div.processing-modal-body.is-completed div.processing-modal-progress-bar {
+    display: none;
+    animation: none;
+}
+
+div.processing-modal-progress-label {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.74rem;
+    font-weight: 750;
+    line-height: 1;
+    color: var(--body-text-color);
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Processing stages */
+
+div.processing-modal-stages {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 52px;
+    gap: 6px 8px;
+}
+
+div.processing-modal-stage {
+    box-sizing: border-box;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
+    padding: 5px 8px;
+    overflow: hidden;
+    background: var(--background-fill-secondary);
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-md);
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        opacity 180ms ease;
+}
+
+div.processing-modal-stage-marker {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 22px;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 0.68rem;
+    font-weight: 750;
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-pill);
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        border-color 160ms ease;
+}
+
+/* Active stage */
+
+div.processing-modal-stage.is-active {
+    background: color-mix(in srgb, var(--waves-color-accent) 8%, var(--background-fill-secondary));
+    border-color: var(--waves-color-accent);
+}
+
+div.processing-modal-stage.is-active div.processing-modal-stage-marker {
+    color: var(--button-primary-text-color);
+    background: var(--waves-color-accent);
+    border-color: var(--waves-color-accent);
+}
+
+div.processing-modal-body.is-running div.processing-modal-stage.is-active div.processing-modal-stage-marker::after {
+    position: absolute;
+    inset: -5px;
+    content: "";
+    border: 1px solid color-mix(in srgb, var(--waves-color-accent) 62%, transparent);
+    border-radius: inherit;
+    animation: waves-processing-marker-pulse 1.45s ease-out infinite;
+}
+
+div.processing-modal-stage.waves-stage-just-activated {
+    animation: waves-processing-stage-activate 300ms ease-out;
+}
+
+/* Completed stages */
+
+div.processing-modal-stage.is-completed div.processing-modal-stage-marker {
+    color: var(--button-primary-text-color);
+    background: var(--waves-color-success);
+    border-color: var(--waves-color-success);
+}
+
+div.processing-modal-stage.waves-stage-just-completed div.processing-modal-stage-marker {
+    animation: waves-processing-marker-complete 360ms ease-out;
+}
+
+/* Pending stages */
+
+div.processing-modal-stage.is-pending {
+    opacity: 0.54;
+}
+
+/* Stage content */
+
+div.processing-modal-stage-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+}
+
+div.processing-modal-stage.is-single-line div.processing-modal-stage-text {
+    justify-content: center;
+}
+
+div.processing-modal-stage.is-single-line div.processing-modal-stage-header {
+    align-items: center;
+    height: 38px;
+    min-height: 38px;
+}
+
+div.processing-modal-stage.is-single-line div.processing-modal-stage-detail {
+    display: none;
+}
+
+div.processing-modal-stage-header {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
+    height: 19px;
+    min-height: 19px;
+}
+
+div.processing-modal-stage-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.78rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+div.processing-modal-stage-detail {
+    height: 16px;
+    min-height: 16px;
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.66rem;
+    line-height: 16px;
+    white-space: nowrap;
+    opacity: 0.66;
+    animation: waves-processing-detail-enter 180ms ease-out;
+}
+
+span.processing-modal-stage-badge {
+    flex: 0 0 auto;
+    padding: 1px 5px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--waves-color-success);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--waves-color-success) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--waves-color-success) 46%, var(--border-color-primary));
+    border-radius: var(--waves-radius-pill);
+}
+
+div.processing-modal-footer {
+    padding-top: 1px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    opacity: 0.58;
+}
+
+/* Processing modal close button */
+
+#processing-modal-close-button {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    border-radius: var(--waves-radius-md) !important;
+}
+
+#processing-modal-close-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/x.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+/* Automatic completion transition */
+
+div.processing-modal-backdrop:has(.processing-modal-body.is-auto-closing) {
+    animation: waves-processing-overlay-auto-close 580ms ease-in forwards;
+}
+
+div.processing-modal-card:has(.processing-modal-body.is-auto-closing) {
+    animation: waves-processing-card-auto-close 580ms ease-in forwards;
+}
+
+/* Processing animations */
+
+@keyframes waves-modal-backdrop-enter {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+
+    to {
+        opacity: 1;
+        backdrop-filter: blur(7px);
+    }
+}
+
+@keyframes waves-modal-card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.975);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes waves-modal-backdrop-exit {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes waves-modal-card-exit {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(8px) scale(0.985);
+    }
+}
+
+@keyframes waves-processing-progress-slide {
+    0% {
+        left: -42%;
+    }
+
+    55% {
+        left: 100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes waves-processing-progress-finish {
+    0% {
+        filter: brightness(1);
+    }
+
+    45% {
+        filter: brightness(1.2);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}
+
+@keyframes waves-processing-marker-pulse {
+    0% {
+        opacity: 0.78;
+        transform: scale(0.86);
+    }
+
+    70% {
+        opacity: 0;
+        transform: scale(1.42);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.42);
+    }
+}
+
+@keyframes waves-processing-marker-complete {
+    0% {
+        transform: scale(0.72);
+    }
+
+    55% {
+        transform: scale(1.13);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes waves-processing-stage-activate {
+    0% {
+        background: color-mix(in srgb, var(--waves-color-accent) 20%, var(--background-fill-secondary));
+    }
+
+    100% {
+        background: color-mix(in srgb, var(--waves-color-accent) 8%, var(--background-fill-secondary));
+    }
+}
+
+@keyframes waves-processing-current-stage-change {
+    from {
+        opacity: 0.35;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes waves-processing-detail-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+
+    to {
+        opacity: 0.66;
+        transform: translateY(0);
+    }
+}
+
+@keyframes waves-processing-overlay-auto-close {
+    0%,
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes waves-processing-card-auto-close {
+    0%,
+    68% {
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        transform: translateY(3px) scale(0.995);
+    }
+}
+
+div.processing-modal-backdrop.waves-modal-closing {
+    pointer-events: none !important;
+    animation: waves-modal-backdrop-exit 180ms ease-in forwards !important;
+}
+
+div.processing-modal-backdrop.waves-modal-closing div.processing-modal-card {
+    animation: waves-modal-card-exit 180ms ease-in forwards !important;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    div.processing-modal-card,
+    div.processing-modal-progress-fill,
+    div.processing-modal-progress-bar,
+    div.processing-modal-stage,
+    div.processing-modal-stage-marker,
+    div.processing-modal-stage-marker::after,
+    div.processing-modal-stage-detail,
+    div.processing-modal-backdrop,
+    div.audio-info-modal-card,
+    div.audio-info-modal-backdrop,
+    div.visualization-info-modal-backdrop,
+    div.visualization-info-modal-card {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
 /* Mobile */
 
 @media (width <= 768px) {
     div.application-status-row {
         flex-direction: column !important;
         gap: 10px !important;
+        height: auto !important;
     }
 
-    div.application-status-column {
+    div.application-status-panel-column,
+    div.application-audio-info-button-column {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
+    }
+
+    div.application-status-panel {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    div.application-processing-time-button-column {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding: 0 8px 8px !important;
+    }
+
+    #processing-time-button {
+        width: 100% !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        margin: 0 !important;
+    }
+
+    div.processing-modal-backdrop {
+        padding: 12px !important;
+    }
+
+    div.processing-modal-card {
+        width: calc(100vw - 24px) !important;
+        max-height: calc(100vh - 24px) !important;
+        padding: 16px !important;
+    }
+
+    div.processing-modal-heading {
+        padding-right: 42px;
+    }
+
+    div.processing-modal-body.is-running div.processing-modal-heading {
+        padding-right: 0;
+    }
+
+    div.processing-modal-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    div.processing-modal-stages {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 52px;
     }
 }

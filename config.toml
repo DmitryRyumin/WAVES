@@ -74,6 +74,16 @@ SPECTROGRAM_COLORSCALE = "Cividis"
 SHOW_SPECTROGRAM = true
 SHOW_ROUTING = true
 
+[ProgressStages]
+validation = 0.02
+audio_decoding = 0.05
+preprocessing = 0.03
+model_loading = 0.12
+enhancement = 0.62
+postprocessing = 0.05
+wav_encoding = 0.03
+spectrogram_rendering = 0.05
+routing_visualization = 0.03
 
 [StaticPaths]
 EXAMPLES = "examples"
@@ -228,6 +238,43 @@ AUDIO_VALIDATION_CHANNELS_WARNING = [
     "Входной сигнал содержит {actual} канал(а); число каналов будет преобразовано к {expected}.",
 ]
 
+PROGRESS_RUNNING_TITLE = [ "Enhancing speech...", "Повышение качества речи..." ]
+
+PROGRESS_RUNNING_SUBTITLE = [
+    "The WAVES processing pipeline is running. The interface is temporarily locked.",
+    "Выполняется обработка WAVES. Интерфейс временно заблокирован.",
+]
+
+PROGRESS_COMPLETED_TITLE = [
+    "Speech enhancement completed successfully.",
+    "Повышение качества речи успешно завершено.",
+]
+
+PROGRESS_COMPLETED_SUBTITLE = [ "Stage timings", "Время выполнения этапов" ]
+
+PROGRESS_FOOTER = [
+    "Processing time is measured for the current run and may vary with the device and input duration.",
+    "Время обработки измерено для текущего запуска и может зависеть от устройства и длительности сигнала.",
+]
+
+PROGRESS_DETAIL_VALIDATION = [ "Checking input audio...", "Проверка входного аудиосигнала..." ]
+
+PROGRESS_DETAIL_AUDIO_DECODING = [ "Decoding waveform...", "Декодирование аудиосигнала..." ]
+
+PROGRESS_DETAIL_PREPROCESSING = [ "Preparing model input...", "Подготовка входных данных модели..." ]
+
+PROGRESS_DETAIL_MODEL_LOADING = [ "Preparing the WAVES model...", "Подготовка модели WAVES..." ]
+
+PROGRESS_DETAIL_ENHANCEMENT = [ "Enhancing speech...", "Повышение качества речи..." ]
+
+PROGRESS_DETAIL_POSTPROCESSING = [ "Restoring the output waveform...", "Восстановление выходного аудиосигнала..." ]
+
+PROGRESS_DETAIL_WAV_ENCODING = [ "Writing enhanced audio...", "Запись обработанного аудиосигнала..." ]
+
+PROGRESS_DETAIL_SPECTROGRAM_RENDERING = [ "Rendering spectrograms...", "Построение спектрограмм..." ]
+
+PROGRESS_DETAIL_ROUTING_VISUALIZATION = [ "Rendering expert routing...", "Построение маршрутизации экспертов..." ]
+
 
 [Labels]
 NOISY_AUDIO = [ "Noisy speech", "Зашумленная речь" ]
@@ -328,6 +375,484 @@ ROUTING_FREQUENCY_POSITION = [ "Encoded position", "Позиция в часто
 
 ROUTING_FREQUENCY_POSITIONS = [ "frequency positions", "частотных позиций" ]
 
+PROCESSING_TIME = [ "Processing time", "Время обработки" ]
+
+PROGRESS_CURRENT_STAGE = [ "Current stage", "Текущий этап" ]
+
+PROGRESS_ELAPSED = [ "Elapsed", "Прошло" ]
+
+PROGRESS_PROGRESS = [ "Progress", "Прогресс" ]
+
+PROGRESS_DEVICE = [ "Device", "Устройство" ]
+
+PROGRESS_COMPLETED = [ "Completed", "Завершено" ]
+
+PROGRESS_CACHED = [ "cached", "из кэша" ]
+
+PROGRESS_WINDOW = [ "Window", "Окно" ]
+
+PROGRESS_STAGE_VALIDATION = [ "Validation", "Проверка" ]
+
+PROGRESS_STAGE_AUDIO_DECODING = [ "Audio decoding", "Декодирование аудио" ]
+
+PROGRESS_STAGE_PREPROCESSING = [ "Preprocessing", "Предобработка" ]
+
+PROGRESS_STAGE_MODEL_LOADING = [ "WAVES model loading", "Загрузка модели WAVES" ]
+
+PROGRESS_STAGE_ENHANCEMENT = [ "WAVES enhancement", "Обработка WAVES" ]
+
+PROGRESS_STAGE_POSTPROCESSING = [ "Audio postprocessing", "Постобработка аудио" ]
+
+PROGRESS_STAGE_WAV_ENCODING = [ "WAV encoding", "Кодирование WAV" ]
+
+PROGRESS_STAGE_SPECTROGRAM_RENDERING = [ "Spectrogram rendering", "Построение спектрограмм" ]
+
+PROGRESS_STAGE_ROUTING_VISUALIZATION = [ "Routing visualization", "Визуализация маршрутизации" ]
+
+[VisualizationInfoLabels]
+
+BADGE = [ "WAVES visualization", "Визуализация WAVES" ]
+
+SHOWS = [ "What it shows", "Что показывает" ]
+
+READ = [ "How to read", "Как читать" ]
+
+CALCULATION = [ "How it is calculated", "Как рассчитывается" ]
+
+NOTATION = [ "Mathematical notation", "Математические обозначения" ]
+
+INTERPRETATION = [ "Interpretation", "Интерпретация" ]
+
+SETTINGS = [ "Current settings", "Текущие параметры" ]
+
+IMPORTANT = [ "Important", "Важно" ]
+
+X_AXIS = [ "X axis", "Ось X" ]
+
+Y_AXIS = [ "Y axis", "Ось Y" ]
+
+COLOR = [ "Color", "Цвет" ]
+
+DASHED_LINE = [ "Dashed line", "Пунктир" ]
+
+
+[VisualizationInfoSpectrogram]
+
+SUBTITLE = [
+    "Time-frequency comparison of the input and enhanced speech signals.",
+    "Сравнение входного и обработанного речевых сигналов во временно-частотной области.",
+]
+
+SHOWS = [
+    "Three aligned Mel power maps: input speech, enhanced speech, and the spectral power change introduced by enhancement.",
+    "Три согласованные Mel-карты мощности: входной сигнал, обработанный сигнал и изменение спектральной мощности после обработки.",
+]
+
+READ_X = [ "Time in seconds.", "Время в секундах." ]
+
+READ_Y = [ "Mel-band center frequency in kHz.", "Центральная частота Mel-полосы в кГц." ]
+
+READ_SIGNAL_COLOR_LABEL = [ "Input / enhanced color", "Цвет входа / результата" ]
+
+READ_SIGNAL_COLOR = [
+    "Power in dB relative to one shared reference level.",
+    "Мощность в дБ относительно одного общего опорного уровня.",
+]
+
+READ_CHANGE_COLOR_LABEL = [ "Change color", "Цвет изменения" ]
+
+READ_CHANGE_COLOR = [
+    "Negative values indicate reduced power, values near zero indicate little change, and positive values indicate increased power.",
+    "Отрицательные значения соответствуют уменьшению мощности, значения около нуля — малому изменению, положительные — увеличению мощности.",
+]
+
+NOTATION_X = [ "Input waveform.", "Входной временной сигнал." ]
+
+NOTATION_T = [ "Time-frame index.", "Индекс временного кадра." ]
+
+NOTATION_M = [ "Mel-frequency band index.", "Индекс Mel-частотной полосы." ]
+
+NOTATION_P = [ "Spectral power.", "Спектральная мощность." ]
+
+NOTATION_P_REF = [
+    "Shared reference power: the maximum power observed across the input and enhanced Mel maps.",
+    "Общая опорная мощность: максимальная мощность среди входной и обработанной Mel-карт.",
+]
+
+NOTATION_P_IN = [ "Input-signal spectral power.", "Спектральная мощность входного сигнала." ]
+
+NOTATION_P_ENH = [ "Enhanced-signal spectral power.", "Спектральная мощность обработанного сигнала." ]
+
+NOTATION_S_DB = [
+    "Spectral power expressed in decibels relative to the shared reference.",
+    "Спектральная мощность в децибелах относительно общей опорной мощности.",
+]
+
+NOTATION_DELTA_DB = [
+    "Enhanced-to-input spectral power change in decibels.",
+    "Изменение спектральной мощности обработанного сигнала относительно входного в децибелах.",
+]
+
+INTERPRETATION_1 = [
+    "Compare the input and enhanced maps to locate spectral components suppressed or preserved by WAVES.",
+    "Сравнивайте входную и обработанную карты, чтобы определить, какие спектральные компоненты WAVES подавляет или сохраняет.",
+]
+
+INTERPRETATION_2 = [
+    "Use the change map to identify where enhancement modifies spectral power.",
+    "Используйте карту изменения, чтобы определить области спектра, в которых обработка изменяет мощность.",
+]
+
+NOTE = [
+    "A positive or negative spectral change is not, by itself, evidence of better or worse speech quality.",
+    "Положительное или отрицательное изменение спектра само по себе не означает улучшение или ухудшение качества речи.",
+]
+
+SETTING_FFT = [ "FFT size", "Размер FFT" ]
+
+SETTING_HOP = [ "Hop length", "Шаг" ]
+
+SETTING_MELS = [ "Mel bands", "Mel-полосы" ]
+
+SETTING_MAX_FREQUENCY = [ "Maximum frequency", "Максимальная частота" ]
+
+SETTING_RANGE = [ "Display range", "Диапазон отображения" ]
+
+SETTING_MAX_DELTA = [ "Maximum spectral change", "Максимальное изменение спектра" ]
+
+NOTATION_MEL_POWER = [
+    "Mel-frequency spectral power transform applied to the input waveform.",
+    "Преобразование входного временного сигнала в спектральную мощность в Mel-частотном представлении.",
+]
+
+NOTATION_LOG10 = [ "Base-10 logarithm.", "Логарифм по основанию 10." ]
+
+
+[VisualizationInfoExpertOccupancy]
+
+SUBTITLE = [
+    "Global share of routing assignments received by each WAVES expert.",
+    "Глобальная доля маршрутизационных назначений, полученных каждым экспертом WAVES.",
+]
+
+SHOWS = [
+    "How routing assignments for the complete enhanced utterance are distributed between the available Mixture-of-Experts experts.",
+    "Как маршрутизационные назначения для всего обработанного сигнала распределяются между доступными экспертами Mixture-of-Experts.",
+]
+
+READ_EXPERT = [ "One routed WAVES expert.", "Один маршрутизируемый эксперт WAVES." ]
+
+READ_MARKER_LABEL = [ "Marker", "Маркер" ]
+
+READ_MARKER = [ "Observed global occupancy share.", "Наблюдаемая глобальная доля назначений." ]
+
+READ_DASHED = [ "Uniform-routing reference.", "Ориентир равномерной маршрутизации." ]
+
+READ_WHISKER_LABEL = [ "Whisker", "Интервал" ]
+
+READ_WHISKER = [
+    "Population standard deviation of the expert occupancy across inference windows.",
+    "Генеральное стандартное отклонение доли эксперта по окнам инференса.",
+]
+
+NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
+
+NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
+
+NOTATION_A_E = [
+    "Assignment-count-weighted load accumulated for expert e.",
+    "Нагрузка эксперта e, накопленная с учетом числа назначений.",
+]
+
+NOTATION_P_E = [ "Normalized global occupancy of expert e.", "Нормированная глобальная доля эксперта e." ]
+
+NOTATION_U = [
+    "Uniform occupancy expected when all experts receive equal routing load.",
+    "Равномерная доля при одинаковой маршрутизационной нагрузке всех экспертов.",
+]
+
+NOTATION_U_PERCENT = [ "Uniform occupancy expressed as a percentage.", "Равномерная доля, выраженная в процентах." ]
+
+NOTATION_DELTA_E = [
+    "Deviation of expert e from uniform occupancy.",
+    "Отклонение доли эксперта e от равномерного распределения.",
+]
+
+NOTATION_H_N = [
+    "Normalized Shannon entropy of the global expert-occupancy distribution.",
+    "Нормированная энтропия Шеннона глобального распределения нагрузки экспертов.",
+]
+
+NOTATION_SIGMA = [
+    "Population standard deviation of expert occupancy.",
+    "Генеральное стандартное отклонение долей экспертов.",
+]
+
+NOTATION_CV = [
+    "Coefficient of variation relative to uniform occupancy.",
+    "Коэффициент вариации относительно равномерной доли.",
+]
+
+NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
+
+INTERPRETATION_1 = [
+    "An expert above the uniform reference is selected more often than under perfectly balanced routing.",
+    "Эксперт выше равномерного уровня выбирается чаще, чем при полностью сбалансированной маршрутизации.",
+]
+
+INTERPRETATION_2 = [
+    "Higher normalized entropy and lower coefficient of variation indicate a more even distribution of routing assignments.",
+    "Более высокая нормированная энтропия и более низкий коэффициент вариации соответствуют более равномерному распределению назначений.",
+]
+
+NOTE = [
+    "Balanced routing is a routing property, not a direct speech-quality metric.",
+    "Сбалансированность маршрутизации характеризует работу роутера, а не качество речи напрямую.",
+]
+
+NOTATION_J_INDEX = [ "Summation index over experts.", "Индекс суммирования по экспертам." ]
+
+NOTATION_LN = [ "Natural logarithm.", "Натуральный логарифм." ]
+
+
+[VisualizationInfoLayerRouting]
+
+SUBTITLE = [
+    "Expert specialization across TS blocks and routing directions.",
+    "Специализация экспертов по TS-блокам и направлениям маршрутизации.",
+]
+
+SHOWS = [
+    "For every TS block, the heatmap separates time-axis and frequency-axis routing and compares each expert with the uniform-routing reference.",
+    "Для каждого TS-блока тепловая карта отдельно показывает маршрутизацию по времени и частоте и сравнивает каждого эксперта с равномерным распределением.",
+]
+
+READ_ROWS_LABEL = [ "Rows", "Строки" ]
+
+READ_ROWS = [ "TS block and routing axis.", "TS-блок и направление маршрутизации." ]
+
+READ_COLUMNS_LABEL = [ "Columns", "Столбцы" ]
+
+READ_COLUMNS = [ "Experts.", "Эксперты." ]
+
+READ_CELL_LABEL = [ "Cell value", "Значение ячейки" ]
+
+READ_CELL = [
+    "Deviation from uniform routing in percentage points; occupancy is shown in parentheses.",
+    "Отклонение от равномерной маршрутизации в процентных пунктах; в скобках указана доля назначений.",
+]
+
+READ_COLOR = [
+    "Negative values are below uniform, values near zero are close to uniform, and positive values are above uniform.",
+    "Отрицательные значения ниже равномерного уровня, значения около нуля близки к нему, положительные значения выше равномерного уровня.",
+]
+
+NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
+
+NOTATION_LAYER = [ "TS-block index.", "Индекс TS-блока." ]
+
+NOTATION_AXIS = [ "Routing axis: time or frequency.", "Направление маршрутизации: время или частота." ]
+
+NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
+
+NOTATION_OBSERVATION = [ "Routing-observation index.", "Индекс наблюдения маршрутизации." ]
+
+NOTATION_N_O = [ "Number of assignments in routing observation o.", "Число назначений в наблюдении маршрутизации o." ]
+
+NOTATION_L_O_E = [
+    "Observed load of expert e in routing observation o.",
+    "Наблюдаемая нагрузка эксперта e в наблюдении маршрутизации o.",
+]
+
+NOTATION_P = [
+    "Assignment-weighted occupancy of expert e for TS block l and routing axis a.",
+    "Взвешенная по назначениям доля эксперта e для TS-блока l и направления a.",
+]
+
+NOTATION_U = [ "Uniform expert occupancy.", "Равномерная доля эксперта." ]
+
+NOTATION_DELTA = [ "Deviation from uniform routing.", "Отклонение от равномерной маршрутизации." ]
+
+NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
+
+INTERPRETATION_1 = [
+    "Persistent positive values for one expert may indicate layer- or axis-specific specialization.",
+    "Устойчивые положительные значения у одного эксперта могут указывать на специализацию по слою или направлению.",
+]
+
+INTERPRETATION_2 = [
+    "Different time- and frequency-axis patterns indicate that the router uses experts differently along the two axes.",
+    "Различия между временными и частотными направлениями показывают, что роутер по-разному использует экспертов вдоль двух осей.",
+]
+
+NOTE = [
+    "Heatmap color represents deviation from uniform routing, not enhancement quality.",
+    "Цвет тепловой карты показывает отклонение от равномерной маршрутизации, а не качество обработки.",
+]
+
+
+[VisualizationInfoFrequencyRouting]
+
+SUBTITLE = [
+    "How WAVES distributes encoded frequency positions between experts.",
+    "Как WAVES распределяет позиции частотного представления между экспертами.",
+]
+
+SHOWS = [
+    "Expert occupancy across encoded frequency positions, expressed as deviation from the uniform expert share.",
+    "Долю экспертов по позициям частотного представления, выраженную как отклонение от равномерной доли.",
+]
+
+READ_X = [
+    "Encoded frequency position mapped linearly to kHz.",
+    "Позиция частотного представления, линейно отображенная в кГц.",
+]
+
+READ_Y = [ "Expert.", "Эксперт." ]
+
+READ_COLOR = [
+    "Deviation from uniform occupancy in percentage points.",
+    "Отклонение от равномерной доли в процентных пунктах.",
+]
+
+READ_PERCENTILES_LABEL = [ "P1-P99", "P1-P99" ]
+
+READ_PERCENTILES = [
+    "Robust percentiles used only to determine the displayed color range.",
+    "Робастные процентили, используемые только для определения отображаемого диапазона цвета.",
+]
+
+NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
+
+NOTATION_OBSERVATION = [ "Routing-observation index.", "Индекс наблюдения маршрутизации." ]
+
+NOTATION_J = [ "Encoded frequency-position index.", "Индекс позиции частотного представления." ]
+
+NOTATION_J_COUNT = [ "Number of encoded frequency positions.", "Число позиций частотного представления." ]
+
+NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
+
+NOTATION_W_O = [ "Weight assigned to routing observation o.", "Вес наблюдения маршрутизации o." ]
+
+NOTATION_S_O = [ "Sequence count in routing observation o.", "Число последовательностей в наблюдении маршрутизации o." ]
+
+NOTATION_K_O = [
+    "Top-k value used by the router for observation o.",
+    "Значение top-k, используемое роутером для наблюдения o.",
+]
+
+NOTATION_L = [
+    "Position-level load of expert e at encoded position j.",
+    "Нагрузка эксперта e в позиции j частотного представления.",
+]
+
+NOTATION_P = [
+    "Aggregated occupancy of expert e at encoded position j.",
+    "Агрегированная доля эксперта e в позиции j.",
+]
+
+NOTATION_SAMPLE_RATE = [ "Audio sample rate.", "Частота дискретизации аудиосигнала." ]
+
+NOTATION_F_J = [
+    "Displayed center frequency associated with encoded position j.",
+    "Отображаемая центральная частота, соответствующая позиции j.",
+]
+
+NOTATION_DELTA = [ "Deviation from uniform expert occupancy.", "Отклонение от равномерной доли экспертов." ]
+
+NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
+
+INTERPRETATION_1 = [
+    "Concentrated positive regions may indicate frequency-dependent expert specialization.",
+    "Сосредоточенные положительные области могут указывать на частотно-зависимую специализацию экспертов.",
+]
+
+INTERPRETATION_2 = [
+    "Broad regions near zero indicate routing closer to the uniform reference.",
+    "Широкие области около нуля соответствуют маршрутизации, близкой к равномерной.",
+]
+
+NOTE = [
+    "The kHz axis is a linear visualization mapping of encoded frequency positions and should not be interpreted as an independent physical filterbank measurement.",
+    "Ось в кГц является линейным отображением позиций скрытого частотного представления и не должна интерпретироваться как независимое физическое измерение полос фильтра.",
+]
+
+
+[VisualizationInfoLoadOverTime]
+
+SUBTITLE = [
+    "How expert utilization changes across overlapping inference windows.",
+    "Как использование экспертов изменяется по перекрывающимся окнам инференса.",
+]
+
+SHOWS = [
+    "One trajectory per expert showing its normalized routing occupancy in each sliding inference window.",
+    "По одной траектории на эксперта, показывающей его нормированную долю маршрутизации в каждом скользящем окне инференса.",
+]
+
+READ_X = [ "Center time of each inference window.", "Время центра каждого окна инференса." ]
+
+READ_Y = [ "Expert occupancy in that window.", "Доля эксперта в этом окне." ]
+
+READ_LINE_LABEL = [ "Line", "Линия" ]
+
+READ_LINE = [ "One expert across successive inference windows.", "Один эксперт по последовательным окнам инференса." ]
+
+READ_DASHED = [ "Uniform-routing reference.", "Ориентир равномерной маршрутизации." ]
+
+NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
+
+NOTATION_WINDOW = [ "Inference-window index.", "Индекс окна инференса." ]
+
+NOTATION_OBSERVATION = [
+    "Routing observation contained in inference window w.",
+    "Наблюдение маршрутизации, относящееся к окну инференса w.",
+]
+
+NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
+
+NOTATION_J = [
+    "Expert index used in normalization over all experts.",
+    "Индекс эксперта при нормировании по всем экспертам.",
+]
+
+NOTATION_N_O = [ "Assignment count of routing observation o.", "Число назначений в наблюдении маршрутизации o." ]
+
+NOTATION_L = [ "Observed load of expert e in observation o.", "Наблюдаемая нагрузка эксперта e в наблюдении o." ]
+
+NOTATION_A = [
+    "Assignment-weighted load of expert e inside inference window w.",
+    "Взвешенная по назначениям нагрузка эксперта e внутри окна w.",
+]
+
+NOTATION_P = [ "Normalized occupancy of expert e in inference window w.", "Нормированная доля эксперта e в окне w." ]
+
+NOTATION_START = [ "Start sample of inference window w.", "Начальный отсчет окна инференса w." ]
+
+NOTATION_END = [ "End sample of inference window w.", "Конечный отсчет окна инференса w." ]
+
+NOTATION_SAMPLE_RATE = [ "Audio sample rate.", "Частота дискретизации." ]
+
+NOTATION_TIME = [ "Center time of inference window w.", "Время центра окна инференса w." ]
+
+NOTATION_DELTA = [ "Deviation from uniform expert occupancy.", "Отклонение от равномерной доли экспертов." ]
+
+NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
+
+INTERPRETATION_1 = [
+    "A nearly flat trajectory indicates relatively stable utilization of that expert.",
+    "Почти горизонтальная траектория соответствует относительно стабильному использованию эксперта.",
+]
+
+INTERPRETATION_2 = [
+    "Local rises and falls indicate time-dependent changes in expert routing.",
+    "Локальные подъемы и спады показывают изменение маршрутизации экспертов во времени.",
+]
+
+NOTE = [
+    "Adjacent points come from overlapping inference windows and therefore are not independent observations.",
+    "Соседние точки получены из перекрывающихся окон инференса и поэтому не являются независимыми наблюдениями.",
+]
 
 [Units]
 SECONDS = [ "s", "с" ]

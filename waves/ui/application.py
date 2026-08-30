@@ -45,19 +45,47 @@ class ApplicationTabComponents:
     audio_info_button_column: gr.Column
     audio_info_button: gr.Button
 
+    processing_time_button_column: gr.Column
+    processing_time_button: gr.Button
+
     audio_info_modal: gr.Column
     audio_info_modal_title: gr.Markdown
     audio_info_modal_content: gr.HTML
     audio_info_modal_close_button: gr.Button
 
+    processing_modal: gr.Column
+    processing_modal_content: gr.HTML
+    processing_modal_close_button: gr.Button
+
+    visualization_info_key_state: gr.State
+    visualization_info_modal: gr.Column
+    visualization_info_modal_content: gr.HTML
+    visualization_info_modal_close_button: gr.Button
+
     enhanced_audio: gr.Audio
+
+    spectrogram_download_button: gr.DownloadButton
+    spectrogram_info_button: gr.Button
     spectrogram_plot: gr.Plot
 
     routing_state: gr.State
+    processing_summary_state: gr.State
+
+    expert_occupancy_download_button: gr.DownloadButton
+    expert_occupancy_info_button: gr.Button
     expert_occupancy_plot: gr.Plot
-    layer_routing_plot: gr.Plot
-    frequency_routing_plot: gr.Plot
+
+    load_over_time_download_button: gr.DownloadButton
+    load_over_time_info_button: gr.Button
     load_over_time_plot: gr.Plot
+
+    frequency_routing_download_button: gr.DownloadButton
+    frequency_routing_info_button: gr.Button
+    frequency_routing_plot: gr.Plot
+
+    layer_routing_download_button: gr.DownloadButton
+    layer_routing_info_button: gr.Button
+    layer_routing_plot: gr.Plot
 
 
 def create_application_title_markdown(
@@ -170,6 +198,14 @@ def create_application_tab(
         value=None,
     )
 
+    processing_summary_state = gr.State(
+        value=None,
+    )
+
+    visualization_info_key_state = gr.State(
+        value=None,
+    )
+
     with gr.Row(
         elem_classes="application-input-row",
     ):
@@ -204,8 +240,13 @@ def create_application_tab(
         ):
             example_audio_paths = get_existing_example_audio_paths()
 
+            examples_label = get_localized_text(
+                "Labels_EXAMPLES",
+                language_index,
+            )
+
             examples_title = gr.Markdown(
-                value=(f"### {get_localized_text('Labels_EXAMPLES', language_index)}"),
+                value=f"### {examples_label}",
                 elem_classes="application-examples-title",
             )
 
@@ -269,22 +310,52 @@ def create_application_tab(
     with gr.Row(
         elem_classes="application-status-row",
     ):
-        with gr.Column(
-            scale=7,
-            min_width=360,
-            elem_classes="application-status-column",
+        with (
+            gr.Column(
+                scale=7,
+                min_width=560,
+                elem_classes=("application-status-panel-column"),
+            ),
+            gr.Row(
+                elem_classes="application-status-panel",
+            ),
         ):
-            status = gr.Markdown(
-                value=get_localized_text(
-                    "Texts_STATUS_READY",
-                    language_index,
-                ),
-                elem_classes="application-status",
-            )
+            with gr.Column(
+                scale=1,
+                min_width=0,
+                elem_classes="application-status-column",
+            ):
+                status = gr.Markdown(
+                    value=get_localized_text(
+                        "Texts_STATUS_READY",
+                        language_index,
+                    ),
+                    elem_classes="application-status",
+                )
+
+            with gr.Column(
+                scale=0,
+                min_width=360,
+                visible=False,
+                elem_id="processing-time-button-column",
+                elem_classes=("application-processing-time-button-column"),
+            ) as processing_time_button_column:
+                processing_time_button = gr.Button(
+                    value=get_localized_text(
+                        "Labels_PROCESSING_TIME",
+                        language_index,
+                    ),
+                    variant="secondary",
+                    size="lg",
+                    interactive=False,
+                    visible=True,
+                    elem_id="processing-time-button",
+                    elem_classes=("application-processing-time-button"),
+                )
 
         with gr.Column(
             scale=3,
-            min_width=260,
+            min_width=300,
             visible=False,
             elem_id="audio-info-button-column",
             elem_classes=("application-audio-info-button-column"),
@@ -299,7 +370,7 @@ def create_application_tab(
                 interactive=False,
                 visible=True,
                 elem_id="audio-info-button",
-                elem_classes=("application-audio-info-button"),
+                elem_classes="application-audio-info-button",
             )
 
     with (
@@ -318,17 +389,22 @@ def create_application_tab(
             with gr.Column(
                 scale=1,
                 min_width=0,
-                elem_classes=("audio-info-modal-title-column"),
+                elem_classes="audio-info-modal-title-column",
             ):
+                audio_info_title = get_localized_text(
+                    "Labels_AUDIO_INFO_TITLE",
+                    language_index,
+                )
+
                 audio_info_modal_title = gr.Markdown(
-                    value=(f"### {get_localized_text('Labels_AUDIO_INFO_TITLE', language_index)}"),
+                    value=f"### {audio_info_title}",
                     elem_classes="audio-info-modal-title",
                 )
 
             with gr.Column(
                 scale=0,
                 min_width=42,
-                elem_classes=("audio-info-modal-close-column"),
+                elem_classes="audio-info-modal-close-column",
             ):
                 audio_info_modal_close_button = gr.Button(
                     value="Close",
@@ -341,6 +417,56 @@ def create_application_tab(
         audio_info_modal_content = gr.HTML(
             value="",
             elem_classes="audio-info-modal-content",
+        )
+
+    with (
+        gr.Column(
+            visible=False,
+            elem_id="processing-modal",
+            elem_classes="processing-modal-backdrop",
+        ) as processing_modal,
+        gr.Column(
+            elem_classes="processing-modal-card",
+        ),
+    ):
+        processing_modal_close_button = gr.Button(
+            value="Close",
+            variant="secondary",
+            size="sm",
+            visible=False,
+            interactive=True,
+            elem_id="processing-modal-close-button",
+            elem_classes="processing-modal-close-button",
+        )
+
+        processing_modal_content = gr.HTML(
+            value="",
+            elem_classes="processing-modal-content",
+        )
+
+    with (
+        gr.Column(
+            visible=False,
+            elem_id="visualization-info-modal",
+            elem_classes=("visualization-info-modal-backdrop"),
+        ) as visualization_info_modal,
+        gr.Column(
+            elem_classes="visualization-info-modal-card",
+        ),
+    ):
+        visualization_info_modal_close_button = gr.Button(
+            value="Close",
+            variant="secondary",
+            size="sm",
+            visible=True,
+            interactive=True,
+            elem_id=("visualization-info-modal-close-button"),
+            elem_classes=("visualization-info-modal-close-button"),
+        )
+
+        visualization_info_modal_content = gr.HTML(
+            value="",
+            elem_classes="visualization-info-modal-content",
         )
 
     enhanced_audio = gr.Audio(
@@ -358,14 +484,41 @@ def create_application_tab(
         elem_classes="application-audio-output",
     )
 
-    spectrogram_plot = gr.Plot(
-        value=None,
-        visible=False,
-        show_label=False,
-        container=False,
-        elem_id="spectrogram-comparison-plot",
-        elem_classes="application-spectrogram-plot",
-    )
+    with gr.Column(
+        elem_classes=[
+            "application-visualization-card",
+            "application-spectrogram-card",
+        ],
+    ):
+        spectrogram_download_button = gr.DownloadButton(
+            label="PDF",
+            value=None,
+            variant="secondary",
+            size="sm",
+            interactive=True,
+            visible=False,
+            elem_id="spectrogram-download-button",
+            elem_classes=("application-visualization-download-button"),
+        )
+
+        spectrogram_info_button = gr.Button(
+            value="ⓘ",
+            variant="secondary",
+            size="sm",
+            interactive=True,
+            visible=False,
+            elem_id="spectrogram-info-button",
+            elem_classes=("application-visualization-info-button"),
+        )
+
+        spectrogram_plot = gr.Plot(
+            value=None,
+            visible=False,
+            show_label=False,
+            container=False,
+            elem_id="spectrogram-comparison-plot",
+            elem_classes="application-spectrogram-plot",
+        )
 
     with gr.Row(
         elem_classes="application-routing-row",
@@ -373,8 +526,32 @@ def create_application_tab(
         with gr.Column(
             scale=1,
             min_width=420,
-            elem_classes="application-routing-column",
+            elem_classes=[
+                "application-routing-column",
+                "application-visualization-card",
+            ],
         ):
+            expert_occupancy_download_button = gr.DownloadButton(
+                label="PDF",
+                value=None,
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="expert-occupancy-download-button",
+                elem_classes=("application-visualization-download-button"),
+            )
+
+            expert_occupancy_info_button = gr.Button(
+                value="ⓘ",
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="expert-occupancy-info-button",
+                elem_classes=("application-visualization-info-button"),
+            )
+
             expert_occupancy_plot = gr.Plot(
                 value=None,
                 visible=False,
@@ -390,8 +567,32 @@ def create_application_tab(
         with gr.Column(
             scale=1,
             min_width=420,
-            elem_classes="application-routing-column",
+            elem_classes=[
+                "application-routing-column",
+                "application-visualization-card",
+            ],
         ):
+            load_over_time_download_button = gr.DownloadButton(
+                label="PDF",
+                value=None,
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="load-over-time-download-button",
+                elem_classes=("application-visualization-download-button"),
+            )
+
+            load_over_time_info_button = gr.Button(
+                value="ⓘ",
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="load-over-time-info-button",
+                elem_classes=("application-visualization-info-button"),
+            )
+
             load_over_time_plot = gr.Plot(
                 value=None,
                 visible=False,
@@ -410,8 +611,32 @@ def create_application_tab(
         with gr.Column(
             scale=1,
             min_width=420,
-            elem_classes="application-routing-column",
+            elem_classes=[
+                "application-routing-column",
+                "application-visualization-card",
+            ],
         ):
+            frequency_routing_download_button = gr.DownloadButton(
+                label="PDF",
+                value=None,
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="frequency-routing-download-button",
+                elem_classes=("application-visualization-download-button"),
+            )
+
+            frequency_routing_info_button = gr.Button(
+                value="ⓘ",
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="frequency-routing-info-button",
+                elem_classes=("application-visualization-info-button"),
+            )
+
             frequency_routing_plot = gr.Plot(
                 value=None,
                 visible=False,
@@ -427,8 +652,32 @@ def create_application_tab(
         with gr.Column(
             scale=1,
             min_width=420,
-            elem_classes="application-routing-column",
+            elem_classes=[
+                "application-routing-column",
+                "application-visualization-card",
+            ],
         ):
+            layer_routing_download_button = gr.DownloadButton(
+                label="PDF",
+                value=None,
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="layer-routing-download-button",
+                elem_classes=("application-visualization-download-button"),
+            )
+
+            layer_routing_info_button = gr.Button(
+                value="ⓘ",
+                variant="secondary",
+                size="sm",
+                interactive=True,
+                visible=False,
+                elem_id="layer-routing-info-button",
+                elem_classes=("application-visualization-info-button"),
+            )
+
             layer_routing_plot = gr.Plot(
                 value=None,
                 visible=False,
@@ -451,17 +700,37 @@ def create_application_tab(
         run_button=run_button,
         clear_button=clear_button,
         status=status,
-        audio_info_button_column=(audio_info_button_column),
+        audio_info_button_column=audio_info_button_column,
         audio_info_button=audio_info_button,
+        processing_time_button_column=(processing_time_button_column),
+        processing_time_button=processing_time_button,
         audio_info_modal=audio_info_modal,
-        audio_info_modal_title=(audio_info_modal_title),
-        audio_info_modal_content=(audio_info_modal_content),
+        audio_info_modal_title=audio_info_modal_title,
+        audio_info_modal_content=audio_info_modal_content,
         audio_info_modal_close_button=(audio_info_modal_close_button),
+        processing_modal=processing_modal,
+        processing_modal_content=processing_modal_content,
+        processing_modal_close_button=(processing_modal_close_button),
+        visualization_info_key_state=(visualization_info_key_state),
+        visualization_info_modal=visualization_info_modal,
+        visualization_info_modal_content=(visualization_info_modal_content),
+        visualization_info_modal_close_button=(visualization_info_modal_close_button),
         enhanced_audio=enhanced_audio,
+        spectrogram_download_button=(spectrogram_download_button),
+        spectrogram_info_button=spectrogram_info_button,
         spectrogram_plot=spectrogram_plot,
         routing_state=routing_state,
+        processing_summary_state=processing_summary_state,
+        expert_occupancy_download_button=(expert_occupancy_download_button),
+        expert_occupancy_info_button=(expert_occupancy_info_button),
         expert_occupancy_plot=expert_occupancy_plot,
-        layer_routing_plot=layer_routing_plot,
-        frequency_routing_plot=frequency_routing_plot,
+        load_over_time_download_button=(load_over_time_download_button),
+        load_over_time_info_button=(load_over_time_info_button),
         load_over_time_plot=load_over_time_plot,
+        frequency_routing_download_button=(frequency_routing_download_button),
+        frequency_routing_info_button=(frequency_routing_info_button),
+        frequency_routing_plot=frequency_routing_plot,
+        layer_routing_download_button=(layer_routing_download_button),
+        layer_routing_info_button=(layer_routing_info_button),
+        layer_routing_plot=layer_routing_plot,
     )

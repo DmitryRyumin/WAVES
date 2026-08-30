@@ -10,13 +10,16 @@ ENV PYTHONUNBUFFERED=1 \
     UV_NO_DEV=1 \
     GRADIO_SERVER_NAME=0.0.0.0 \
     GRADIO_SERVER_PORT=7860 \
+    BROWSER_PATH=/usr/bin/chromium \
     HOME=/home/user \
     PATH="/app/.venv/bin:$PATH"
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
+        chromium \
         ffmpeg \
+        fonts-liberation \
     && useradd --create-home --uid 1000 user \
     && mkdir -p /app \
     && chown user:user /app \

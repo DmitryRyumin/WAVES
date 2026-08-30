@@ -89,6 +89,8 @@ div.audio-info-modal-backdrop {
     height: 100vh !important;
     padding: 24px !important;
     background: rgb(0 0 0 / 55%) !important;
+    backdrop-filter: blur(7px);
+    animation: waves-modal-backdrop-enter 180ms ease-out;
 }
 
 div.audio-info-modal-backdrop.hide,
@@ -109,7 +111,19 @@ div.audio-info-modal-card {
     border: 1px solid var(--border-color-primary) !important;
     border-radius: var(--waves-radius-xl) !important;
     box-shadow: 0 24px 80px rgb(0 0 0 / 45%) !important;
+    animation: waves-modal-card-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+div.audio-info-modal-backdrop.waves-modal-closing {
+    pointer-events: none !important;
+    animation: waves-modal-backdrop-exit 180ms ease-in forwards !important;
+}
+
+div.audio-info-modal-backdrop.waves-modal-closing div.audio-info-modal-card {
+    animation: waves-modal-card-exit 180ms ease-in forwards !important;
+}
+
+/* Audio information modal header */
 
 div.audio-info-modal-header {
     display: flex !important;
@@ -136,6 +150,8 @@ div.audio-info-modal-close-column {
 div.audio-info-modal-title h3 {
     margin: 0 !important;
 }
+
+/* Audio information close button */
 
 #audio-info-modal-close-button {
     box-sizing: border-box !important;

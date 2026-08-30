@@ -1,10 +1,12 @@
 /* Spectrogram container */
 
 #spectrogram-comparison-plot {
+    position: relative;
+    z-index: 1;
     width: 100% !important;
     max-width: 100% !important;
     padding: var(--waves-plot-padding) !important;
-    margin-top: 18px !important;
+    margin-top: 0 !important;
     overflow: hidden !important;
     background: var(--background-fill-secondary) !important;
     border: 1px solid var(--border-color-primary) !important;
@@ -14,6 +16,8 @@
 /* Routing plot containers */
 
 .application-routing-plot {
+    position: relative;
+    z-index: 1;
     width: 100% !important;
     max-width: 100% !important;
     padding: var(--waves-plot-padding) !important;
@@ -35,6 +39,13 @@
     background: transparent !important;
 }
 
+/* Hide Plotly modebar while preserving hover interaction */
+
+#spectrogram-comparison-plot .modebar-container,
+.application-routing-plot .modebar-container {
+    display: none !important;
+}
+
 /* Shared axis lines and ticks */
 
 #spectrogram-comparison-plot .main-svg .xlines-above path,
@@ -46,37 +57,6 @@
 .application-routing-plot .main-svg .xtick line,
 .application-routing-plot .main-svg .ytick line {
     stroke: var(--body-text-color-subdued) !important;
-}
-
-/* Shared Plotly modebar */
-
-#spectrogram-comparison-plot .modebar,
-.application-routing-plot .modebar {
-    background: transparent !important;
-}
-
-#spectrogram-comparison-plot .modebar-btn,
-.application-routing-plot .modebar-btn {
-    opacity: 0.72;
-}
-
-#spectrogram-comparison-plot .modebar-btn path,
-.application-routing-plot .modebar-btn path {
-    fill: var(--body-text-color-subdued) !important;
-}
-
-#spectrogram-comparison-plot .modebar-btn:hover,
-#spectrogram-comparison-plot .modebar-btn.active,
-.application-routing-plot .modebar-btn:hover,
-.application-routing-plot .modebar-btn.active {
-    opacity: 1;
-}
-
-#spectrogram-comparison-plot .modebar-btn:hover path,
-#spectrogram-comparison-plot .modebar-btn.active path,
-.application-routing-plot .modebar-btn:hover path,
-.application-routing-plot .modebar-btn.active path {
-    fill: var(--body-text-color) !important;
 }
 
 /* Force readable hover labels on both light and dark themes */
@@ -96,6 +76,15 @@
 }
 
 /* Spectrogram comparison */
+
+.application-spectrogram-card {
+    position: relative;
+    gap: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-top: 18px !important;
+}
 
 div.application-spectrogram-plot {
     width: 100% !important;
@@ -130,6 +119,7 @@ div.application-spectrogram-plot {
 }
 
 .application-routing-column {
+    position: relative;
     min-width: 0 !important;
 }
 
@@ -173,7 +163,7 @@ div.application-spectrogram-plot {
     fill: var(--body-text-color) !important;
 }
 
-/* Routing y-axis ticks (expert labels and layer labels) */
+/* Routing y-axis ticks */
 
 .application-routing-plot .main-svg .ytick text,
 .application-routing-plot .main-svg .ytick tspan {
@@ -202,13 +192,162 @@ div.application-spectrogram-plot {
     fill: var(--body-text-color) !important;
 }
 
+/* Visualization cards */
+
+.application-visualization-card {
+    position: relative !important;
+    gap: 0 !important;
+    min-width: 0 !important;
+}
+
+/* Shared visualization controls */
+
+.application-visualization-info-button,
+.application-visualization-download-button {
+    position: absolute !important;
+    z-index: 30 !important;
+    box-sizing: border-box !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    color: var(--body-text-color) !important;
+    cursor: pointer !important;
+    background: color-mix(in srgb, var(--background-fill-primary) 88%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--border-color-primary) 92%, transparent) !important;
+    border-radius: var(--waves-radius-md) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(10px) !important;
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease !important;
+}
+
+/* Information button */
+
+.application-visualization-info-button {
+    top: 12px !important;
+    right: 12px !important;
+    left: auto !important;
+    font-size: 0 !important;
+}
+
+.application-visualization-info-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/info.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+/* PDF download button */
+
+.application-visualization-download-button {
+    top: 12px !important;
+    right: 50px !important;
+    left: auto !important;
+    font-size: 0 !important;
+}
+
+.application-visualization-download-button::before {
+    display: inline-block !important;
+    flex: 0 0 var(--waves-icon-size) !important;
+    width: var(--waves-icon-size) !important;
+    height: var(--waves-icon-size) !important;
+    content: "" !important;
+    background-color: currentcolor !important;
+    mask-image: url("/gradio_api/file=static/images/icons/download.svg") !important;
+    mask-repeat: no-repeat !important;
+    mask-position: center !important;
+    mask-size: contain !important;
+}
+
+/* Visualization control hover */
+
+.application-visualization-info-button:hover,
+.application-visualization-download-button:hover {
+    color: var(--waves-color-accent) !important;
+    background: color-mix(in srgb, var(--waves-color-accent) 12%, var(--background-fill-primary)) !important;
+    border-color: color-mix(in srgb, var(--waves-color-accent) 72%, var(--border-color-primary)) !important;
+    box-shadow: none !important;
+    transform: translateY(-1px) scale(1.03) !important;
+}
+
+/* Visualization control active */
+
+.application-visualization-info-button:active,
+.application-visualization-download-button:active {
+    box-shadow: none !important;
+    transform: scale(0.97) !important;
+}
+
+/* Visualization control focus */
+
+.application-visualization-info-button:focus,
+.application-visualization-info-button:focus-visible,
+.application-visualization-download-button:focus,
+.application-visualization-download-button:focus-visible {
+    outline: none !important;
+    border-color: var(--waves-color-accent) !important;
+    box-shadow: none !important;
+}
+
+/* Keep Plotly content behind the custom visualization controls */
+
+#spectrogram-comparison-plot,
+#expert-occupancy-plot,
+#load-over-time-plot,
+#frequency-routing-plot,
+#layer-routing-plot {
+    position: relative;
+    z-index: 1;
+}
+
 /* Spectrogram mobile layout */
 
 @media (width <= 768px) {
+    .application-spectrogram-card {
+        margin-top: 14px !important;
+    }
+
     #spectrogram-comparison-plot {
         padding: var(--waves-plot-padding-mobile) !important;
-        margin-top: 14px !important;
         border-radius: var(--waves-radius-lg) !important;
+    }
+
+    .application-visualization-info-button,
+    .application-visualization-download-button {
+        width: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        max-height: 30px !important;
+        border-radius: var(--waves-radius-md) !important;
+    }
+
+    .application-visualization-info-button {
+        top: 10px !important;
+        right: 10px !important;
+        left: auto !important;
+    }
+
+    .application-visualization-download-button {
+        top: 10px !important;
+        right: 46px !important;
+        left: auto !important;
     }
 }
 
@@ -223,5 +362,21 @@ div.application-spectrogram-plot {
     .application-routing-plot {
         padding: var(--waves-plot-padding-mobile) !important;
         border-radius: var(--waves-radius-lg) !important;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .application-visualization-info-button,
+    .application-visualization-download-button {
+        transition: none !important;
+    }
+
+    .application-visualization-info-button:hover,
+    .application-visualization-info-button:active,
+    .application-visualization-download-button:hover,
+    .application-visualization-download-button:active {
+        transform: none !important;
     }
 }

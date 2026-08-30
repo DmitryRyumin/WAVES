@@ -30,6 +30,10 @@ from waves.localization import (
 from waves.routing import RoutingTelemetry
 from waves.ui.application import create_application_title_markdown
 from waves.ui.language_selector import create_language_flag_html
+from waves.ui.progress_modal import (
+    ProcessingSummary,
+    create_processing_time_button_label,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,6 +51,7 @@ class LanguageChangeUpdates:
     run_button: Any
     clear_button: Any
     audio_info_button: Any
+    processing_time_button: Any
     audio_info_modal_title: Any
     audio_info_modal_content: Any
     enhanced_audio: Any
@@ -90,6 +95,7 @@ def handle_language_change(
     enhanced_audio_path: str | None,
     routing: RoutingTelemetry | None,
     audio_filename: str | None,
+    processing_summary: ProcessingSummary | None,
 ) -> LanguageChangeUpdates:
     """Create named UI updates after language selection."""
 
@@ -110,6 +116,18 @@ def handle_language_change(
     routing_updates = create_routing_plot_updates(
         routing=routing,
         language_index=language_index,
+    )
+
+    processing_time_button_value = (
+        create_processing_time_button_label(
+            processing_summary,
+            language_index,
+        )
+        if processing_summary is not None
+        else get_localized_text(
+            "Labels_PROCESSING_TIME",
+            language_index,
+        )
     )
 
     return LanguageChangeUpdates(
@@ -156,6 +174,9 @@ def handle_language_change(
                 "Labels_AUDIO_INFO_TITLE",
                 language_index,
             ),
+        ),
+        processing_time_button=gr.update(
+            value=processing_time_button_value,
         ),
         audio_info_modal_title=gr.update(
             value=f"### {get_localized_text('Labels_AUDIO_INFO_TITLE', language_index)}",

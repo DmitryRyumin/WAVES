@@ -39,6 +39,14 @@ class LoadedModel:
     device: torch.device
 
 
+@dataclass(frozen=True, slots=True)
+class ModelLoadResult:
+    """Loaded WAVES model together with its cache status."""
+
+    loaded_model: LoadedModel
+    cached: bool
+
+
 _MODEL_CACHE: dict[
     tuple[str, str],
     LoadedModel,
@@ -69,7 +77,13 @@ def get_inference_device(
         if torch.cuda.is_available():
             return torch.device("cuda")
 
-        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        if (
+            hasattr(
+                torch.backends,
+                "mps",
+            )
+            and torch.backends.mps.is_available()
+        ):
             return torch.device("mps")
 
         return torch.device("cpu")
@@ -82,7 +96,13 @@ def get_inference_device(
         return torch.device(device_name)
 
     if device_name == "mps":
-        if not hasattr(torch.backends, "mps") or not torch.backends.mps.is_available():
+        if (
+            not hasattr(
+                torch.backends,
+                "mps",
+            )
+            or not torch.backends.mps.is_available()
+        ):
             msg = "MPS was requested but is not available."
             raise RuntimeError(msg)
 
@@ -95,15 +115,16 @@ def get_inference_device(
     raise ValueError(msg)
 
 
-def load_model(
+def load_model_with_status(
     model_name: str,
     *,
     device_name: str | None = None,
     use_cache: bool | None = None,
-) -> LoadedModel:
-    """Load a WAVES SafeTensors model strictly and optionally cache it."""
+) -> ModelLoadResult:
+    """Load a WAVES model and report whether it came from cache."""
 
     model_info = get_model_info(model_name)
+
     device = get_inference_device(device_name)
 
     cache_models = get_config_bool(
@@ -121,12 +142,19 @@ def load_model(
 
     with _MODEL_CACHE_LOCK:
         if cache_models and cache_key in _MODEL_CACHE:
-            return _MODEL_CACHE[cache_key]
+            return ModelLoadResult(
+                loaded_model=(_MODEL_CACHE[cache_key]),
+                cached=True,
+            )
 
         model_config = load_waves_config(model_info.config_path)
+
         model = WAVESModel(model_config)
 
-        missing_keys, unexpected_keys = load_safetensors_model(
+        (
+            missing_keys,
+            unexpected_keys,
+        ) = load_safetensors_model(
             model,
             model_info.weights_path,
             strict=True,
@@ -136,12 +164,15 @@ def load_model(
 
         if missing_keys or unexpected_keys:
             msg = (
-                "SafeTensors model loading produced an inconsistent state: "
-                f"missing={missing_keys}, unexpected={unexpected_keys}."
+                "SafeTensors model loading "
+                "produced an inconsistent state: "
+                f"missing={missing_keys}, "
+                f"unexpected={unexpected_keys}."
             )
             raise RuntimeError(msg)
 
         model.to(device)
+
         model.eval()
 
         loaded_model = LoadedModel(
@@ -154,7 +185,25 @@ def load_model(
         if cache_models:
             _MODEL_CACHE[cache_key] = loaded_model
 
-        return loaded_model
+        return ModelLoadResult(
+            loaded_model=loaded_model,
+            cached=False,
+        )
+
+
+def load_model(
+    model_name: str,
+    *,
+    device_name: str | None = None,
+    use_cache: bool | None = None,
+) -> LoadedModel:
+    """Load a WAVES SafeTensors model strictly and optionally cache it."""
+
+    return load_model_with_status(
+        model_name=model_name,
+        device_name=device_name,
+        use_cache=use_cache,
+    ).loaded_model
 
 
 def clear_model_cache() -> None:

@@ -8,6 +8,7 @@ Description: WAVES sliding-window inference engine for speech enhancement.
 License: MIT License
 """
 
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
@@ -77,6 +78,25 @@ class EnhancedAudioFile:
     encoded: EncodedAudio
 
 
+@dataclass(frozen=True, slots=True)
+class SlidingWindowInferenceResult:
+    """Completed sliding-window inference result."""
+
+    waveform: Tensor
+    window_samples: int
+    hop_samples: int
+    routing: RoutingTelemetry | None
+
+
+@dataclass(frozen=True, slots=True)
+class SlidingWindowInferenceUpdate:
+    """Progress update emitted during sliding-window inference."""
+
+    completed_windows: int
+    total_windows: int
+    result: SlidingWindowInferenceResult | None = None
+
+
 def get_window_parameters(
     sample_rate: int,
 ) -> tuple[int, int]:
@@ -101,6 +121,7 @@ def get_window_parameters(
         raise ValueError(msg)
 
     window_samples = round(window_seconds * sample_rate)
+
     hop_samples = round(hop_seconds * sample_rate)
 
     if window_samples <= 0:
@@ -218,7 +239,8 @@ def validate_preprocessed_audio(
 
     if audio.sample_rate != loaded_model.config.sampling_rate:
         msg = (
-            "Audio and model sample rates do not match: "
+            "Audio and model sample rates "
+            "do not match: "
             f"{audio.sample_rate} Hz != "
             f"{loaded_model.config.sampling_rate} Hz."
         )
@@ -385,6 +407,7 @@ def run_model_forward(
             )
 
     enhanced_magnitude = model_result[0]
+
     enhanced_phase = model_result[1]
 
     return (
@@ -409,9 +432,7 @@ def infer_segment(
 
     segment_length = int(segment.shape[-1])
 
-    spectral_device = get_spectral_device(
-        loaded_model.device,
-    )
+    spectral_device = get_spectral_device(loaded_model.device)
 
     spectral_segment = segment.to(
         device=spectral_device,
@@ -424,10 +445,10 @@ def infer_segment(
         _,
     ) = magnitude_phase_stft(
         waveform=spectral_segment,
-        n_fft=loaded_model.config.n_fft,
-        hop_size=loaded_model.config.hop_size,
-        win_size=loaded_model.config.win_size,
-        compress_factor=loaded_model.config.compress_factor,
+        n_fft=(loaded_model.config.n_fft),
+        hop_size=(loaded_model.config.hop_size),
+        win_size=(loaded_model.config.win_size),
+        compress_factor=(loaded_model.config.compress_factor),
     )
 
     (
@@ -452,10 +473,10 @@ def infer_segment(
     waveform = magnitude_phase_istft(
         magnitude=enhanced_magnitude,
         phase=enhanced_phase,
-        n_fft=loaded_model.config.n_fft,
-        hop_size=loaded_model.config.hop_size,
-        win_size=loaded_model.config.win_size,
-        compress_factor=loaded_model.config.compress_factor,
+        n_fft=(loaded_model.config.n_fft),
+        hop_size=(loaded_model.config.hop_size),
+        win_size=(loaded_model.config.win_size),
+        compress_factor=(loaded_model.config.compress_factor),
         length=segment_length,
     )
 
@@ -479,16 +500,11 @@ def infer_segment(
     return waveform
 
 
-def sliding_window_inference(
+def iter_sliding_window_inference(
     preprocessed_audio: PreprocessedAudio,
     loaded_model: LoadedModel,
-) -> tuple[
-    Tensor,
-    int,
-    int,
-    RoutingTelemetry | None,
-]:
-    """Enhance arbitrary-length audio using overlapping waveform windows."""
+) -> Iterator[SlidingWindowInferenceUpdate]:
+    """Enhance audio and emit progress after every processed window."""
 
     validate_preprocessed_audio(
         audio=preprocessed_audio,
@@ -509,18 +525,22 @@ def sliding_window_inference(
     (
         window_samples,
         hop_samples,
-    ) = get_window_parameters(
-        preprocessed_audio.sample_rate,
-    )
+    ) = get_window_parameters(preprocessed_audio.sample_rate)
 
-    routing_collector = create_routing_collector(
-        loaded_model,
-    )
+    routing_collector = create_routing_collector(loaded_model)
 
     process_full_audio = get_config_bool(
         "MoERouting_PROCESS_FULL_AUDIO",
         True,
     )
+
+    positions = build_window_positions(
+        num_samples=num_samples,
+        window_samples=window_samples,
+        hop_samples=hop_samples,
+    )
+
+    total_windows = len(positions)
 
     try:
         if num_samples <= window_samples:
@@ -539,11 +559,11 @@ def sliding_window_inference(
                 window_index=0,
                 start_sample=0,
                 end_sample=num_samples,
-                process_full_audio=process_full_audio,
+                process_full_audio=(process_full_audio),
             )
 
             enhanced_waveform = infer_segment(
-                loaded_model=loaded_model,
+                loaded_model=(loaded_model),
                 segment=padded,
             )
 
@@ -552,13 +572,14 @@ def sliding_window_inference(
                 :num_samples,
             ].contiguous()
 
-        else:
-            positions = build_window_positions(
-                num_samples=num_samples,
-                window_samples=window_samples,
-                hop_samples=hop_samples,
+            yield (
+                SlidingWindowInferenceUpdate(
+                    completed_windows=1,
+                    total_windows=1,
+                )
             )
 
+        else:
             output = torch.zeros(
                 num_samples,
                 dtype=torch.float32,
@@ -591,23 +612,30 @@ def sliding_window_inference(
 
                 prepare_routing_window(
                     routing_collector,
-                    window_index=window_index,
+                    window_index=(window_index),
                     start_sample=position,
                     end_sample=min(
                         end,
                         num_samples,
                     ),
-                    process_full_audio=process_full_audio,
+                    process_full_audio=(process_full_audio),
                 )
 
                 enhanced_segment = infer_segment(
-                    loaded_model=loaded_model,
+                    loaded_model=(loaded_model),
                     segment=segment,
                 ).squeeze(0)
 
                 output[position:end] += enhanced_segment * fade
 
                 weight[position:end] += fade
+
+                yield (
+                    SlidingWindowInferenceUpdate(
+                        completed_windows=(window_index + 1),
+                        total_windows=(total_windows),
+                    )
+                )
 
             enhanced_waveform = (output / weight.clamp(min=1e-8)).unsqueeze(0)
 
@@ -617,15 +645,53 @@ def sliding_window_inference(
         if routing_collector is not None and routing_collector.is_attached:
             routing_collector.close()
 
-    routing = create_routing_snapshot(
-        routing_collector,
+    routing = create_routing_snapshot(routing_collector)
+
+    result = SlidingWindowInferenceResult(
+        waveform=(enhanced_waveform),
+        window_samples=(window_samples),
+        hop_samples=(hop_samples),
+        routing=routing,
     )
 
+    yield (
+        SlidingWindowInferenceUpdate(
+            completed_windows=(total_windows),
+            total_windows=(total_windows),
+            result=result,
+        )
+    )
+
+
+def sliding_window_inference(
+    preprocessed_audio: PreprocessedAudio,
+    loaded_model: LoadedModel,
+) -> tuple[
+    Tensor,
+    int,
+    int,
+    RoutingTelemetry | None,
+]:
+    """Enhance arbitrary-length audio using overlapping waveform windows."""
+
+    result: SlidingWindowInferenceResult | None = None
+
+    for update in iter_sliding_window_inference(
+        preprocessed_audio=(preprocessed_audio),
+        loaded_model=(loaded_model),
+    ):
+        if update.result is not None:
+            result = update.result
+
+    if result is None:
+        msg = "Sliding-window inference did not produce a result."
+        raise RuntimeError(msg)
+
     return (
-        enhanced_waveform,
-        window_samples,
-        hop_samples,
-        routing,
+        result.waveform,
+        result.window_samples,
+        result.hop_samples,
+        result.routing,
     )
 
 
@@ -641,13 +707,13 @@ def enhance_preprocessed_audio(
         hop_samples,
         routing,
     ) = sliding_window_inference(
-        preprocessed_audio=preprocessed_audio,
-        loaded_model=loaded_model,
+        preprocessed_audio=(preprocessed_audio),
+        loaded_model=(loaded_model),
     )
 
     postprocessed = postprocess_enhanced_waveform(
-        normalized_waveform=normalized_enhanced,
-        preprocessed_audio=preprocessed_audio,
+        normalized_waveform=(normalized_enhanced),
+        preprocessed_audio=(preprocessed_audio),
     )
 
     waveform = (
@@ -660,17 +726,17 @@ def enhance_preprocessed_audio(
     )
 
     return EnhancedAudio(
-        input_path=preprocessed_audio.path,
-        model_name=loaded_model.info.name,
+        input_path=(preprocessed_audio.path),
+        model_name=(loaded_model.info.name),
         model_weights_path=str(loaded_model.info.weights_path),
-        sample_rate=preprocessed_audio.sample_rate,
+        sample_rate=(preprocessed_audio.sample_rate),
         duration_seconds=(preprocessed_audio.duration_seconds),
-        num_samples=preprocessed_audio.num_samples,
+        num_samples=(preprocessed_audio.num_samples),
         waveform=waveform,
-        window_samples=window_samples,
-        hop_samples=hop_samples,
+        window_samples=(window_samples),
+        hop_samples=(hop_samples),
         device=str(loaded_model.device),
-        postprocessing=postprocessed,
+        postprocessing=(postprocessed),
         routing=routing,
     )
 
@@ -685,13 +751,11 @@ def enhance_audio_file(
 
     preprocessed_audio = preprocess_audio_for_enhancement(decoded_audio)
 
-    loaded_model = load_model(
-        model_name,
-    )
+    loaded_model = load_model(model_name)
 
     return enhance_preprocessed_audio(
-        preprocessed_audio=preprocessed_audio,
-        loaded_model=loaded_model,
+        preprocessed_audio=(preprocessed_audio),
+        loaded_model=(loaded_model),
     )
 
 
@@ -707,8 +771,8 @@ def enhance_audio_to_file(
     )
 
     encoded_audio = encode_audio_to_temporary_wav(
-        waveform=enhanced_audio.waveform,
-        sample_rate=enhanced_audio.sample_rate,
+        waveform=(enhanced_audio.waveform),
+        sample_rate=(enhanced_audio.sample_rate),
     )
 
     return EnhancedAudioFile(

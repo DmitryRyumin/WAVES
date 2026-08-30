@@ -128,6 +128,45 @@ def get_config_str_mapping(
     return values
 
 
+def get_config_float_mapping(
+    section_name: str,
+) -> dict[str, float]:
+    """Return a configuration section containing numeric key-value pairs."""
+
+    section = _RAW_CONFIG.get(section_name)
+
+    if not isinstance(
+        section,
+        Mapping,
+    ):
+        msg = f"Configuration section '{section_name}' must be a TOML table."
+        raise TypeError(msg)
+
+    values: dict[str, float] = {}
+
+    for key, value in section.items():
+        if not isinstance(
+            key,
+            str,
+        ):
+            msg = f"Configuration section '{section_name}' contains a non-string key."
+            raise TypeError(msg)
+
+        if isinstance(
+            value,
+            bool,
+        ) or not isinstance(
+            value,
+            int | float,
+        ):
+            msg = f"Configuration value '{section_name}.{key}' must be numeric."
+            raise TypeError(msg)
+
+        values[key] = float(value)
+
+    return values
+
+
 def load_tab_creators(
     available_functions: Mapping[
         str,
