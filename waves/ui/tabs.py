@@ -21,15 +21,18 @@ from waves.localization import (
     get_localized_text,
     get_localized_values,
 )
-from waves.ui.application import create_application_tab
+from waves.ui.application import (
+    create_application_tab,
+)
+from waves.ui.authors import (
+    create_authors_tab,
+)
 from waves.ui.requirements import (
     create_requirements_tab,
 )
-from waves.ui.settings import create_settings_tab
-
-AUTHORS_MARKDOWN: Final = """
-### Ksenia Zolina, Dmitry Ryumin, Denis Ivanko, and Alexey Karpov
-"""
+from waves.ui.settings import (
+    create_settings_tab,
+)
 
 TAB_STATE_ENABLED: Final = "enabled"
 TAB_STATE_DISABLED: Final = "disabled"
@@ -119,16 +122,6 @@ def create_about_app_tab(
         description=description,
         placeholder=placeholder,
     )
-
-
-def create_authors_tab(
-    language_index: int = 0,
-) -> None:
-    """Create the authors tab."""
-
-    del language_index
-
-    gr.Markdown(AUTHORS_MARKDOWN)
 
 
 def _get_tab_labels(

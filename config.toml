@@ -110,6 +110,50 @@ AUDIO = [
     "p257_004.wav",
 ]
 
+[Authors]
+ORDER = [ "KSENIA_ZOLINA", "DMITRY_RYUMIN", "DENIS_IVANKO", "ALEXEY_KARPOV" ]
+
+
+[Author_KSENIA_ZOLINA]
+NAME = "Ksenia Zolina"
+INITIALS = "KZ"
+LINK_GITHUB = "https://github.com/nixiieee"
+
+
+[Author_DMITRY_RYUMIN]
+NAME = "Dr. Dmitry Ryumin"
+INITIALS = "DR"
+
+LINK_GITHUB = "https://github.com/DmitryRyumin"
+LINK_WEBSITE = "https://dmitryryumin.github.io"
+LINK_WEB_OF_SCIENCE = "https://www.webofscience.com/wos/author/record/K-7989-2018"
+LINK_SCOPUS = "https://www.scopus.com/authid/detail.uri?authorId=57191960214"
+LINK_GOOGLE_SCHOLAR = "https://scholar.google.com/citations?user=LrTIp5IAAAAJ"
+LINK_ORCID = "https://orcid.org/0000-0002-7935-0569"
+LINK_HUGGING_FACE = "https://huggingface.co/DmitryRyumin"
+LINK_TELEGRAM = "https://t.me/dmitry_ryumin"
+LINK_EMAIL = "mailto:neweraairesearch@gmail.com"
+
+
+[Author_DENIS_IVANKO]
+NAME = "Dr. Denis Ivanko"
+INITIALS = "DI"
+
+LINK_WEB_OF_SCIENCE = "https://www.webofscience.com/wos/author/record/663220"
+LINK_SCOPUS = "https://www.scopus.com/authid/detail.uri?authorId=57190967993"
+LINK_GOOGLE_SCHOLAR = "https://scholar.google.com/citations?hl=ru&user=CyE3W0oAAAAJ&view_op=list_works"
+LINK_ORCID = "https://orcid.org/0000-0003-0412-7765"
+
+
+[Author_ALEXEY_KARPOV]
+NAME = "D.Sc. Alexey Karpov"
+INITIALS = "AK"
+
+LINK_WEB_OF_SCIENCE = "https://www.webofscience.com/wos/author/record/1377380"
+LINK_SCOPUS = "https://www.scopus.com/authid/detail.uri?authorId=57219469958"
+LINK_GOOGLE_SCHOLAR = "https://scholar.google.com/citations?hl=ru&user=Q0C3f1oAAAAJ&view_op=list_works"
+LINK_ORCID = "https://orcid.org/0000-0003-3424-652X"
+
 
 [Languages]
 CHOICES = [ "English", "Русский" ]
@@ -137,7 +181,7 @@ REQUIREMENTS = "create_requirements_tab"
 APP = "enabled"
 SETTINGS = "hidden"
 ABOUT_APP = "disabled"
-AUTHORS = "disabled"
+AUTHORS = "enabled"
 REQUIREMENTS = "enabled"
 
 

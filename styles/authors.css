@@ -1,0 +1,263 @@
+/* Authors tab */
+
+div.authors-content,
+div.authors-content > div {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.authors-shell {
+    width: 100%;
+    max-width: 100%;
+    padding-top: 10px;
+}
+
+/* Author grid */
+
+.authors-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+    width: 100%;
+}
+
+/* Author card */
+
+.author-profile-card {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 18px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--background-fill-secondary) 90%, transparent);
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-xl);
+    box-shadow: none !important;
+    transition:
+        background 160ms ease,
+        border-color 160ms ease;
+    animation: waves-author-card-enter 240ms ease-out both;
+    animation-delay: calc(var(--author-card-index) * 45ms);
+}
+
+.author-profile-card::before {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    left: 16px;
+    height: 2px;
+    content: "";
+    background: var(--waves-color-accent);
+    border-radius: 0 0 999px 999px;
+    opacity: 0;
+    transform: scaleX(0.35);
+    transform-origin: center;
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+}
+
+.author-profile-card:hover {
+    background: color-mix(in srgb, var(--background-fill-secondary) 94%, var(--waves-color-accent) 6%);
+    border-color: color-mix(in srgb, var(--waves-color-accent) 32%, var(--border-color-primary));
+    box-shadow: none !important;
+}
+
+.author-profile-card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+/* Author header */
+
+.author-profile-header {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    min-width: 0;
+}
+
+.author-profile-monogram {
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 0 48px;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--body-text-color);
+    letter-spacing: 0.045em;
+    background: color-mix(in srgb, var(--waves-color-accent) 8%, var(--background-fill-primary));
+    border: 1px solid color-mix(in srgb, var(--waves-color-accent) 30%, var(--border-color-primary));
+    border-radius: var(--waves-radius-lg);
+    box-shadow: none !important;
+}
+
+.author-profile-identity {
+    min-width: 0;
+}
+
+.author-profile-name {
+    margin: 0 !important;
+    font-size: 1.05rem !important;
+    font-weight: 750 !important;
+    line-height: 1.25 !important;
+    color: var(--body-text-color) !important;
+    overflow-wrap: anywhere;
+}
+
+/* Author links */
+
+.author-profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.author-profile-link {
+    box-sizing: border-box;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    font-size: 0.74rem;
+    font-weight: 680;
+    line-height: 1;
+    color: var(--body-text-color-subdued) !important;
+    white-space: nowrap;
+    text-decoration: none !important;
+    background: color-mix(in srgb, var(--background-fill-primary) 82%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color-primary) 86%, transparent);
+    border-radius: 999px;
+    box-shadow: none !important;
+    transition:
+        color 150ms ease,
+        background 150ms ease,
+        border-color 150ms ease,
+        transform 150ms ease !important;
+}
+
+.author-profile-link::after {
+    display: inline-block;
+    font-size: 0.69rem;
+    font-weight: 700;
+    line-height: 1;
+    color: currentcolor;
+    content: "↗";
+    transform: translateY(-1px);
+    transition: transform 150ms ease;
+}
+
+.author-profile-link:hover,
+.author-profile-link:focus-visible {
+    color: var(--waves-color-accent) !important;
+    background: color-mix(in srgb, var(--waves-color-accent) 8%, var(--background-fill-primary));
+    border-color: color-mix(in srgb, var(--waves-color-accent) 45%, var(--border-color-primary));
+    box-shadow: none !important;
+}
+
+.author-profile-link:hover::after,
+.author-profile-link:focus-visible::after {
+    transform: translate(1px, -2px);
+}
+
+.author-profile-link:hover {
+    transform: translateY(-1px);
+}
+
+.author-profile-link:active {
+    box-shadow: none !important;
+    transform: scale(0.98);
+}
+
+.author-profile-link:focus-visible {
+    outline: none !important;
+}
+
+/* Initial card entrance */
+
+@keyframes waves-author-card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive layout */
+
+@media (width <= 820px) {
+    .authors-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .author-profile-card {
+        padding: 16px;
+        border-radius: var(--waves-radius-lg);
+    }
+}
+
+@media (width <= 520px) {
+    .authors-shell {
+        padding-top: 6px;
+    }
+
+    .author-profile-header {
+        gap: 11px;
+    }
+
+    .author-profile-monogram {
+        flex-basis: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--waves-radius-md);
+    }
+
+    .author-profile-name {
+        font-size: 1rem !important;
+    }
+
+    .author-profile-links {
+        gap: 6px;
+        margin-top: 14px;
+    }
+
+    .author-profile-link {
+        min-height: 29px;
+        padding: 0 9px;
+        font-size: 0.72rem;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .author-profile-card {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .author-profile-card::before,
+    .author-profile-link,
+    .author-profile-link::after {
+        transition: none !important;
+    }
+
+    .author-profile-link:hover,
+    .author-profile-link:active {
+        transform: none !important;
+    }
+}
