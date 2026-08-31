@@ -21,6 +21,7 @@ from waves.localization import (
     get_localized_text,
     get_localized_values,
 )
+from waves.ui.about import create_about_content_html
 from waves.ui.application import (
     create_application_tab,
 )
@@ -56,7 +57,7 @@ class AboutAppTabComponents:
 
     title: gr.Markdown
     description: gr.Markdown
-    placeholder: gr.Markdown
+    placeholder: gr.HTML
 
 
 @dataclass(
@@ -91,30 +92,33 @@ class TabRuntimeState:
 def create_about_app_tab(
     language_index: int = 0,
 ) -> AboutAppTabComponents:
-    """Create the about application tab."""
+    """Create the About WAVES tab."""
 
     title = gr.Markdown(
-        f"# "
-        f"{
-            get_localized_text(
-                'Texts_ABOUT_TITLE',
-                language_index,
-            )
-        }"
+        (
+            f"### "
+            f"{
+                get_localized_text(
+                    'Texts_ABOUT_TITLE',
+                    language_index,
+                )
+            }"
+        ),
+        elem_classes=("about-title"),
     )
 
     description = gr.Markdown(
         get_localized_text(
             "Texts_ABOUT_DESCRIPTION",
             language_index,
-        )
+        ),
+        elem_classes=("about-description"),
     )
 
-    placeholder = gr.Markdown(
-        get_localized_text(
-            "Texts_ABOUT_PLACEHOLDER",
-            language_index,
-        )
+    placeholder = gr.HTML(
+        value=(create_about_content_html(language_index)),
+        elem_id="about-content",
+        elem_classes=("about-content"),
     )
 
     return AboutAppTabComponents(

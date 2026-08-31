@@ -28,6 +28,9 @@ from waves.localization import (
     get_localized_text,
 )
 from waves.routing import RoutingTelemetry
+from waves.ui.about import (
+    create_about_content_html,
+)
 from waves.ui.application import (
     create_application_title_markdown,
 )
@@ -283,7 +286,7 @@ def handle_language_change(
         ),
         about_app_title=gr.update(
             value=(
-                f"# "
+                f"### "
                 f"{
                     get_localized_text(
                         'Texts_ABOUT_TITLE',
@@ -304,12 +307,7 @@ def handle_language_change(
         ),
         about_app_placeholder=(
             gr.update(
-                value=(
-                    get_localized_text(
-                        "Texts_ABOUT_PLACEHOLDER",
-                        language_index,
-                    )
-                ),
+                value=(create_about_content_html(language_index)),
             )
         ),
         requirements_title=(

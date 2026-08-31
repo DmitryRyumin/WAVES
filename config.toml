@@ -180,7 +180,7 @@ REQUIREMENTS = "create_requirements_tab"
 [TabStates]
 APP = "enabled"
 SETTINGS = "hidden"
-ABOUT_APP = "disabled"
+ABOUT_APP = "enabled"
 AUTHORS = "enabled"
 REQUIREMENTS = "enabled"
 
@@ -197,13 +197,8 @@ APP_SUBTITLE = [
 ABOUT_TITLE = [ "About WAVES", "О WAVES" ]
 
 ABOUT_DESCRIPTION = [
-    "WAVES is a neural speech enhancement framework based on weighted adaptive variance-aware expert selection within a Mixture-of-Experts architecture.",
-    "WAVES — нейросетевой фреймворк для повышения качества речи на основе взвешенного адаптивного выбора экспертов с учетом вариативности в архитектуре Mixture-of-Experts.",
-]
-
-ABOUT_PLACEHOLDER = [
-    "A detailed description of the framework, models, intended use cases, and limitations will be added here.",
-    "Здесь будет представлено подробное описание фреймворка, моделей, сценариев применения и ограничений.",
+    "Interactive speech enhancement and sparse Mixture-of-Experts routing analysis.",
+    "Интерактивное повышение качества речи и анализ маршрутизации разреженной Mixture-of-Experts.",
 ]
 
 REQUIREMENTS_TITLE = [ "Requirements", "Системные требования" ]
@@ -318,6 +313,80 @@ PROGRESS_DETAIL_WAV_ENCODING = [ "Writing enhanced audio...", "Запись об
 PROGRESS_DETAIL_SPECTROGRAM_RENDERING = [ "Rendering spectrograms...", "Построение спектрограмм..." ]
 
 PROGRESS_DETAIL_ROUTING_VISUALIZATION = [ "Rendering expert routing...", "Построение маршрутизации экспертов..." ]
+
+[About]
+
+BADGE = [ "Research application", "Исследовательское приложение" ]
+
+FULL_NAME = [
+    "Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
+    "Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
+]
+
+HERO_DESCRIPTION = [
+    "WAVES enhances noisy speech with adaptive sparse Mixture-of-Experts routing and exposes how experts are used for each input.",
+    "WAVES повышает качество зашумленной речи с помощью адаптивной разреженной маршрутизации Mixture-of-Experts и показывает, как эксперты используются для каждого входного сигнала.",
+]
+
+OPEN_SOURCE = [ "Open source", "Открытый исходный код" ]
+
+MANUSCRIPT_STATUS = [ "Journal manuscript · under review", "Статья в журнале · на рецензировании" ]
+
+FLOW_INPUT = [ "Noisy speech", "Зашумленная речь" ]
+
+FLOW_MODEL = [ "WAVES · Sparse MoE", "WAVES · Sparse MoE" ]
+
+FLOW_OUTPUT = [ "Enhanced speech", "Речь после обработки" ]
+
+FEATURE_ENHANCE_TITLE = [ "Enhance speech", "Повышение качества речи" ]
+
+FEATURE_ENHANCE_TEXT = [
+    "Upload or record noisy speech and obtain the enhanced waveform.",
+    "Загрузите или запишите зашумленную речь и получите обработанный сигнал.",
+]
+
+FEATURE_COMPARE_TITLE = [ "Compare the signal", "Сравнение сигнала" ]
+
+FEATURE_COMPARE_TEXT = [
+    "Compare noisy and enhanced spectrograms and inspect the spectral change map.",
+    "Сравните спектрограммы до и после обработки и оцените карту спектральных изменений.",
+]
+
+FEATURE_ROUTING_TITLE = [ "Inspect expert routing", "Анализ маршрутизации" ]
+
+FEATURE_ROUTING_TEXT = [
+    "Explore expert utilization across time, frequency, layers, and processing axes.",
+    "Исследуйте загрузку экспертов во времени, по частоте, слоям и направлениям обработки.",
+]
+
+SNAPSHOT_TITLE = [ "Model snapshot", "Конфигурация модели" ]
+
+SNAPSHOT_NOTE = [
+    "Final configuration uses MoE in the last TS block with spectral mean/std noise conditioning.",
+    "Финальная конфигурация использует MoE в последнем TS-блоке с учетом среднего и стандартного отклонения спектра.",
+]
+
+BENCHMARK_NOTE = [ "VoiceBank+DEMAND test set", "Тестовая выборка VoiceBank+DEMAND" ]
+
+EXPERTS_VALUE = "6"
+
+EXPERTS_LABEL = [ "Experts", "Экспертов" ]
+
+ROUTING_VALUE = "Top-2"
+
+ROUTING_LABEL = [ "Routing", "Маршрутизация" ]
+
+ACTIVE_PARAMS_VALUE = "2.003M"
+
+ACTIVE_PARAMS_LABEL = [ "Active parameters", "Активных параметров" ]
+
+PESQ_VALUE = "3.59"
+
+PESQ_LABEL = [ "PESQ", "PESQ" ]
+
+CODE_LABEL = [ "Source code", "Исходный код" ]
+
+CODE_URL = "https://github.com/DmitryRyumin/WAVES"
 
 [Requirements]
 DESCRIPTION = [
