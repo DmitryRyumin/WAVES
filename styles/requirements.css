@@ -1,0 +1,603 @@
+/* Requirements tab */
+
+#tab-requirements > div.column {
+    gap: 0 !important;
+}
+
+div.requirements-title {
+    margin: 0 0 4px !important;
+}
+
+div.requirements-title h3 {
+    margin: 0 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+}
+
+div.requirements-description {
+    margin: 0 0 16px !important;
+}
+
+div.requirements-description p {
+    max-width: 1100px !important;
+    margin: 0 !important;
+    color: var(--body-text-color-subdued) !important;
+}
+
+div.requirements-content,
+div.requirements-content > div {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.requirements-shell {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Runtime summary */
+
+.requirements-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.requirements-summary-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 14px 16px;
+    background: color-mix(in srgb, var(--background-fill-secondary) 88%, transparent);
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-lg);
+    box-shadow: none !important;
+}
+
+.requirements-summary-label {
+    margin-bottom: 5px;
+    font-size: 0.75rem;
+    font-weight: 650;
+    line-height: 1.2;
+    color: var(--body-text-color-subdued);
+    letter-spacing: 0.02em;
+}
+
+.requirements-summary-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.08rem;
+    font-weight: 750;
+    line-height: 1.25;
+    color: var(--body-text-color);
+    white-space: nowrap;
+}
+
+.requirements-summary-source {
+    letter-spacing: 0.01em;
+}
+
+.requirements-summary-meta {
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    color: var(--body-text-color-subdued);
+    white-space: nowrap;
+}
+
+/* Primary version-source link */
+
+.requirements-summary-primary-link {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    width: fit-content;
+    color: var(--body-text-color) !important;
+    text-decoration: none !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 42%, transparent);
+    transition:
+        color 150ms ease,
+        border-color 150ms ease !important;
+}
+
+.requirements-summary-primary-link-arrow {
+    display: inline-block;
+    font-size: 0.72em;
+    line-height: 1;
+    transform: translateY(-2px);
+    transition: transform 150ms ease !important;
+}
+
+.requirements-summary-primary-link:hover,
+.requirements-summary-primary-link:focus-visible {
+    color: var(--waves-color-accent) !important;
+    border-bottom-color: var(--waves-color-accent) !important;
+}
+
+.requirements-summary-primary-link:hover .requirements-summary-primary-link-arrow,
+.requirements-summary-primary-link:focus-visible .requirements-summary-primary-link-arrow {
+    transform: translate(1px, -3px);
+}
+
+.requirements-summary-primary-link:focus-visible {
+    outline: none !important;
+}
+
+/* Newly resolved PyPI result */
+
+@keyframes waves-requirements-result-enter {
+    from {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.requirements-dependency-row.is-resolved .requirements-latest-cell > *,
+.requirements-dependency-row.is-resolved .requirements-status-cell > * {
+    animation: waves-requirements-result-enter 180ms ease-out;
+}
+
+/* Requirements source links */
+
+.requirements-source-link {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    width: fit-content;
+    font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: inherit;
+    font-weight: 650;
+    line-height: inherit;
+    color: var(--body-text-color-subdued) !important;
+    text-decoration: none !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 38%, transparent);
+    transition:
+        color 150ms ease,
+        border-color 150ms ease !important;
+}
+
+.requirements-source-link-arrow {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 0.68rem;
+    line-height: 1;
+    transform: translateY(-1px);
+    transition: transform 150ms ease !important;
+}
+
+.requirements-source-link:hover,
+.requirements-source-link:focus-visible {
+    color: var(--waves-color-accent) !important;
+    border-bottom-color: var(--waves-color-accent) !important;
+}
+
+.requirements-source-link:hover .requirements-source-link-arrow,
+.requirements-source-link:focus-visible .requirements-source-link-arrow {
+    transform: translate(1px, -2px);
+}
+
+.requirements-source-link:focus-visible {
+    outline: none !important;
+}
+
+.requirements-source-separator {
+    margin: 0 4px;
+    color: var(--body-text-color-subdued);
+}
+
+/* Dependency table card */
+
+.requirements-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: auto hidden;
+    background: var(--background-fill-secondary);
+    border: 1px solid var(--border-color-primary);
+    border-radius: var(--waves-radius-xl);
+    box-shadow: none !important;
+}
+
+/*
+ * Reset Gradio / browser table borders.
+ *
+ * The Requirements table uses one outer card border and
+ * subtle horizontal row separators instead of a full grid.
+ */
+
+.requirements-table,
+.requirements-table thead,
+.requirements-table tbody,
+.requirements-table tr,
+.requirements-table th,
+.requirements-table td {
+    outline: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Dependency table */
+
+.requirements-table {
+    width: 100%;
+    min-width: 980px;
+    margin: 0 !important;
+    font-size: 0.84rem;
+    line-height: 1.35;
+    color: var(--body-text-color);
+    border-spacing: 0 !important;
+    border-collapse: separate !important;
+    background: transparent !important;
+}
+
+/* Header */
+
+.requirements-table thead {
+    background: color-mix(in srgb, var(--background-fill-primary) 72%, var(--background-fill-secondary)) !important;
+}
+
+.requirements-table th {
+    padding: 12px 16px !important;
+    font-size: 0.71rem !important;
+    font-weight: 750 !important;
+    line-height: 1.2 !important;
+    color: var(--body-text-color-subdued) !important;
+    text-align: left !important;
+    letter-spacing: 0.03em !important;
+    white-space: nowrap !important;
+    background: transparent !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color-primary) 86%, transparent) !important;
+}
+
+/* Rows */
+
+.requirements-table tbody tr {
+    background: transparent !important;
+    transition: background 150ms ease !important;
+}
+
+.requirements-table tbody tr:hover {
+    background: color-mix(in srgb, var(--body-text-color) 3.5%, transparent) !important;
+}
+
+.requirements-table td {
+    padding: 13px 16px !important;
+    vertical-align: middle !important;
+    text-align: left !important;
+    background: transparent !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color-primary) 58%, transparent) !important;
+}
+
+.requirements-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+/* Column sizing */
+
+.requirements-package-cell {
+    width: 15%;
+    min-width: 140px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.requirements-purpose-cell {
+    width: 25%;
+    min-width: 230px;
+    color: var(--body-text-color-subdued);
+}
+
+.requirements-version-cell {
+    width: 10%;
+    white-space: nowrap;
+}
+
+.requirements-status-cell {
+    width: 13%;
+    white-space: nowrap;
+}
+
+/* Package links */
+
+.requirements-package-link {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    width: fit-content;
+    font-weight: 720 !important;
+    line-height: 1.25;
+    color: var(--body-text-color) !important;
+    text-decoration: none !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 38%, transparent);
+    transition:
+        color 150ms ease,
+        border-color 150ms ease !important;
+}
+
+.requirements-package-link::after {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 0.68rem;
+    font-weight: 650;
+    line-height: 1;
+    color: currentcolor;
+    content: "↗";
+    transform: translateY(-1px);
+    transition: transform 150ms ease !important;
+}
+
+.requirements-package-link:hover,
+.requirements-package-link:focus-visible {
+    color: var(--waves-color-accent) !important;
+    border-bottom-color: var(--waves-color-accent) !important;
+}
+
+.requirements-package-link:hover::after,
+.requirements-package-link:focus-visible::after {
+    transform: translate(1px, -2px);
+}
+
+.requirements-package-link:focus-visible {
+    outline: none !important;
+}
+
+/* Requirement constraint */
+
+.requirements-specifier {
+    display: inline-block;
+    max-width: 280px;
+    padding: 5px 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.71rem;
+    line-height: 1.2;
+    color: var(--body-text-color);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--background-fill-primary) 82%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color-primary) 78%, transparent);
+    border-radius: var(--waves-radius-sm);
+}
+
+/* Version badges */
+
+.requirements-version-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 25px;
+    padding: 0 9px;
+    font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.71rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--body-text-color);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--background-fill-primary) 82%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color-primary) 82%, transparent);
+    border-radius: 999px;
+}
+
+.requirements-value-unavailable {
+    font-size: 0.82rem;
+    color: var(--body-text-color-subdued);
+}
+
+/* Status badges */
+
+.requirements-status-badge {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 9px;
+    font-size: 0.71rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    box-shadow: none !important;
+}
+
+.requirements-status-dot {
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    background: currentcolor;
+    border-radius: 50%;
+}
+
+.requirements-status-badge.is-current {
+    color: #16a34a;
+    background: color-mix(in srgb, #16a34a 9%, transparent);
+    border-color: color-mix(in srgb, #16a34a 30%, var(--border-color-primary));
+}
+
+.requirements-status-badge.is-update {
+    color: var(--waves-color-accent);
+    background: color-mix(in srgb, var(--waves-color-accent) 9%, transparent);
+    border-color: color-mix(in srgb, var(--waves-color-accent) 36%, var(--border-color-primary));
+}
+
+.requirements-status-badge.is-constrained,
+.requirements-status-badge.is-unavailable {
+    color: var(--body-text-color-subdued);
+    background: color-mix(in srgb, var(--body-text-color) 4%, transparent);
+    border-color: var(--border-color-primary);
+}
+
+.requirements-status-badge.is-error {
+    color: #dc2626;
+    background: color-mix(in srgb, #dc2626 9%, transparent);
+    border-color: color-mix(in srgb, #dc2626 32%, var(--border-color-primary));
+}
+
+.requirements-status-pending {
+    display: inline-block;
+    width: 1px;
+    height: 25px;
+    vertical-align: middle;
+}
+
+/* Latest-version loader */
+
+.requirements-version-loader {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    color: var(--body-text-color-subdued);
+}
+
+.requirements-version-loader::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: conic-gradient(
+        from 15deg,
+        transparent 0deg 42deg,
+        currentcolor 42deg 132deg,
+        transparent 132deg 205deg,
+        currentcolor 205deg 286deg,
+        transparent 286deg 360deg
+    );
+    border-radius: 50%;
+    mask-image: radial-gradient(circle, transparent 45%, #000 50%);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    animation: waves-requirements-version-orbit 900ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.requirements-version-loader::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    content: "";
+    background: currentcolor;
+    border-radius: 50%;
+    animation: waves-requirements-version-pulse 900ms ease-in-out infinite;
+}
+
+@keyframes waves-requirements-version-orbit {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes waves-requirements-version-pulse {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+    }
+}
+
+/* Footer */
+
+.requirements-footer-row {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 2px 0;
+}
+
+.requirements-footer {
+    max-width: none !important;
+    margin: 0 !important;
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+    color: var(--body-text-color-subdued) !important;
+}
+
+.requirements-last-checked {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: var(--body-text-color-subdued);
+    white-space: nowrap;
+}
+
+.requirements-last-checked strong {
+    font-weight: 650;
+    color: var(--body-text-color);
+}
+
+/* Responsive layout */
+
+@media (width <= 900px) {
+    .requirements-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .requirements-summary-card {
+        padding: 12px 14px;
+    }
+
+    .requirements-table-wrapper {
+        border-radius: var(--waves-radius-lg);
+    }
+
+    .requirements-table th,
+    .requirements-table td {
+        padding-right: 13px !important;
+        padding-left: 13px !important;
+    }
+
+    .requirements-footer-row {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+
+    .requirements-last-checked {
+        white-space: normal;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .requirements-table tbody tr,
+    .requirements-package-link,
+    .requirements-package-link::after,
+    .requirements-source-link,
+    .requirements-source-link-arrow,
+    .requirements-summary-primary-link,
+    .requirements-summary-primary-link-arrow {
+        transition: none !important;
+    }
+
+    .requirements-version-loader::before,
+    .requirements-version-loader::after,
+    .requirements-dependency-row.is-resolved .requirements-latest-cell > *,
+    .requirements-dependency-row.is-resolved .requirements-status-cell > * {
+        animation: none !important;
+    }
+}

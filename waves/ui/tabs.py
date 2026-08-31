@@ -22,6 +22,9 @@ from waves.localization import (
     get_localized_values,
 )
 from waves.ui.application import create_application_tab
+from waves.ui.requirements import (
+    create_requirements_tab,
+)
 from waves.ui.settings import create_settings_tab
 
 AUTHORS_MARKDOWN: Final = """
@@ -41,7 +44,10 @@ VALID_TAB_STATES: Final = frozenset(
 )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class AboutAppTabComponents:
     """Components created inside the about application tab."""
 
@@ -50,23 +56,28 @@ class AboutAppTabComponents:
     placeholder: gr.Markdown
 
 
-@dataclass(frozen=True, slots=True)
-class RequirementsTabComponents:
-    """Components created inside the requirements tab."""
-
-    title: gr.Markdown
-    placeholder: gr.Markdown
-
-
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class AppTabsComponents:
     """Components created by the WAVES tab UI."""
 
-    tab_components: dict[str, gr.Tab]
-    tab_contents: dict[str, Any]
+    tab_components: dict[
+        str,
+        gr.Tab,
+    ]
+
+    tab_contents: dict[
+        str,
+        Any,
+    ]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class TabRuntimeState:
     """Resolved runtime state of one application tab."""
 
@@ -79,7 +90,15 @@ def create_about_app_tab(
 ) -> AboutAppTabComponents:
     """Create the about application tab."""
 
-    title = gr.Markdown(f"# {get_localized_text('Texts_ABOUT_TITLE', language_index)}")
+    title = gr.Markdown(
+        f"# "
+        f"{
+            get_localized_text(
+                'Texts_ABOUT_TITLE',
+                language_index,
+            )
+        }"
+    )
 
     description = gr.Markdown(
         get_localized_text(
@@ -112,26 +131,6 @@ def create_authors_tab(
     gr.Markdown(AUTHORS_MARKDOWN)
 
 
-def create_requirements_tab(
-    language_index: int = 0,
-) -> RequirementsTabComponents:
-    """Create the requirements tab."""
-
-    title = gr.Markdown(f"### {get_localized_text('Texts_REQUIREMENTS_TITLE', language_index)}")
-
-    placeholder = gr.Markdown(
-        get_localized_text(
-            "Texts_REQUIREMENTS_PLACEHOLDER",
-            language_index,
-        )
-    )
-
-    return RequirementsTabComponents(
-        title=title,
-        placeholder=placeholder,
-    )
-
-
 def _get_tab_labels(
     tab_name: str,
 ) -> list[str]:
@@ -156,10 +155,11 @@ def _get_tab_runtime_state(
         .lower()
     )
 
-    if state not in VALID_TAB_STATES:
+    if state not in (VALID_TAB_STATES):
         allowed_states = ", ".join(sorted(VALID_TAB_STATES))
 
         msg = f"Unsupported tab state '{state}' for '{tab_name}'. Expected one of: {allowed_states}."
+
         raise ValueError(msg)
 
     if state == TAB_STATE_HIDDEN:
@@ -186,46 +186,64 @@ def create_app_tabs(
     """Create WAVES tabs dynamically from the application configuration."""
 
     available_functions = {
-        "create_application_tab": create_application_tab,
-        "create_settings_tab": create_settings_tab,
-        "create_about_app_tab": create_about_app_tab,
-        "create_authors_tab": create_authors_tab,
-        "create_requirements_tab": create_requirements_tab,
+        "create_application_tab": (create_application_tab),
+        "create_settings_tab": (create_settings_tab),
+        "create_about_app_tab": (create_about_app_tab),
+        "create_authors_tab": (create_authors_tab),
+        "create_requirements_tab": (create_requirements_tab),
     }
 
     tab_creators = load_tab_creators(available_functions)
 
-    tab_components: dict[str, gr.Tab] = {}
-    tab_contents: dict[str, Any] = {}
+    tab_components: dict[
+        str,
+        gr.Tab,
+    ] = {}
+
+    tab_contents: dict[
+        str,
+        Any,
+    ] = {}
 
     with gr.Tabs(elem_classes="app-tabs"):
-        for tab_name, tab_creator in tab_creators.items():
+        for (
+            tab_name,
+            tab_creator,
+        ) in tab_creators.items():
             tab_labels = _get_tab_labels(tab_name)
 
             if language_index >= len(tab_labels):
                 msg = (
-                    f"Language index {language_index} is not available for "
-                    f"tab '{tab_name}'. Configured labels: {len(tab_labels)}."
+                    f"Language index "
+                    f"{language_index} "
+                    f"is not available for "
+                    f"tab '{tab_name}'. "
+                    f"Configured labels: "
+                    f"{len(tab_labels)}."
                 )
+
                 raise IndexError(msg)
 
             tab_state = _get_tab_runtime_state(tab_name)
 
-            tab_id = tab_name.lower().replace("_", "-")
+            tab_id = tab_name.lower().replace(
+                "_",
+                "-",
+            )
 
             with gr.Tab(
-                label=tab_labels[language_index],
+                label=(tab_labels[language_index]),
                 id=tab_id,
-                visible=tab_state.visible,
-                interactive=tab_state.interactive,
-                elem_id=f"tab-{tab_id}",
-                elem_classes=f"{tab_id}-tab",
+                visible=(tab_state.visible),
+                interactive=(tab_state.interactive),
+                elem_id=(f"tab-{tab_id}"),
+                elem_classes=(f"{tab_id}-tab"),
             ) as tab:
                 tab_contents[tab_name] = tab_creator(language_index)
 
             tab_components[tab_name] = tab
 
     return AppTabsComponents(
-        tab_components=tab_components,
-        tab_contents=tab_contents,
+        tab_components=(tab_components),
+        tab_contents=(tab_contents),
     )

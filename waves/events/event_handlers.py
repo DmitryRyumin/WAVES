@@ -58,11 +58,14 @@ from waves.ui.language_selector import (
     LanguageSelectorComponents,
 )
 from waves.ui.progress_modal import ProcessingSummary
+from waves.ui.requirements import (
+    RequirementsTabComponents,
+    stream_requirements_content_html,
+)
 from waves.ui.settings import SettingsTabComponents
 from waves.ui.tabs import (
     AboutAppTabComponents,
     AppTabsComponents,
-    RequirementsTabComponents,
 )
 from waves.ui.visualization_info import VisualizationInfoKey
 from waves.visualization.export import (
@@ -297,7 +300,8 @@ def setup_app_event_handlers(
             about_app_content.description: (updates.about_app_description),
             about_app_content.placeholder: (updates.about_app_placeholder),
             requirements_content.title: (updates.requirements_title),
-            requirements_content.placeholder: (updates.requirements_placeholder),
+            requirements_content.description: (updates.requirements_description),
+            requirements_content.content: (updates.requirements_content),
         }
 
         component_updates.update(map_routing_updates(updates.routing_plots))
@@ -846,7 +850,8 @@ def setup_app_event_handlers(
         about_app_content.description,
         about_app_content.placeholder,
         requirements_content.title,
-        requirements_content.placeholder,
+        requirements_content.description,
+        requirements_content.content,
     ]
 
     audio_change_outputs = [
@@ -980,6 +985,11 @@ def setup_app_event_handlers(
         app_content.load_over_time_info_button,
     )
 
+    requirements_tab = cast(
+        Any,
+        app_tabs.tab_components["REQUIREMENTS"],
+    )
+
     gradio_app.load(
         fn=None,
         inputs=[
@@ -988,6 +998,20 @@ def setup_app_event_handlers(
         outputs=[],
         js=EXAMPLES_UI_JS,
         queue=False,
+        show_progress="hidden",
+    )
+
+    requirements_tab.select(
+        fn=stream_requirements_content_html,
+        inputs=[
+            language_selector.dropdown,
+        ],
+        outputs=[
+            requirements_content.content,
+        ],
+        queue=True,
+        concurrency_limit=1,
+        concurrency_id=("requirements-version-check"),
         show_progress="hidden",
     )
 
@@ -1013,6 +1037,20 @@ def setup_app_event_handlers(
         queue=True,
         concurrency_limit=1,
         concurrency_id=("visualization-pdf-export"),
+        show_progress="hidden",
+    )
+
+    language_change_event.then(
+        fn=stream_requirements_content_html,
+        inputs=[
+            language_selector.dropdown,
+        ],
+        outputs=[
+            requirements_content.content,
+        ],
+        queue=True,
+        concurrency_limit=1,
+        concurrency_id=("requirements-version-check"),
         show_progress="hidden",
     )
 

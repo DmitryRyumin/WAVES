@@ -8,6 +8,7 @@ dependencies = [
     "gradio>=6.26.0,<7.0.0",
     "librosa>=1.0.0,<2.0.0",
     "numpy>=2.5.2,<3.0.0",
+    "packaging>=26.3,<27.0",
     "plotly[kaleido]>=7.0.0,<8.0.0",
     "psutil>=7.2.2",
     "pyyaml>=6.0.3",

@@ -138,7 +138,7 @@ APP = "enabled"
 SETTINGS = "hidden"
 ABOUT_APP = "disabled"
 AUTHORS = "disabled"
-REQUIREMENTS = "disabled"
+REQUIREMENTS = "enabled"
 
 
 [Texts]
@@ -163,11 +163,6 @@ ABOUT_PLACEHOLDER = [
 ]
 
 REQUIREMENTS_TITLE = [ "Requirements", "Системные требования" ]
-
-REQUIREMENTS_PLACEHOLDER = [
-    "Application requirements will be added here.",
-    "Системные требования и зависимости приложения будут добавлены позже.",
-]
 
 STATUS_READY = [
     "Ready. Upload or record a noisy speech sample to start.",
@@ -280,6 +275,64 @@ PROGRESS_DETAIL_SPECTROGRAM_RENDERING = [ "Rendering spectrograms...", "Пост
 
 PROGRESS_DETAIL_ROUTING_VISUALIZATION = [ "Rendering expert routing...", "Построение маршрутизации экспертов..." ]
 
+[Requirements]
+DESCRIPTION = [
+    "Runtime environment and core Python dependencies used by WAVES. Installed versions are read from the active environment; latest releases are checked against PyPI.",
+    "Среда выполнения и основные Python-зависимости WAVES. Установленные версии определяются из активного окружения, а актуальные релизы проверяются через PyPI.",
+]
+
+SUMMARY_PYTHON = [ "Python runtime", "Среда Python" ]
+SUMMARY_DEPENDENCIES = [ "Runtime dependencies", "Зависимости среды" ]
+SUMMARY_SOURCE = [ "Version source", "Источник версий" ]
+SUMMARY_SOURCE_META = [ "active environment", "активное окружение" ]
+REQUIRED = [ "Required", "Требуется" ]
+
+COLUMN_PACKAGE = [ "Package", "Пакет" ]
+COLUMN_PURPOSE = [ "Purpose in WAVES", "Назначение в WAVES" ]
+COLUMN_REQUIREMENT = [ "WAVES requirement", "Требование WAVES" ]
+COLUMN_INSTALLED = [ "Installed", "Установлено" ]
+COLUMN_LATEST = [ "Latest", "Актуальная" ]
+COLUMN_STATUS = [ "Status", "Статус" ]
+
+LAST_CHECKED = [ "Last checked", "Последняя проверка" ]
+
+STATUS_CURRENT = [ "Current", "Актуально" ]
+STATUS_UPDATE_AVAILABLE = [ "Update available", "Доступно обновление" ]
+STATUS_CONSTRAINED = [ "Version constrained", "Ограничено диапазоном" ]
+STATUS_MISSING = [ "Missing", "Не установлено" ]
+STATUS_INCOMPATIBLE = [ "Incompatible", "Несовместимо" ]
+STATUS_UNAVAILABLE = [ "Unavailable", "Недоступно" ]
+
+CHECKING_LATEST = [ "Checking latest version", "Проверка актуальной версии" ]
+
+VALUE_UNAVAILABLE = [ "—", "—" ]
+
+FOOTER = [
+    "Installed versions come from the active WAVES environment. Latest releases are refreshed from PyPI when the Requirements tab is opened and are cached briefly.",
+    "Установленные версии определяются из активного окружения WAVES. Актуальные релизы обновляются через PyPI при открытии вкладки и кратковременно кэшируются.",
+]
+
+PURPOSE_GRADIO = [ "Web application interface", "Веб-интерфейс приложения" ]
+
+PURPOSE_LIBROSA = [ "Audio and spectral processing", "Обработка аудио и спектральный анализ" ]
+
+PURPOSE_NUMPY = [ "Numerical computation", "Численные вычисления" ]
+
+PURPOSE_PACKAGING = [ "PEP 440/508 version validation", "Проверка версий по PEP 440/508" ]
+
+PURPOSE_PLOTLY = [ "Interactive visualizations and PDF export", "Интерактивные визуализации и экспорт PDF" ]
+
+PURPOSE_PSUTIL = [ "Runtime system information", "Информация о системных ресурсах" ]
+
+PURPOSE_PYYAML = [ "Model configuration loading", "Загрузка конфигурации модели" ]
+
+PURPOSE_SAFETENSORS = [ "Safe model-weight loading", "Безопасная загрузка весов модели" ]
+
+PURPOSE_TORCH = [ "Neural speech-enhancement inference", "Нейросетевой инференс повышения качества речи" ]
+
+PURPOSE_TORCHCODEC = [ "Audio decoding and encoding", "Декодирование и кодирование аудио" ]
+
+PURPOSE_GENERIC = [ "Runtime dependency", "Зависимость среды выполнения" ]
 
 [Labels]
 NOISY_AUDIO = [ "Noisy speech", "Зашумленная речь" ]

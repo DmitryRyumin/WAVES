@@ -28,20 +28,33 @@ from waves.localization import (
     get_localized_text,
 )
 from waves.routing import RoutingTelemetry
-from waves.ui.application import create_application_title_markdown
-from waves.ui.language_selector import create_language_flag_html
+from waves.ui.application import (
+    create_application_title_markdown,
+)
+from waves.ui.language_selector import (
+    create_language_flag_html,
+)
 from waves.ui.progress_modal import (
     ProcessingSummary,
     create_processing_time_button_label,
 )
+from waves.ui.requirements import (
+    create_initial_requirements_content_html,
+)
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class LanguageChangeUpdates:
     """Named UI updates produced by a language change."""
 
     flag: Any
-    tabs: dict[str, Any]
+    tabs: dict[
+        str,
+        Any,
+    ]
 
     title: Any
     status: Any
@@ -68,21 +81,27 @@ class LanguageChangeUpdates:
     about_app_placeholder: Any
 
     requirements_title: Any
-    requirements_placeholder: Any
+    requirements_description: Any
+    requirements_content: Any
 
 
 def create_tab_language_updates(
     language_index: int,
-) -> dict[str, Any]:
+) -> dict[
+    str,
+    Any,
+]:
     """Create localized updates for dynamically configured tabs."""
 
     tab_creators = get_config_str_mapping("TabCreators")
 
     return {
         tab_name: gr.update(
-            label=get_localized_text(
-                f"Tabs_{tab_name}",
-                language_index,
+            label=(
+                get_localized_text(
+                    f"Tabs_{tab_name}",
+                    language_index,
+                )
             ),
         )
         for tab_name in tab_creators
@@ -103,19 +122,19 @@ def handle_language_change(
 
     audio_state = create_audio_state_content(
         audio_path=audio_path,
-        enhanced_audio_path=enhanced_audio_path,
-        language_index=language_index,
+        enhanced_audio_path=(enhanced_audio_path),
+        language_index=(language_index),
     )
 
     spectrogram_update = create_spectrogram_plot_update_from_paths(
         audio_path=audio_path,
-        enhanced_audio_path=enhanced_audio_path,
-        language_index=language_index,
+        enhanced_audio_path=(enhanced_audio_path),
+        language_index=(language_index),
     )
 
     routing_updates = create_routing_plot_updates(
         routing=routing,
-        language_index=language_index,
+        language_index=(language_index),
     )
 
     processing_time_button_value = (
@@ -132,104 +151,191 @@ def handle_language_change(
 
     return LanguageChangeUpdates(
         flag=gr.update(
-            value=create_language_flag_html(language_index),
+            value=(create_language_flag_html(language_index)),
         ),
-        tabs=create_tab_language_updates(language_index),
+        tabs=(create_tab_language_updates(language_index)),
         title=gr.update(
-            value=create_application_title_markdown(language_index),
+            value=(create_application_title_markdown(language_index)),
         ),
         status=gr.update(
-            value=audio_state.status_text,
+            value=(audio_state.status_text),
         ),
         audio_input=gr.update(
-            label=create_audio_component_label(
-                "Labels_NOISY_AUDIO",
-                language_index,
-                audio_filename,
+            label=(
+                create_audio_component_label(
+                    "Labels_NOISY_AUDIO",
+                    language_index,
+                    audio_filename,
+                )
             ),
         ),
         examples_title=gr.update(
-            value=f"### {get_localized_text('Labels_EXAMPLES', language_index)}",
-        ),
-        examples_placeholder=gr.update(
-            value=get_localized_text(
-                "Texts_EXAMPLES_PLACEHOLDER",
-                language_index,
+            value=(
+                f"### "
+                f"{
+                    get_localized_text(
+                        'Labels_EXAMPLES',
+                        language_index,
+                    )
+                }"
             ),
         ),
+        examples_placeholder=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Texts_EXAMPLES_PLACEHOLDER",
+                        language_index,
+                    )
+                ),
+            )
+        ),
         run_button=gr.update(
-            value=get_localized_text(
-                "Labels_RUN",
-                language_index,
+            value=(
+                get_localized_text(
+                    "Labels_RUN",
+                    language_index,
+                )
             ),
         ),
         clear_button=gr.update(
-            value=get_localized_text(
-                "Labels_CLEAR",
-                language_index,
+            value=(
+                get_localized_text(
+                    "Labels_CLEAR",
+                    language_index,
+                )
             ),
         ),
         audio_info_button=gr.update(
-            value=get_localized_text(
-                "Labels_AUDIO_INFO_TITLE",
-                language_index,
+            value=(
+                get_localized_text(
+                    "Labels_AUDIO_INFO_TITLE",
+                    language_index,
+                )
             ),
         ),
-        processing_time_button=gr.update(
-            value=processing_time_button_value,
+        processing_time_button=(
+            gr.update(
+                value=(processing_time_button_value),
+            )
         ),
-        audio_info_modal_title=gr.update(
-            value=f"### {get_localized_text('Labels_AUDIO_INFO_TITLE', language_index)}",
+        audio_info_modal_title=(
+            gr.update(
+                value=(
+                    f"### "
+                    f"{
+                        get_localized_text(
+                            'Labels_AUDIO_INFO_TITLE',
+                            language_index,
+                        )
+                    }"
+                ),
+            )
         ),
-        audio_info_modal_content=gr.update(
-            value=audio_state.audio_info_html,
+        audio_info_modal_content=(
+            gr.update(
+                value=(audio_state.audio_info_html),
+            )
         ),
         enhanced_audio=gr.update(
-            label=create_audio_component_label(
-                "Labels_ENHANCED_AUDIO",
-                language_index,
-                audio_filename,
+            label=(
+                create_audio_component_label(
+                    "Labels_ENHANCED_AUDIO",
+                    language_index,
+                    audio_filename,
+                )
             ),
         ),
-        spectrogram_plot=spectrogram_update,
-        routing_plots=routing_updates,
+        spectrogram_plot=(spectrogram_update),
+        routing_plots=(routing_updates),
         settings_title=gr.update(
-            value=f"### {get_localized_text('Texts_SETTINGS_TITLE', language_index)}",
-        ),
-        settings_description=gr.update(
-            value=get_localized_text(
-                "Texts_SETTINGS_DESCRIPTION",
-                language_index,
+            value=(
+                f"### "
+                f"{
+                    get_localized_text(
+                        'Texts_SETTINGS_TITLE',
+                        language_index,
+                    )
+                }"
             ),
         ),
-        settings_placeholder=gr.update(
-            value=get_localized_text(
-                "Texts_SETTINGS_PLACEHOLDER",
-                language_index,
-            ),
+        settings_description=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Texts_SETTINGS_DESCRIPTION",
+                        language_index,
+                    )
+                ),
+            )
+        ),
+        settings_placeholder=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Texts_SETTINGS_PLACEHOLDER",
+                        language_index,
+                    )
+                ),
+            )
         ),
         about_app_title=gr.update(
-            value=f"# {get_localized_text('Texts_ABOUT_TITLE', language_index)}",
-        ),
-        about_app_description=gr.update(
-            value=get_localized_text(
-                "Texts_ABOUT_DESCRIPTION",
-                language_index,
+            value=(
+                f"# "
+                f"{
+                    get_localized_text(
+                        'Texts_ABOUT_TITLE',
+                        language_index,
+                    )
+                }"
             ),
         ),
-        about_app_placeholder=gr.update(
-            value=get_localized_text(
-                "Texts_ABOUT_PLACEHOLDER",
-                language_index,
-            ),
+        about_app_description=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Texts_ABOUT_DESCRIPTION",
+                        language_index,
+                    )
+                ),
+            )
         ),
-        requirements_title=gr.update(
-            value=f"### {get_localized_text('Texts_REQUIREMENTS_TITLE', language_index)}",
+        about_app_placeholder=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Texts_ABOUT_PLACEHOLDER",
+                        language_index,
+                    )
+                ),
+            )
         ),
-        requirements_placeholder=gr.update(
-            value=get_localized_text(
-                "Texts_REQUIREMENTS_PLACEHOLDER",
-                language_index,
-            ),
+        requirements_title=(
+            gr.update(
+                value=(
+                    f"### "
+                    f"{
+                        get_localized_text(
+                            'Texts_REQUIREMENTS_TITLE',
+                            language_index,
+                        )
+                    }"
+                ),
+            )
+        ),
+        requirements_description=(
+            gr.update(
+                value=(
+                    get_localized_text(
+                        "Requirements_DESCRIPTION",
+                        language_index,
+                    )
+                ),
+            )
+        ),
+        requirements_content=(
+            gr.update(
+                value=(create_initial_requirements_content_html(language_index)),
+            )
         ),
     )
