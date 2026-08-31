@@ -261,7 +261,7 @@ def create_application_tab(
                     cache_examples=False,
                     examples_per_page=EXAMPLES_PER_PAGE,
                     label="",
-                    example_labels=get_example_audio_labels(example_audio_paths),
+                    example_labels=(get_example_audio_labels(example_audio_paths)),
                     elem_id="application-examples",
                 )
 
@@ -389,7 +389,7 @@ def create_application_tab(
             with gr.Column(
                 scale=1,
                 min_width=0,
-                elem_classes="audio-info-modal-title-column",
+                elem_classes=("audio-info-modal-title-column"),
             ):
                 audio_info_title = get_localized_text(
                     "Labels_AUDIO_INFO_TITLE",
@@ -404,7 +404,7 @@ def create_application_tab(
             with gr.Column(
                 scale=0,
                 min_width=42,
-                elem_classes="audio-info-modal-close-column",
+                elem_classes=("audio-info-modal-close-column"),
             ):
                 audio_info_modal_close_button = gr.Button(
                     value="Close",
@@ -466,7 +466,7 @@ def create_application_tab(
 
         visualization_info_modal_content = gr.HTML(
             value="",
-            elem_classes="visualization-info-modal-content",
+            elem_classes=("visualization-info-modal-content"),
         )
 
     enhanced_audio = gr.Audio(
@@ -495,7 +495,7 @@ def create_application_tab(
             value=None,
             variant="secondary",
             size="sm",
-            interactive=True,
+            interactive=False,
             visible=False,
             elem_id="spectrogram-download-button",
             elem_classes=("application-visualization-download-button"),
@@ -536,9 +536,9 @@ def create_application_tab(
                 value=None,
                 variant="secondary",
                 size="sm",
-                interactive=True,
+                interactive=False,
                 visible=False,
-                elem_id="expert-occupancy-download-button",
+                elem_id=("expert-occupancy-download-button"),
                 elem_classes=("application-visualization-download-button"),
             )
 
@@ -577,9 +577,9 @@ def create_application_tab(
                 value=None,
                 variant="secondary",
                 size="sm",
-                interactive=True,
+                interactive=False,
                 visible=False,
-                elem_id="load-over-time-download-button",
+                elem_id=("load-over-time-download-button"),
                 elem_classes=("application-visualization-download-button"),
             )
 
@@ -621,9 +621,9 @@ def create_application_tab(
                 value=None,
                 variant="secondary",
                 size="sm",
-                interactive=True,
+                interactive=False,
                 visible=False,
-                elem_id="frequency-routing-download-button",
+                elem_id=("frequency-routing-download-button"),
                 elem_classes=("application-visualization-download-button"),
             )
 
@@ -662,7 +662,7 @@ def create_application_tab(
                 value=None,
                 variant="secondary",
                 size="sm",
-                interactive=True,
+                interactive=False,
                 visible=False,
                 elem_id="layer-routing-download-button",
                 elem_classes=("application-visualization-download-button"),
@@ -706,30 +706,30 @@ def create_application_tab(
         processing_time_button=processing_time_button,
         audio_info_modal=audio_info_modal,
         audio_info_modal_title=audio_info_modal_title,
-        audio_info_modal_content=audio_info_modal_content,
+        audio_info_modal_content=(audio_info_modal_content),
         audio_info_modal_close_button=(audio_info_modal_close_button),
         processing_modal=processing_modal,
-        processing_modal_content=processing_modal_content,
+        processing_modal_content=(processing_modal_content),
         processing_modal_close_button=(processing_modal_close_button),
         visualization_info_key_state=(visualization_info_key_state),
-        visualization_info_modal=visualization_info_modal,
+        visualization_info_modal=(visualization_info_modal),
         visualization_info_modal_content=(visualization_info_modal_content),
         visualization_info_modal_close_button=(visualization_info_modal_close_button),
         enhanced_audio=enhanced_audio,
         spectrogram_download_button=(spectrogram_download_button),
-        spectrogram_info_button=spectrogram_info_button,
+        spectrogram_info_button=(spectrogram_info_button),
         spectrogram_plot=spectrogram_plot,
         routing_state=routing_state,
-        processing_summary_state=processing_summary_state,
+        processing_summary_state=(processing_summary_state),
         expert_occupancy_download_button=(expert_occupancy_download_button),
         expert_occupancy_info_button=(expert_occupancy_info_button),
-        expert_occupancy_plot=expert_occupancy_plot,
+        expert_occupancy_plot=(expert_occupancy_plot),
         load_over_time_download_button=(load_over_time_download_button),
         load_over_time_info_button=(load_over_time_info_button),
-        load_over_time_plot=load_over_time_plot,
+        load_over_time_plot=(load_over_time_plot),
         frequency_routing_download_button=(frequency_routing_download_button),
         frequency_routing_info_button=(frequency_routing_info_button),
-        frequency_routing_plot=frequency_routing_plot,
+        frequency_routing_plot=(frequency_routing_plot),
         layer_routing_download_button=(layer_routing_download_button),
         layer_routing_info_button=(layer_routing_info_button),
         layer_routing_plot=layer_routing_plot,

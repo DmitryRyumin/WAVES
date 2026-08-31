@@ -74,6 +74,10 @@ SPECTROGRAM_COLORSCALE = "Cividis"
 SHOW_SPECTROGRAM = true
 SHOW_ROUTING = true
 
+[VisualizationExport]
+SHOW_TITLE = true
+SHOW_LANGUAGE_SUFFIX = true
+
 [ProgressStages]
 validation = 0.02
 audio_decoding = 0.05
@@ -109,6 +113,7 @@ AUDIO = [
 
 [Languages]
 CHOICES = [ "English", "Русский" ]
+CODES = [ "EN", "RU" ]
 DEFAULT = "English"
 
 

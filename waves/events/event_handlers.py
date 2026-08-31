@@ -10,7 +10,9 @@ License: MIT License
 
 from collections.abc import Iterator
 from functools import partial
+from threading import Lock
 from typing import Any, cast
+from uuid import uuid4
 
 import gradio as gr
 from gradio.components.plot import PlotData
@@ -65,12 +67,97 @@ from waves.ui.tabs import (
 from waves.ui.visualization_info import VisualizationInfoKey
 from waves.visualization.export import (
     VisualizationExportKey,
-    VisualizationPdfExports,
-    create_visualization_pdf_exports_from_plot_json,
+    create_visualization_pdf_export_directory,
+    create_visualization_pdf_export_from_plot_json,
+    remove_visualization_pdf_export_directory,
     remove_visualization_pdf_exports,
 )
 
 LOGGER = get_logger(__name__)
+
+VISUALIZATION_DOWNLOAD_BUTTON_CLASS = "application-visualization-download-button"
+
+VISUALIZATION_DOWNLOAD_PREPARING_CLASS = "is-preparing"
+
+VISUALIZATION_EXPORT_SEQUENCE = (
+    VisualizationExportKey.EXPERT_OCCUPANCY,
+    VisualizationExportKey.LAYER_ROUTING,
+    VisualizationExportKey.FREQUENCY_ROUTING,
+    VisualizationExportKey.LOAD_OVER_TIME,
+    VisualizationExportKey.SPECTROGRAM,
+)
+
+_VISUALIZATION_EXPORT_GENERATIONS: dict[
+    str,
+    str,
+] = {}
+
+_VISUALIZATION_EXPORT_GENERATIONS_LOCK = Lock()
+
+
+def _get_visualization_export_session_key(
+    request: gr.Request,
+) -> str:
+    """Return a stable session key for visualization export coordination."""
+
+    return request.session_hash or "default"
+
+
+def _begin_visualization_export_generation(
+    request: gr.Request,
+) -> str:
+    """Start a new PDF export generation for the current session."""
+
+    generation = uuid4().hex
+
+    session_key = _get_visualization_export_session_key(request)
+
+    with _VISUALIZATION_EXPORT_GENERATIONS_LOCK:
+        _VISUALIZATION_EXPORT_GENERATIONS[session_key] = generation
+
+    return generation
+
+
+def _invalidate_visualization_export_generation(
+    request: gr.Request,
+) -> None:
+    """Invalidate any active PDF export generation for the current session."""
+
+    session_key = _get_visualization_export_session_key(request)
+
+    with _VISUALIZATION_EXPORT_GENERATIONS_LOCK:
+        _VISUALIZATION_EXPORT_GENERATIONS.pop(
+            session_key,
+            None,
+        )
+
+
+def _is_current_visualization_export_generation(
+    request: gr.Request,
+    generation: str,
+) -> bool:
+    """Return whether an export generation is still current."""
+
+    session_key = _get_visualization_export_session_key(request)
+
+    with _VISUALIZATION_EXPORT_GENERATIONS_LOCK:
+        return _VISUALIZATION_EXPORT_GENERATIONS.get(session_key) == generation
+
+
+def _finish_visualization_export_generation(
+    request: gr.Request,
+    generation: str,
+) -> None:
+    """Remove a completed generation without affecting a newer one."""
+
+    session_key = _get_visualization_export_session_key(request)
+
+    with _VISUALIZATION_EXPORT_GENERATIONS_LOCK:
+        if _VISUALIZATION_EXPORT_GENERATIONS.get(session_key) == generation:
+            _VISUALIZATION_EXPORT_GENERATIONS.pop(
+                session_key,
+                None,
+            )
 
 
 def setup_app_event_handlers(
@@ -114,6 +201,14 @@ def setup_app_event_handlers(
         app_content.frequency_routing_info_button,
         app_content.load_over_time_info_button,
     ]
+
+    visualization_download_buttons = {
+        VisualizationExportKey.SPECTROGRAM: (app_content.spectrogram_download_button),
+        VisualizationExportKey.EXPERT_OCCUPANCY: (app_content.expert_occupancy_download_button),
+        VisualizationExportKey.LAYER_ROUTING: (app_content.layer_routing_download_button),
+        VisualizationExportKey.FREQUENCY_ROUTING: (app_content.frequency_routing_download_button),
+        VisualizationExportKey.LOAD_OVER_TIME: (app_content.load_over_time_download_button),
+    }
 
     visualization_download_button_components = [
         app_content.spectrogram_download_button,
@@ -162,8 +257,11 @@ def setup_app_event_handlers(
         routing: RoutingTelemetry | None,
         audio_filename: str | None,
         processing_summary: ProcessingSummary | None,
+        request: gr.Request,
     ) -> dict[Any, Any]:
         """Map named language updates to their Gradio components."""
+
+        _invalidate_visualization_export_generation(request)
 
         updates = handle_language_change(
             language=language,
@@ -258,8 +356,11 @@ def setup_app_event_handlers(
         audio_path: str | None,
         enhanced_audio_path: str | None,
         language: str,
+        request: gr.Request,
     ) -> dict[Any, Any]:
         """Handle an audio sample loaded from a file."""
+
+        _invalidate_visualization_export_generation(request)
 
         updates = handle_audio_change(
             audio_path=audio_path,
@@ -274,8 +375,11 @@ def setup_app_event_handlers(
         audio_path: str | None,
         enhanced_audio_path: str | None,
         language: str,
+        request: gr.Request,
     ) -> dict[Any, Any]:
         """Handle an audio sample recorded in the browser."""
+
+        _invalidate_visualization_export_generation(request)
 
         updates = handle_audio_change(
             audio_path=audio_path,
@@ -327,8 +431,11 @@ def setup_app_event_handlers(
         enhanced_audio_path: str | None,
         language: str,
         audio_filename: str | None,
+        request: gr.Request,
     ) -> dict[Any, Any]:
         """Immediately lock the interface and show the processing modal."""
+
+        _invalidate_visualization_export_generation(request)
 
         updates = handle_enhancement_started(
             audio_path=audio_path,
@@ -361,8 +468,11 @@ def setup_app_event_handlers(
     def handle_clear_application_event(
         language: str,
         enhanced_audio_path: str | None,
+        request: gr.Request,
     ) -> dict[Any, Any]:
         """Map named clear-state updates to their Gradio components."""
+
+        _invalidate_visualization_export_generation(request)
 
         updates: ClearApplicationUpdates = handle_clear_application(
             language=language,
@@ -455,51 +565,95 @@ def setup_app_event_handlers(
 
         return map_visualization_info_modal_updates(updates)
 
-    def map_visualization_pdf_exports(
-        exports: VisualizationPdfExports,
-    ) -> dict[Any, Any]:
-        """Map generated PDF paths to visualization download buttons."""
+    def create_visualization_download_button_update(
+        *,
+        path: str | None,
+        visible: bool,
+        preparing: bool,
+    ) -> Any:
+        """Create one visualization PDF download button update."""
 
-        return {
-            app_content.spectrogram_download_button: (
-                gr.update(
-                    value=exports.spectrogram,
-                    visible=(exports.spectrogram is not None),
-                )
-            ),
-            app_content.expert_occupancy_download_button: (
-                gr.update(
-                    value=(exports.expert_occupancy),
-                    visible=(exports.expert_occupancy is not None),
-                )
-            ),
-            app_content.layer_routing_download_button: (
-                gr.update(
-                    value=(exports.layer_routing),
-                    visible=(exports.layer_routing is not None),
-                )
-            ),
-            app_content.frequency_routing_download_button: (
-                gr.update(
-                    value=(exports.frequency_routing),
-                    visible=(exports.frequency_routing is not None),
-                )
-            ),
-            app_content.load_over_time_download_button: (
-                gr.update(
-                    value=(exports.load_over_time),
-                    visible=(exports.load_over_time is not None),
-                )
-            ),
-        }
+        classes = [VISUALIZATION_DOWNLOAD_BUTTON_CLASS]
+
+        if preparing:
+            classes.append(VISUALIZATION_DOWNLOAD_PREPARING_CLASS)
+
+        return gr.update(
+            value=path,
+            visible=visible,
+            interactive=(visible and not preparing and path is not None),
+            elem_classes=classes,
+        )
 
     def hide_visualization_pdf_exports() -> dict[
         Any,
         Any,
     ]:
-        """Hide all visualization PDF download buttons."""
+        """Hide every visualization PDF download button."""
 
-        return map_visualization_pdf_exports(VisualizationPdfExports())
+        return {
+            button: (
+                create_visualization_download_button_update(
+                    path=None,
+                    visible=False,
+                    preparing=False,
+                )
+            )
+            for button in (visualization_download_button_components)
+        }
+
+    def map_visualization_pdf_preparing(
+        plot_data: dict[
+            VisualizationExportKey,
+            str | None,
+        ],
+    ) -> dict[Any, Any]:
+        """Show animated preparation states for available visualizations."""
+
+        return {
+            visualization_download_buttons[export_key]: (
+                create_visualization_download_button_update(
+                    path=None,
+                    visible=(plot_json is not None),
+                    preparing=(plot_json is not None),
+                )
+            )
+            for (
+                export_key,
+                plot_json,
+            ) in plot_data.items()
+        }
+
+    def map_visualization_pdf_ready(
+        export_key: VisualizationExportKey,
+        path: str,
+    ) -> dict[Any, Any]:
+        """Mark one visualization PDF as ready for download."""
+
+        return {
+            visualization_download_buttons[export_key]: (
+                create_visualization_download_button_update(
+                    path=path,
+                    visible=True,
+                    preparing=False,
+                )
+            )
+        }
+
+    def map_visualization_pdf_failed(
+        export_key: VisualizationExportKey,
+    ) -> dict[Any, Any]:
+        """Hide one visualization download button after export failure."""
+
+        return {
+            visualization_download_buttons[export_key]: (
+                create_visualization_download_button_update(
+                    path=None,
+                    visible=False,
+                    preparing=False,
+                )
+            )
+        }
 
     def handle_clear_visualization_pdf_exports(
         spectrogram_path: str | None,
@@ -528,13 +682,20 @@ def setup_app_event_handlers(
         layer_routing_plot: PlotData | None,
         frequency_routing_plot: PlotData | None,
         load_over_time_plot: PlotData | None,
+        language: str,
         spectrogram_path: str | None,
         expert_occupancy_path: str | None,
         layer_routing_path: str | None,
         frequency_routing_path: str | None,
         load_over_time_path: str | None,
-    ) -> dict[Any, Any]:
-        """Regenerate white-theme PDF exports for visible Plotly figures."""
+        request: gr.Request,
+    ) -> Iterator[
+        dict[
+            Any,
+            Any,
+        ]
+    ]:
+        """Stream independent PDF export readiness updates to the interface."""
 
         remove_visualization_pdf_exports(
             (
@@ -546,7 +707,10 @@ def setup_app_event_handlers(
             )
         )
 
-        plot_data = {
+        plot_data: dict[
+            VisualizationExportKey,
+            str | None,
+        ] = {
             VisualizationExportKey.SPECTROGRAM: (
                 spectrogram_plot.plot if (spectrogram_plot is not None and spectrogram_plot.type == "plotly") else None
             ),
@@ -572,14 +736,91 @@ def setup_app_event_handlers(
             ),
         }
 
+        if not any(plot_json is not None for plot_json in plot_data.values()):
+            yield (hide_visualization_pdf_exports())
+            return
+
+        generation = _begin_visualization_export_generation(request)
+
+        export_directory = None
+
+        generated_paths: list[str] = []
+
         try:
-            exports = create_visualization_pdf_exports_from_plot_json(plot_data)
-        except Exception:
-            LOGGER.exception("Failed to export WAVES visualizations to PDF.")
+            yield (map_visualization_pdf_preparing(plot_data))
 
-            return hide_visualization_pdf_exports()
+            if not (
+                _is_current_visualization_export_generation(
+                    request,
+                    generation,
+                )
+            ):
+                return
 
-        return map_visualization_pdf_exports(exports)
+            export_directory = create_visualization_pdf_export_directory()
+
+            for export_key in VISUALIZATION_EXPORT_SEQUENCE:
+                plot_json = plot_data[export_key]
+
+                if plot_json is None:
+                    continue
+
+                if not (
+                    _is_current_visualization_export_generation(
+                        request,
+                        generation,
+                    )
+                ):
+                    remove_visualization_pdf_export_directory(export_directory)
+                    return
+
+                try:
+                    export_path = create_visualization_pdf_export_from_plot_json(
+                        export_key=export_key,
+                        plot_json=plot_json,
+                        export_directory=(export_directory),
+                        language=language,
+                    )
+                except Exception:
+                    LOGGER.exception(
+                        "Failed to export WAVES visualization '%s' to PDF.",
+                        export_key.value,
+                    )
+
+                    if _is_current_visualization_export_generation(
+                        request,
+                        generation,
+                    ):
+                        yield (map_visualization_pdf_failed(export_key))
+
+                    continue
+
+                generated_paths.append(export_path)
+
+                if not (
+                    _is_current_visualization_export_generation(
+                        request,
+                        generation,
+                    )
+                ):
+                    remove_visualization_pdf_export_directory(export_directory)
+                    return
+
+                yield (
+                    map_visualization_pdf_ready(
+                        export_key,
+                        export_path,
+                    )
+                )
+
+            if not generated_paths:
+                remove_visualization_pdf_export_directory(export_directory)
+
+        finally:
+            _finish_visualization_export_generation(
+                request,
+                generation,
+            )
 
     language_outputs = [
         language_selector.flag,
@@ -661,6 +902,7 @@ def setup_app_event_handlers(
         app_content.layer_routing_plot,
         app_content.frequency_routing_plot,
         app_content.load_over_time_plot,
+        language_selector.dropdown,
         *visualization_download_button_components,
     ]
 
@@ -834,7 +1076,7 @@ def setup_app_event_handlers(
 
     upload_audio_change_event.then(
         fn=handle_clear_visualization_pdf_exports,
-        inputs=visualization_pdf_cleanup_inputs,
+        inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
         show_progress="hidden",
@@ -855,7 +1097,7 @@ def setup_app_event_handlers(
 
     recorded_audio_change_event.then(
         fn=handle_clear_visualization_pdf_exports,
-        inputs=visualization_pdf_cleanup_inputs,
+        inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
         show_progress="hidden",
@@ -919,7 +1161,7 @@ def setup_app_event_handlers(
 
     clear_application_event.then(
         fn=handle_clear_visualization_pdf_exports,
-        inputs=visualization_pdf_cleanup_inputs,
+        inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
         show_progress="hidden",
@@ -939,7 +1181,7 @@ def setup_app_event_handlers(
 
     audio_clear_event.then(
         fn=handle_clear_visualization_pdf_exports,
-        inputs=visualization_pdf_cleanup_inputs,
+        inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
         show_progress="hidden",

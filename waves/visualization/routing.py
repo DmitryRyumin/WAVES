@@ -1871,7 +1871,8 @@ def create_load_over_time_figure(
                 f"{window_label}: "
                 f"{window_index}<br>"
                 f"{window_range_label}: "
-                f"{start_time:.2f}-{end_time:.2f} "
+                f"{start_time:.2f}-"
+                f"{end_time:.2f} "
                 f"{seconds_unit}<br>"
                 f"{window_center_label}: "
                 f"{center_time:.2f} "
@@ -1938,15 +1939,16 @@ def create_load_over_time_figure(
     )
 
     figure.add_annotation(
-        x=end_seconds,
+        x=1.0,
         y=uniform_percent,
-        xref="x",
+        xref="paper",
         yref="y",
-        text=f"{uniform_label} {uniform_percent:.2f}%",
+        text=(f"{uniform_label} {uniform_percent:.2f}%"),
         showarrow=False,
-        xanchor="right",
-        yanchor="bottom",
-        yshift=5,
+        textangle=-90,
+        xanchor="center",
+        yanchor="middle",
+        xshift=20,
         font={
             "size": 10,
             "color": "#F59E0B",
@@ -1957,8 +1959,8 @@ def create_load_over_time_figure(
         y_min,
         y_max,
     ) = _get_time_load_y_range(
-        occupancy_matrix=occupancy_matrix,
-        uniform_percent=uniform_percent,
+        occupancy_matrix=(occupancy_matrix),
+        uniform_percent=(uniform_percent),
     )
 
     figure.update_layout(
@@ -1976,15 +1978,15 @@ def create_load_over_time_figure(
         plot_bgcolor="rgba(0,0,0,0)",
         margin={
             "l": 72,
-            "r": 28,
+            "r": 48,
             "t": 78,
             "b": 112,
         },
         height=430,
         hovermode="closest",
         hoverlabel={
-            "bgcolor": "rgba(17,24,39,0.96)",
-            "bordercolor": "rgba(255,255,255,0.18)",
+            "bgcolor": ("rgba(17,24,39,0.96)"),
+            "bordercolor": ("rgba(255,255,255,0.18)"),
             "font": {
                 "color": "#F9FAFB",
                 "size": 12,
@@ -1997,13 +1999,13 @@ def create_load_over_time_figure(
             "xanchor": "center",
             "y": -0.30,
             "yanchor": "top",
-            "bgcolor": "rgba(0,0,0,0)",
+            "bgcolor": ("rgba(0,0,0,0)"),
             "traceorder": "normal",
             "font": {
                 "size": 11,
             },
         },
-        uirevision="routing-load-over-time",
+        uirevision=("routing-load-over-time"),
     )
 
     figure.update_xaxes(
@@ -2022,7 +2024,7 @@ def create_load_over_time_figure(
             "size": 11,
         },
         showgrid=True,
-        gridcolor="rgba(127,127,127,0.16)",
+        gridcolor=("rgba(127,127,127,0.16)"),
         gridwidth=1,
         zeroline=False,
         showline=True,
@@ -2049,7 +2051,7 @@ def create_load_over_time_figure(
             "size": 11,
         },
         showgrid=True,
-        gridcolor="rgba(127,127,127,0.16)",
+        gridcolor=("rgba(127,127,127,0.16)"),
         gridwidth=1,
         zeroline=False,
         showline=True,

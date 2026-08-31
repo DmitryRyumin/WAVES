@@ -8,8 +8,8 @@ Description: White-theme PDF export utilities for WAVES Plotly visualizations.
 License: MIT License
 """
 
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from collections.abc import Iterable
+from contextlib import suppress
 from enum import StrEnum
 from pathlib import Path
 import shutil
@@ -18,6 +18,11 @@ from typing import cast
 
 import plotly.graph_objects as go
 import plotly.io as pio
+
+from waves.config import (
+    get_config_bool,
+    get_config_str_list,
+)
 
 
 class VisualizationExportKey(StrEnum):
@@ -30,47 +35,17 @@ class VisualizationExportKey(StrEnum):
     LOAD_OVER_TIME = "load_over_time"
 
 
-@dataclass(frozen=True, slots=True)
-class VisualizationPdfExports:
-    """Filesystem paths for generated visualization PDF files."""
-
-    spectrogram: str | None = None
-    expert_occupancy: str | None = None
-    layer_routing: str | None = None
-    frequency_routing: str | None = None
-    load_over_time: str | None = None
-
-    def as_tuple(
-        self,
-    ) -> tuple[
-        str | None,
-        str | None,
-        str | None,
-        str | None,
-        str | None,
-    ]:
-        """Return export paths in application UI order."""
-
-        return (
-            self.spectrogram,
-            self.expert_occupancy,
-            self.layer_routing,
-            self.frequency_routing,
-            self.load_over_time,
-        )
-
-
 EXPORT_DIRECTORY_PREFIX = "waves-visualizations-"
 
-EXPORT_FILENAMES: dict[
+EXPORT_FILENAME_STEMS: dict[
     VisualizationExportKey,
     str,
 ] = {
-    VisualizationExportKey.SPECTROGRAM: ("WAVES_Spectrogram_Comparison.pdf"),
-    VisualizationExportKey.EXPERT_OCCUPANCY: ("WAVES_Expert_Occupancy.pdf"),
-    VisualizationExportKey.LAYER_ROUTING: ("WAVES_Layer_Routing.pdf"),
-    VisualizationExportKey.FREQUENCY_ROUTING: ("WAVES_Expert_Load_by_Frequency.pdf"),
-    VisualizationExportKey.LOAD_OVER_TIME: ("WAVES_Expert_Load_over_Time.pdf"),
+    VisualizationExportKey.SPECTROGRAM: ("WAVES_Spectrogram_Comparison"),
+    VisualizationExportKey.EXPERT_OCCUPANCY: ("WAVES_Expert_Occupancy"),
+    VisualizationExportKey.LAYER_ROUTING: ("WAVES_Layer_Routing"),
+    VisualizationExportKey.FREQUENCY_ROUTING: ("WAVES_Expert_Load_by_Frequency"),
+    VisualizationExportKey.LOAD_OVER_TIME: ("WAVES_Expert_Load_over_Time"),
 }
 
 EXPORT_WIDTHS: dict[
@@ -84,12 +59,33 @@ EXPORT_WIDTHS: dict[
     VisualizationExportKey.LOAD_OVER_TIME: 900,
 }
 
+TITLELESS_TOP_MARGINS: dict[
+    VisualizationExportKey,
+    int,
+] = {
+    VisualizationExportKey.SPECTROGRAM: 44,
+    VisualizationExportKey.EXPERT_OCCUPANCY: 32,
+    VisualizationExportKey.LAYER_ROUTING: 28,
+    VisualizationExportKey.FREQUENCY_ROUTING: 32,
+    VisualizationExportKey.LOAD_OVER_TIME: 32,
+}
+
 DEFAULT_EXPORT_HEIGHT = 500
 
 EXPORT_BACKGROUND_COLOR = "#FFFFFF"
 EXPORT_TEXT_COLOR = "#111827"
 EXPORT_AXIS_COLOR = "#6B7280"
 EXPORT_GRID_COLOR = "rgba(107, 114, 128, 0.16)"
+
+DEFAULT_LANGUAGE_CHOICES = [
+    "English",
+    "Русский",
+]
+
+DEFAULT_LANGUAGE_CODES = [
+    "EN",
+    "RU",
+]
 
 
 def create_plotly_figure_from_json(
@@ -170,6 +166,70 @@ def _resolve_export_dimensions(
     )
 
 
+def _resolve_language_code(
+    language: str,
+) -> str:
+    """Resolve the configured short code for the selected UI language."""
+
+    language_choices = get_config_str_list(
+        "Languages_CHOICES",
+        DEFAULT_LANGUAGE_CHOICES,
+    )
+
+    language_codes = get_config_str_list(
+        "Languages_CODES",
+        DEFAULT_LANGUAGE_CODES,
+    )
+
+    try:
+        language_index = language_choices.index(language)
+    except ValueError:
+        language_index = 0
+
+    if language_index < len(language_codes):
+        language_code = language_codes[language_index].strip().upper()
+
+        if language_code:
+            return language_code
+
+    return f"LANG{language_index + 1}"
+
+
+def _create_export_filename(
+    export_key: VisualizationExportKey,
+    language: str,
+) -> str:
+    """Create the configured PDF filename for one visualization."""
+
+    filename_stem = EXPORT_FILENAME_STEMS[export_key]
+
+    if get_config_bool(
+        "VisualizationExport_SHOW_LANGUAGE_SUFFIX",
+        True,
+    ):
+        language_code = _resolve_language_code(language)
+
+        filename_stem = f"{filename_stem}_{language_code}"
+
+    return f"{filename_stem}.pdf"
+
+
+def _is_visualization_export_filename(
+    filename: str,
+) -> bool:
+    """Return whether a filename belongs to a WAVES visualization export."""
+
+    if not filename.endswith(".pdf"):
+        return False
+
+    filename_stem = filename.removesuffix(".pdf")
+
+    return any(
+        filename_stem == allowed_stem or filename_stem.startswith(f"{allowed_stem}_")
+        for allowed_stem in EXPORT_FILENAME_STEMS.values()
+    )
+
+
 def _create_white_export_figure(
     figure: go.Figure,
     export_key: VisualizationExportKey,
@@ -206,6 +266,17 @@ def _create_white_export_figure(
         },
     )
 
+    if not get_config_bool(
+        "VisualizationExport_SHOW_TITLE",
+        True,
+    ):
+        export_figure.update_layout(
+            title=None,
+            margin={
+                "t": TITLELESS_TOP_MARGINS[export_key],
+            },
+        )
+
     export_figure.update_xaxes(
         color=EXPORT_TEXT_COLOR,
         linecolor=EXPORT_AXIS_COLOR,
@@ -239,122 +310,101 @@ def _create_white_export_figure(
     )
 
 
-def create_visualization_pdf_exports_from_plot_json(
-    plots: Mapping[
-        VisualizationExportKey,
-        str | None,
-    ],
-) -> VisualizationPdfExports:
-    """Export serialized Plotly figures to white-theme PDF files."""
+def create_visualization_pdf_export_directory() -> Path:
+    """Create a temporary directory for one set of visualization PDF files."""
 
-    figures: dict[
-        VisualizationExportKey,
-        go.Figure | None,
-    ] = {
-        export_key: (create_plotly_figure_from_json(plot_json) if plot_json is not None else None)
-        for (
-            export_key,
-            plot_json,
-        ) in plots.items()
-    }
-
-    return create_visualization_pdf_exports(figures)
-
-
-def create_visualization_pdf_exports(
-    figures: Mapping[
-        VisualizationExportKey,
-        go.Figure | None,
-    ],
-) -> VisualizationPdfExports:
-    """Export available Plotly figures to tightly sized white-theme PDF files."""
-
-    export_directory = Path(
+    return Path(
         tempfile.mkdtemp(
             prefix=EXPORT_DIRECTORY_PREFIX,
         )
     )
 
-    export_figures: list[go.Figure] = []
 
-    export_paths: list[str | Path] = []
+def create_visualization_pdf_export_from_plot_json(
+    export_key: VisualizationExportKey,
+    plot_json: str,
+    export_directory: Path,
+    language: str,
+) -> str:
+    """Export one serialized Plotly visualization to a white-theme PDF."""
 
-    export_widths: list[int | None] = []
+    figure = create_plotly_figure_from_json(plot_json)
 
-    export_heights: list[int | None] = []
+    return create_visualization_pdf_export(
+        export_key=export_key,
+        figure=figure,
+        export_directory=export_directory,
+        language=language,
+    )
 
-    generated_paths: dict[
-        VisualizationExportKey,
-        str,
-    ] = {}
+
+def create_visualization_pdf_export(
+    export_key: VisualizationExportKey,
+    figure: go.Figure,
+    export_directory: Path,
+    language: str,
+) -> str:
+    """Export one Plotly visualization to a tightly sized white-theme PDF."""
+
+    (
+        export_figure,
+        width,
+        height,
+    ) = _create_white_export_figure(
+        figure,
+        export_key,
+    )
+
+    export_path = export_directory / _create_export_filename(
+        export_key,
+        language,
+    )
 
     try:
-        for export_key in VisualizationExportKey:
-            figure = figures.get(export_key)
-
-            if figure is None:
-                continue
-
-            (
-                export_figure,
-                width,
-                height,
-            ) = _create_white_export_figure(
-                figure,
-                export_key,
-            )
-
-            export_path = export_directory / EXPORT_FILENAMES[export_key]
-
-            export_figures.append(export_figure)
-
-            export_paths.append(export_path)
-
-            export_widths.append(width)
-
-            export_heights.append(height)
-
-            generated_paths[export_key] = str(export_path)
-
-        if not export_figures:
-            export_directory.rmdir()
-
-            return VisualizationPdfExports()
-
-        pio.write_images(
-            fig=export_figures,
-            file=export_paths,
+        pio.write_image(
+            fig=export_figure,
+            file=export_path,
             format="pdf",
-            width=export_widths,
-            height=export_heights,
+            width=width,
+            height=height,
             scale=1,
         )
-
     except Exception:
-        shutil.rmtree(
-            export_directory,
-            ignore_errors=True,
-        )
+        with suppress(OSError):
+            export_path.unlink(missing_ok=True)
 
         raise
 
-    return VisualizationPdfExports(
-        spectrogram=(generated_paths.get(VisualizationExportKey.SPECTROGRAM)),
-        expert_occupancy=(generated_paths.get(VisualizationExportKey.EXPERT_OCCUPANCY)),
-        layer_routing=(generated_paths.get(VisualizationExportKey.LAYER_ROUTING)),
-        frequency_routing=(generated_paths.get(VisualizationExportKey.FREQUENCY_ROUTING)),
-        load_over_time=(generated_paths.get(VisualizationExportKey.LOAD_OVER_TIME)),
+    return str(export_path)
+
+
+def remove_visualization_pdf_export_directory(
+    export_directory: str | Path | None,
+) -> None:
+    """Safely remove one WAVES visualization export directory."""
+
+    if export_directory is None:
+        return
+
+    temporary_root = Path(tempfile.gettempdir()).resolve()
+
+    directory = Path(export_directory).expanduser().resolve()
+
+    if not directory.name.startswith(EXPORT_DIRECTORY_PREFIX) or not directory.is_relative_to(temporary_root):
+        return
+
+    shutil.rmtree(
+        directory,
+        ignore_errors=True,
     )
 
 
 def remove_visualization_pdf_exports(
     paths: Iterable[str | None],
 ) -> None:
-    """Remove WAVES-generated visualization PDF files and empty export directories."""
+    """Remove WAVES-generated visualization PDF files and empty directories."""
 
     temporary_root = Path(tempfile.gettempdir()).resolve()
-
-    allowed_filenames = set(EXPORT_FILENAMES.values())
 
     parent_directories: set[Path] = set()
 
@@ -365,7 +415,7 @@ def remove_visualization_pdf_exports(
         path = Path(raw_path).expanduser().resolve()
 
         if (
-            path.name not in allowed_filenames
+            not _is_visualization_export_filename(path.name)
             or not path.parent.name.startswith(EXPORT_DIRECTORY_PREFIX)
             or not path.is_relative_to(temporary_root)
         ):
