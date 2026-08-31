@@ -39,7 +39,8 @@ from waves.ui.progress_modal import (
     create_processing_time_button_label,
 )
 from waves.ui.requirements import (
-    create_initial_requirements_content_html,
+    RequirementsSessionState,
+    create_requirements_content_html_from_state,
 )
 
 
@@ -115,6 +116,7 @@ def handle_language_change(
     routing: RoutingTelemetry | None,
     audio_filename: str | None,
     processing_summary: ProcessingSummary | None,
+    requirements_state: RequirementsSessionState | None,
 ) -> LanguageChangeUpdates:
     """Create named UI updates after language selection."""
 
@@ -335,7 +337,12 @@ def handle_language_change(
         ),
         requirements_content=(
             gr.update(
-                value=(create_initial_requirements_content_html(language_index)),
+                value=(
+                    create_requirements_content_html_from_state(
+                        language_index,
+                        requirements_state,
+                    )
+                ),
             )
         ),
     )

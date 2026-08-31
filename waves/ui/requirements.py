@@ -16,8 +16,6 @@ from html import escape
 from importlib import metadata
 import json
 import platform
-from threading import Lock
-import time
 import tomllib
 from typing import Final, cast
 from urllib.parse import quote
@@ -28,14 +26,8 @@ from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 
-from waves.config import (
-    PROJECT_ROOT,
-    get_config_str,
-)
-from waves.localization import (
-    get_language_index,
-    get_localized_text,
-)
+from waves.config import PROJECT_ROOT, get_config_str
+from waves.localization import get_language_index, get_localized_text
 from waves.logger import get_logger
 
 LOGGER = get_logger(__name__)
@@ -49,7 +41,6 @@ PYPI_HOME_URL: Final = "https://pypi.org/"
 PYPI_JSON_URL_TEMPLATE: Final = "https://pypi.org/pypi/{package_name}/json"
 
 PYPI_TIMEOUT_SECONDS: Final = 4.0
-PYPI_CACHE_TTL_SECONDS: Final = 1800.0
 PYPI_MAX_WORKERS: Final = 4
 
 PACKAGE_DISPLAY_NAMES: Final[
@@ -127,6 +118,7 @@ class RequirementsTabComponents:
     title: gr.Markdown
     description: gr.Markdown
     content: gr.HTML
+    session_state: gr.State
 
 
 @dataclass(
@@ -144,7 +136,7 @@ class RuntimeDependency:
     def canonical_name(
         self,
     ) -> str:
-        """Return the normalized package name used for cache lookup."""
+        """Return the normalized package name used for session-state lookup."""
 
         return canonicalize_name(self.requirement.name)
 
@@ -153,39 +145,22 @@ class RuntimeDependency:
     frozen=True,
     slots=True,
 )
-class LatestVersionCacheEntry:
-    """Cached latest-version result for one package."""
+class RequirementsSessionState:
+    """Per-browser-page PyPI version-check state."""
 
-    version: str | None
-    checked_at: float
+    latest_versions: tuple[
+        tuple[
+            str,
+            str | None,
+        ],
+        ...,
+    ]
 
+    pending_names: frozenset[str]
 
-_LATEST_VERSION_CACHE: dict[
-    str,
-    LatestVersionCacheEntry,
-] = {}
-
-_LATEST_VERSION_CACHE_LOCK = Lock()
-
-_LAST_PYPI_CHECK_AT: datetime | None = None
-
-_LAST_PYPI_CHECK_AT_LOCK = Lock()
-
-
-def _mark_pypi_check_completed() -> None:
-    """Record the completion time of the latest PyPI version check."""
-
-    global _LAST_PYPI_CHECK_AT
-
-    with _LAST_PYPI_CHECK_AT_LOCK:
-        _LAST_PYPI_CHECK_AT = datetime.now(UTC)
-
-
-def _get_last_pypi_check_at() -> datetime | None:
-    """Return the latest completed PyPI check timestamp."""
-
-    with _LAST_PYPI_CHECK_AT_LOCK:
-        return _LAST_PYPI_CHECK_AT
+    checked_at: datetime | None
+    resolved_name: str | None
+    completed: bool
 
 
 def _read_project_metadata() -> tuple[
@@ -264,6 +239,7 @@ def _get_installed_version(
 
     try:
         return metadata.version(package_name)
+
     except metadata.PackageNotFoundError:
         return None
 
@@ -287,6 +263,7 @@ def get_runtime_dependencies() -> tuple[
     for raw_requirement in raw_dependencies:
         try:
             requirement = Requirement(raw_requirement)
+
         except InvalidRequirement as error:
             msg = f"Invalid runtime requirement in pyproject.toml: {raw_requirement!r}."
 
@@ -304,48 +281,6 @@ def get_runtime_dependencies() -> tuple[
         requires_python,
         tuple(dependencies),
     )
-
-
-def _get_cached_latest_version(
-    package_name: str,
-) -> tuple[
-    bool,
-    str | None,
-]:
-    """Return a fresh cached PyPI result when available."""
-
-    canonical_name = canonicalize_name(package_name)
-
-    now = time.monotonic()
-
-    with _LATEST_VERSION_CACHE_LOCK:
-        entry = _LATEST_VERSION_CACHE.get(canonical_name)
-
-    if entry is None or (now - entry.checked_at) > PYPI_CACHE_TTL_SECONDS:
-        return (
-            False,
-            None,
-        )
-
-    return (
-        True,
-        entry.version,
-    )
-
-
-def _set_cached_latest_version(
-    package_name: str,
-    version: str | None,
-) -> None:
-    """Cache one PyPI latest-version lookup."""
-
-    canonical_name = canonicalize_name(package_name)
-
-    with _LATEST_VERSION_CACHE_LOCK:
-        _LATEST_VERSION_CACHE[canonical_name] = LatestVersionCacheEntry(
-            version=version,
-            checked_at=(time.monotonic()),
-        )
 
 
 def _fetch_latest_pypi_version(
@@ -481,6 +416,7 @@ def _resolve_dependency_status(
 
     try:
         installed = Version(installed_version)
+
     except InvalidVersion:
         return "incompatible"
 
@@ -500,6 +436,7 @@ def _resolve_dependency_status(
 
     try:
         latest = Version(latest_version)
+
     except InvalidVersion:
         return "unavailable"
 
@@ -577,7 +514,15 @@ def _create_package_cell_html(
 
     package_name = _get_package_display_name(dependency)
 
-    project_url = f"https://pypi.org/project/{quote(dependency.requirement.name, safe='')}/"
+    project_url = (
+        "https://pypi.org/project/"
+        f"{
+            quote(
+                dependency.requirement.name,
+                safe='',
+            )
+        }/"
+    )
 
     return (
         "<a "
@@ -729,10 +674,9 @@ def _create_runtime_summary_html(
 
 def _create_last_checked_html(
     language_index: int,
+    checked_at: datetime | None,
 ) -> str:
-    """Create the latest PyPI check timestamp."""
-
-    checked_at = _get_last_pypi_check_at()
+    """Create the current page session's latest PyPI-check timestamp."""
 
     if checked_at is None:
         return ""
@@ -742,7 +686,7 @@ def _create_last_checked_html(
         language_index,
     )
 
-    checked_time = checked_at.strftime("%H:%M")
+    checked_time = checked_at.astimezone(UTC).strftime("%H:%M")
 
     return (
         "<span "
@@ -751,36 +695,48 @@ def _create_last_checked_html(
         '<span aria-hidden="true">'
         " · "
         "</span>"
-        f"<strong>"
+        "<strong>"
         f"{checked_time} UTC"
-        f"</strong>"
+        "</strong>"
         "</span>"
+    )
+
+
+def _create_pending_session_state() -> RequirementsSessionState:
+    """Create a fresh pending state for a newly loaded browser page."""
+
+    (
+        _,
+        dependencies,
+    ) = get_runtime_dependencies()
+
+    return RequirementsSessionState(
+        latest_versions=(),
+        pending_names=frozenset(dependency.canonical_name for dependency in dependencies),
+        checked_at=None,
+        resolved_name=None,
+        completed=False,
     )
 
 
 def create_requirements_content_html(
     language_index: int,
+    session_state: RequirementsSessionState | None,
     *,
-    latest_versions: (
-        dict[
-            str,
-            str | None,
-        ]
-        | None
-    ) = None,
-    pending_names: set[str] | None = None,
-    resolved_name: str | None = None,
+    animate_resolved: bool = False,
 ) -> str:
-    """Render the complete Requirements table."""
+    """Render the complete Requirements table from per-page session state."""
 
     (
         requires_python,
         dependencies,
     ) = get_runtime_dependencies()
 
-    resolved_latest_versions = latest_versions or {}
+    resolved_state = session_state or _create_pending_session_state()
 
-    resolved_pending_names = pending_names or set()
+    latest_versions = dict(resolved_state.latest_versions)
+
+    pending_names = resolved_state.pending_names
 
     package_label = get_localized_text(
         "Requirements_COLUMN_PACKAGE",
@@ -822,9 +778,9 @@ def create_requirements_content_html(
     for dependency in dependencies:
         canonical_name = dependency.canonical_name
 
-        pending = canonical_name in resolved_pending_names
+        pending = canonical_name in pending_names
 
-        latest_version = resolved_latest_versions.get(canonical_name)
+        latest_version = latest_versions.get(canonical_name)
 
         status = _resolve_dependency_status(
             dependency,
@@ -847,7 +803,7 @@ def create_requirements_content_html(
         else:
             latest_html = f'<span class="requirements-value-unavailable">{escape(unavailable_label)}</span>'
 
-        row_class = " is-resolved" if canonical_name == resolved_name else ""
+        row_class = " is-resolved" if (animate_resolved and canonical_name == resolved_state.resolved_name) else ""
 
         rows.append(
             """
@@ -909,7 +865,14 @@ def create_requirements_content_html(
         language_index,
     )
 
-    last_checked_html = _create_last_checked_html(language_index) if not resolved_pending_names else ""
+    last_checked_html = (
+        _create_last_checked_html(
+            language_index,
+            resolved_state.checked_at,
+        )
+        if resolved_state.completed
+        else ""
+    )
 
     return f"""
     <section class="requirements-shell">
@@ -928,18 +891,23 @@ def create_requirements_content_html(
                         <th>
                             {escape(package_label)}
                         </th>
+
                         <th>
                             {escape(purpose_label)}
                         </th>
+
                         <th>
                             {escape(requirement_label)}
                         </th>
+
                         <th>
                             {escape(installed_label)}
                         </th>
+
                         <th>
                             {escape(latest_label)}
                         </th>
+
                         <th>
                             {escape(status_label)}
                         </th>
@@ -966,100 +934,99 @@ def create_requirements_content_html(
 def create_initial_requirements_content_html(
     language_index: int,
 ) -> str:
-    """Create cached Requirements content without network access."""
-
-    (
-        _,
-        dependencies,
-    ) = get_runtime_dependencies()
-
-    latest_versions: dict[
-        str,
-        str | None,
-    ] = {}
-
-    pending_names: set[str] = set()
-
-    for dependency in dependencies:
-        (
-            cache_hit,
-            latest_version,
-        ) = _get_cached_latest_version(dependency.requirement.name)
-
-        if cache_hit:
-            latest_versions[dependency.canonical_name] = latest_version
-        else:
-            pending_names.add(dependency.canonical_name)
+    """Create the initial pending table without making network requests."""
 
     return create_requirements_content_html(
         language_index,
-        latest_versions=(latest_versions),
-        pending_names=(pending_names),
+        None,
+        animate_resolved=False,
     )
 
 
-def stream_requirements_content_html(
+def create_requirements_content_html_from_state(
+    language_index: int,
+    session_state: RequirementsSessionState | None,
+) -> str:
+    """Render localized Requirements content without re-checking PyPI."""
+
+    return create_requirements_content_html(
+        language_index,
+        session_state,
+        animate_resolved=False,
+    )
+
+
+def render_requirements_session_state(
     language: str,
-) -> Iterator[str]:
-    """Stream PyPI version results into the Requirements table."""
+    session_state: RequirementsSessionState | None,
+) -> str:
+    """Render one streamed session-state update in the current language."""
 
     language_index = get_language_index(language)
+
+    return create_requirements_content_html(
+        language_index,
+        session_state,
+        animate_resolved=True,
+    )
+
+
+def stream_requirements_session_state(
+    session_state: RequirementsSessionState | None,
+) -> Iterator[RequirementsSessionState]:
+    """Check PyPI once for the current browser page."""
+
+    if session_state is not None and session_state.completed:
+        yield RequirementsSessionState(
+            latest_versions=tuple(session_state.latest_versions),
+            pending_names=frozenset(),
+            checked_at=(session_state.checked_at),
+            resolved_name=None,
+            completed=True,
+        )
+
+        return
 
     (
         _,
         dependencies,
     ) = get_runtime_dependencies()
 
-    latest_versions: dict[
-        str,
-        str | None,
-    ] = {}
+    dependency_by_name = {dependency.canonical_name: (dependency) for dependency in dependencies}
 
-    pending_names: set[str] = set()
+    latest_versions = dict(session_state.latest_versions) if session_state is not None else {}
 
-    dependencies_to_check: dict[
-        str,
-        RuntimeDependency,
-    ] = {}
+    completed_names = set(latest_versions)
 
-    for dependency in dependencies:
-        (
-            cache_hit,
-            latest_version,
-        ) = _get_cached_latest_version(dependency.requirement.name)
+    pending_names = set(dependency_by_name).difference(completed_names)
 
-        if cache_hit:
-            latest_versions[dependency.canonical_name] = latest_version
-
-            continue
-
-        pending_names.add(dependency.canonical_name)
-
-        dependencies_to_check[dependency.canonical_name] = dependency
-
-    yield (
-        create_requirements_content_html(
-            language_index,
-            latest_versions=(latest_versions),
-            pending_names=(pending_names),
-        )
+    initial_state = RequirementsSessionState(
+        latest_versions=tuple(sorted(latest_versions.items())),
+        pending_names=frozenset(pending_names),
+        checked_at=(session_state.checked_at if session_state is not None else None),
+        resolved_name=None,
+        completed=(not pending_names),
     )
 
-    if not dependencies_to_check:
+    yield initial_state
+
+    if not pending_names:
         return
+
+    dependencies_to_check = [dependency_by_name[name] for name in pending_names]
 
     max_workers = min(
         PYPI_MAX_WORKERS,
         len(dependencies_to_check),
     )
 
-    with ThreadPoolExecutor(max_workers=(max_workers)) as executor:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(
                 _fetch_latest_pypi_version,
                 dependency.requirement.name,
             ): dependency
-            for dependency in dependencies_to_check.values()
+            for dependency in dependencies_to_check
         }
 
         for future in as_completed(futures):
@@ -1067,6 +1034,7 @@ def stream_requirements_content_html(
 
             try:
                 latest_version = future.result()
+
             except Exception:
                 LOGGER.exception(
                     "Unexpected error while checking the latest version of '%s'.",
@@ -1075,24 +1043,18 @@ def stream_requirements_content_html(
 
                 latest_version = None
 
-            _set_cached_latest_version(
-                dependency.requirement.name,
-                latest_version,
-            )
-
             latest_versions[dependency.canonical_name] = latest_version
 
             pending_names.discard(dependency.canonical_name)
 
-            _mark_pypi_check_completed()
+            completed = not pending_names
 
-            yield (
-                create_requirements_content_html(
-                    language_index,
-                    latest_versions=(latest_versions),
-                    pending_names=(pending_names),
-                    resolved_name=(dependency.canonical_name),
-                )
+            yield RequirementsSessionState(
+                latest_versions=tuple(sorted(latest_versions.items())),
+                pending_names=frozenset(pending_names),
+                checked_at=(datetime.now(UTC) if completed else None),
+                resolved_name=(dependency.canonical_name),
+                completed=completed,
             )
 
 
@@ -1122,6 +1084,8 @@ def create_requirements_tab(
         elem_classes=("requirements-description"),
     )
 
+    session_state = gr.State(value=(_create_pending_session_state))
+
     content = gr.HTML(
         value=(create_initial_requirements_content_html(language_index)),
         elem_id="requirements-content",
@@ -1132,4 +1096,5 @@ def create_requirements_tab(
         title=title,
         description=description,
         content=content,
+        session_state=session_state,
     )

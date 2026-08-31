@@ -321,8 +321,8 @@ PROGRESS_DETAIL_ROUTING_VISUALIZATION = [ "Rendering expert routing...", "Пос
 
 [Requirements]
 DESCRIPTION = [
-    "Runtime environment and core Python dependencies used by WAVES. Installed versions are read from the active environment; latest releases are checked against PyPI.",
-    "Среда выполнения и основные Python-зависимости WAVES. Установленные версии определяются из активного окружения, а актуальные релизы проверяются через PyPI.",
+    "Runtime environment and core Python dependencies used by WAVES. Installed versions are read from the active environment; latest releases are checked against PyPI once per page load.",
+    "Среда выполнения и основные Python-зависимости WAVES. Установленные версии определяются из активного окружения, а актуальные релизы проверяются через PyPI один раз при загрузке страницы.",
 ]
 
 SUMMARY_PYTHON = [ "Python runtime", "Среда Python" ]
@@ -352,8 +352,8 @@ CHECKING_LATEST = [ "Checking latest version", "Проверка актуаль�
 VALUE_UNAVAILABLE = [ "—", "—" ]
 
 FOOTER = [
-    "Installed versions come from the active WAVES environment. Latest releases are refreshed from PyPI when the Requirements tab is opened and are cached briefly.",
-    "Установленные версии определяются из активного окружения WAVES. Актуальные релизы обновляются через PyPI при открытии вкладки и кратковременно кэшируются.",
+    "Installed versions come from the active WAVES environment. Latest releases are checked against PyPI once when this page is loaded. Reload the page to run a new check.",
+    "Установленные версии определяются из активного окружения WAVES. Актуальные релизы проверяются через PyPI один раз при загрузке страницы. Для новой проверки перезагрузите страницу.",
 ]
 
 PURPOSE_GRADIO = [ "Web application interface", "Веб-интерфейс приложения" ]

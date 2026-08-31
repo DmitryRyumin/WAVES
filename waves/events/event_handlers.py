@@ -59,8 +59,10 @@ from waves.ui.language_selector import (
 )
 from waves.ui.progress_modal import ProcessingSummary
 from waves.ui.requirements import (
+    RequirementsSessionState,
     RequirementsTabComponents,
-    stream_requirements_content_html,
+    render_requirements_session_state,
+    stream_requirements_session_state,
 )
 from waves.ui.settings import SettingsTabComponents
 from waves.ui.tabs import (
@@ -230,7 +232,10 @@ def setup_app_event_handlers(
 
     def map_visualization_info_button_updates(
         updates: VisualizationInfoButtonUpdates,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map visualization information button updates."""
 
         return {
@@ -243,7 +248,10 @@ def setup_app_event_handlers(
 
     def map_routing_updates(
         updates: RoutingPlotUpdates,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map named routing updates to their Gradio components."""
 
         return {
@@ -260,6 +268,7 @@ def setup_app_event_handlers(
         routing: RoutingTelemetry | None,
         audio_filename: str | None,
         processing_summary: ProcessingSummary | None,
+        requirements_state: RequirementsSessionState | None,
         request: gr.Request,
     ) -> dict[Any, Any]:
         """Map named language updates to their Gradio components."""
@@ -273,6 +282,7 @@ def setup_app_event_handlers(
             routing=routing,
             audio_filename=audio_filename,
             processing_summary=processing_summary,
+            requirements_state=requirements_state,
         )
 
         component_updates: dict[
@@ -319,7 +329,10 @@ def setup_app_event_handlers(
 
     def map_audio_change_updates(
         updates: AudioChangeUpdates,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map named input-audio updates to their Gradio components."""
 
         component_updates: dict[
@@ -361,14 +374,17 @@ def setup_app_event_handlers(
         enhanced_audio_path: str | None,
         language: str,
         request: gr.Request,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Handle an audio sample loaded from a file."""
 
         _invalidate_visualization_export_generation(request)
 
         updates = handle_audio_change(
             audio_path=audio_path,
-            enhanced_audio_path=enhanced_audio_path,
+            enhanced_audio_path=(enhanced_audio_path),
             language=language,
             audio_filename=(get_audio_display_filename(audio_path)),
         )
@@ -380,14 +396,17 @@ def setup_app_event_handlers(
         enhanced_audio_path: str | None,
         language: str,
         request: gr.Request,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Handle an audio sample recorded in the browser."""
 
         _invalidate_visualization_export_generation(request)
 
         updates = handle_audio_change(
             audio_path=audio_path,
-            enhanced_audio_path=enhanced_audio_path,
+            enhanced_audio_path=(enhanced_audio_path),
             language=language,
             audio_filename=(RECORDED_AUDIO_FILENAME),
         )
@@ -396,7 +415,10 @@ def setup_app_event_handlers(
 
     def map_enhancement_updates(
         updates: EnhancementUpdates,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map enhancement updates to Gradio components."""
 
         component_updates: dict[
@@ -436,7 +458,10 @@ def setup_app_event_handlers(
         language: str,
         audio_filename: str | None,
         request: gr.Request,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Immediately lock the interface and show the processing modal."""
 
         _invalidate_visualization_export_generation(request)
@@ -445,7 +470,7 @@ def setup_app_event_handlers(
             audio_path=audio_path,
             enhanced_audio_path=(enhanced_audio_path),
             language=language,
-            audio_filename=audio_filename,
+            audio_filename=(audio_filename),
         )
 
         return map_enhancement_updates(updates)
@@ -465,15 +490,18 @@ def setup_app_event_handlers(
         for updates in handle_run_enhancement(
             audio_path=audio_path,
             language=language,
-            audio_filename=audio_filename,
+            audio_filename=(audio_filename),
         ):
-            yield map_enhancement_updates(updates)
+            yield (map_enhancement_updates(updates))
 
     def handle_clear_application_event(
         language: str,
         enhanced_audio_path: str | None,
         request: gr.Request,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map named clear-state updates to their Gradio components."""
 
         _invalidate_visualization_export_generation(request)
@@ -520,7 +548,10 @@ def setup_app_event_handlers(
     def handle_show_processing_timing_event(
         summary: ProcessingSummary | None,
         language: str,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Open the completed processing timing modal."""
 
         updates: ProcessingModalUpdates = handle_show_processing_timing(
@@ -536,7 +567,10 @@ def setup_app_event_handlers(
 
     def map_visualization_info_modal_updates(
         updates: VisualizationInfoModalUpdates,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Map shared visualization information modal updates."""
 
         return {
@@ -549,7 +583,10 @@ def setup_app_event_handlers(
     def handle_show_visualization_info_event(
         visualization_key: VisualizationInfoKey,
         language: str,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Open information for one scientific visualization."""
 
         updates = handle_show_visualization_info(
@@ -611,7 +648,10 @@ def setup_app_event_handlers(
             VisualizationExportKey,
             str | None,
         ],
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Show animated preparation states for available visualizations."""
 
         return {
@@ -631,7 +671,10 @@ def setup_app_event_handlers(
     def map_visualization_pdf_ready(
         export_key: VisualizationExportKey,
         path: str,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Mark one visualization PDF as ready for download."""
 
         return {
@@ -646,7 +689,10 @@ def setup_app_event_handlers(
 
     def map_visualization_pdf_failed(
         export_key: VisualizationExportKey,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Hide one visualization download button after export failure."""
 
         return {
@@ -665,7 +711,10 @@ def setup_app_event_handlers(
         layer_routing_path: str | None,
         frequency_routing_path: str | None,
         load_over_time_path: str | None,
-    ) -> dict[Any, Any]:
+    ) -> dict[
+        Any,
+        Any,
+    ]:
         """Delete generated PDF exports and hide their download buttons."""
 
         remove_visualization_pdf_exports(
@@ -742,6 +791,7 @@ def setup_app_event_handlers(
 
         if not any(plot_json is not None for plot_json in plot_data.values()):
             yield (hide_visualization_pdf_exports())
+
             return
 
         generation = _begin_visualization_export_generation(request)
@@ -776,15 +826,17 @@ def setup_app_event_handlers(
                     )
                 ):
                     remove_visualization_pdf_export_directory(export_directory)
+
                     return
 
                 try:
                     export_path = create_visualization_pdf_export_from_plot_json(
-                        export_key=export_key,
-                        plot_json=plot_json,
+                        export_key=(export_key),
+                        plot_json=(plot_json),
                         export_directory=(export_directory),
                         language=language,
                     )
+
                 except Exception:
                     LOGGER.exception(
                         "Failed to export WAVES visualization '%s' to PDF.",
@@ -808,6 +860,7 @@ def setup_app_event_handlers(
                     )
                 ):
                     remove_visualization_pdf_export_directory(export_directory)
+
                     return
 
                 yield (
@@ -985,11 +1038,6 @@ def setup_app_event_handlers(
         app_content.load_over_time_info_button,
     )
 
-    requirements_tab = cast(
-        Any,
-        app_tabs.tab_components["REQUIREMENTS"],
-    )
-
     gradio_app.load(
         fn=None,
         inputs=[
@@ -1001,17 +1049,29 @@ def setup_app_event_handlers(
         show_progress="hidden",
     )
 
-    requirements_tab.select(
-        fn=stream_requirements_content_html,
+    gradio_app.load(
+        fn=(stream_requirements_session_state),
+        inputs=[
+            requirements_content.session_state,
+        ],
+        outputs=[
+            requirements_content.session_state,
+        ],
+        queue=True,
+        concurrency_limit=4,
+        show_progress="hidden",
+    )
+
+    requirements_content.session_state.change(
+        fn=(render_requirements_session_state),
         inputs=[
             language_selector.dropdown,
+            requirements_content.session_state,
         ],
         outputs=[
             requirements_content.content,
         ],
-        queue=True,
-        concurrency_limit=1,
-        concurrency_id=("requirements-version-check"),
+        queue=False,
         show_progress="hidden",
     )
 
@@ -1024,6 +1084,7 @@ def setup_app_event_handlers(
             app_content.routing_state,
             app_content.audio_filename_state,
             app_content.processing_summary_state,
+            requirements_content.session_state,
         ],
         outputs=language_outputs,
         queue=False,
@@ -1031,8 +1092,8 @@ def setup_app_event_handlers(
     )
 
     language_change_event.then(
-        fn=handle_refresh_visualization_pdf_exports,
-        inputs=visualization_pdf_export_inputs,
+        fn=(handle_refresh_visualization_pdf_exports),
+        inputs=(visualization_pdf_export_inputs),
         outputs=(visualization_download_button_components),
         queue=True,
         concurrency_limit=1,
@@ -1040,22 +1101,8 @@ def setup_app_event_handlers(
         show_progress="hidden",
     )
 
-    language_change_event.then(
-        fn=stream_requirements_content_html,
-        inputs=[
-            language_selector.dropdown,
-        ],
-        outputs=[
-            requirements_content.content,
-        ],
-        queue=True,
-        concurrency_limit=1,
-        concurrency_id=("requirements-version-check"),
-        show_progress="hidden",
-    )
-
     language_dropdown.change(
-        fn=handle_refresh_visualization_info,
+        fn=(handle_refresh_visualization_info),
         inputs=[
             app_content.visualization_info_key_state,
             language_selector.dropdown,
@@ -1080,19 +1127,19 @@ def setup_app_event_handlers(
 
     if app_content.examples is not None:
         example_audio_change_event = app_content.examples.load_input_event.then(
-            fn=handle_file_audio_change_event,
+            fn=(handle_file_audio_change_event),
             inputs=[
                 app_content.audio_input,
                 app_content.enhanced_audio,
                 language_selector.dropdown,
             ],
-            outputs=audio_change_outputs,
+            outputs=(audio_change_outputs),
             queue=False,
             show_progress="hidden",
         )
 
         example_audio_change_event.then(
-            fn=handle_clear_visualization_pdf_exports,
+            fn=(handle_clear_visualization_pdf_exports),
             inputs=(visualization_pdf_cleanup_inputs),
             outputs=(visualization_download_button_components),
             queue=False,
@@ -1100,20 +1147,20 @@ def setup_app_event_handlers(
         )
 
     upload_audio_change_event = audio_input.upload(
-        fn=handle_file_audio_change_event,
+        fn=(handle_file_audio_change_event),
         inputs=[
             app_content.audio_input,
             app_content.enhanced_audio,
             language_selector.dropdown,
         ],
-        outputs=audio_change_outputs,
-        js=CLEAR_EXAMPLE_SELECTION_JS,
+        outputs=(audio_change_outputs),
+        js=(CLEAR_EXAMPLE_SELECTION_JS),
         queue=False,
         show_progress="hidden",
     )
 
     upload_audio_change_event.then(
-        fn=handle_clear_visualization_pdf_exports,
+        fn=(handle_clear_visualization_pdf_exports),
         inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
@@ -1121,20 +1168,20 @@ def setup_app_event_handlers(
     )
 
     recorded_audio_change_event = audio_input.stop_recording(
-        fn=handle_recorded_audio_change_event,
+        fn=(handle_recorded_audio_change_event),
         inputs=[
             app_content.audio_input,
             app_content.enhanced_audio,
             language_selector.dropdown,
         ],
-        outputs=audio_change_outputs,
-        js=CLEAR_EXAMPLE_SELECTION_JS,
+        outputs=(audio_change_outputs),
+        js=(CLEAR_EXAMPLE_SELECTION_JS),
         queue=False,
         show_progress="hidden",
     )
 
     recorded_audio_change_event.then(
-        fn=handle_clear_visualization_pdf_exports,
+        fn=(handle_clear_visualization_pdf_exports),
         inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
@@ -1142,20 +1189,20 @@ def setup_app_event_handlers(
     )
 
     enhancement_event = run_button.click(
-        fn=handle_enhancement_started_event,
+        fn=(handle_enhancement_started_event),
         inputs=[
             app_content.audio_input,
             app_content.enhanced_audio,
             language_selector.dropdown,
             app_content.audio_filename_state,
         ],
-        outputs=enhancement_outputs,
+        outputs=(enhancement_outputs),
         queue=False,
         show_progress="hidden",
     )
 
     enhancement_cleanup_event = enhancement_event.then(
-        fn=handle_clear_visualization_pdf_exports,
+        fn=(handle_clear_visualization_pdf_exports),
         inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
@@ -1163,21 +1210,21 @@ def setup_app_event_handlers(
     )
 
     enhancement_run_event = enhancement_cleanup_event.then(
-        fn=handle_run_enhancement_event,
+        fn=(handle_run_enhancement_event),
         inputs=[
             app_content.audio_input,
             language_selector.dropdown,
             app_content.audio_filename_state,
         ],
-        outputs=enhancement_outputs,
+        outputs=(enhancement_outputs),
         queue=True,
         concurrency_limit=1,
         show_progress="hidden",
     )
 
     enhancement_run_event.then(
-        fn=handle_refresh_visualization_pdf_exports,
-        inputs=visualization_pdf_export_inputs,
+        fn=(handle_refresh_visualization_pdf_exports),
+        inputs=(visualization_pdf_export_inputs),
         outputs=(visualization_download_button_components),
         queue=True,
         concurrency_limit=1,
@@ -1186,19 +1233,19 @@ def setup_app_event_handlers(
     )
 
     clear_application_event = clear_button.click(
-        fn=handle_clear_application_event,
+        fn=(handle_clear_application_event),
         inputs=[
             language_selector.dropdown,
             app_content.enhanced_audio,
         ],
-        outputs=clear_outputs,
-        js=CLEAR_EXAMPLE_SELECTION_JS,
+        outputs=(clear_outputs),
+        js=(CLEAR_EXAMPLE_SELECTION_JS),
         queue=False,
         show_progress="hidden",
     )
 
     clear_application_event.then(
-        fn=handle_clear_visualization_pdf_exports,
+        fn=(handle_clear_visualization_pdf_exports),
         inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
@@ -1206,19 +1253,19 @@ def setup_app_event_handlers(
     )
 
     audio_clear_event = audio_input.clear(
-        fn=handle_clear_application_event,
+        fn=(handle_clear_application_event),
         inputs=[
             language_selector.dropdown,
             app_content.enhanced_audio,
         ],
-        outputs=clear_outputs,
-        js=CLEAR_EXAMPLE_SELECTION_JS,
+        outputs=(clear_outputs),
+        js=(CLEAR_EXAMPLE_SELECTION_JS),
         queue=False,
         show_progress="hidden",
     )
 
     audio_clear_event.then(
-        fn=handle_clear_visualization_pdf_exports,
+        fn=(handle_clear_visualization_pdf_exports),
         inputs=(visualization_pdf_cleanup_inputs),
         outputs=(visualization_download_button_components),
         queue=False,
@@ -1247,7 +1294,7 @@ def setup_app_event_handlers(
     )
 
     processing_time_button.click(
-        fn=handle_show_processing_timing_event,
+        fn=(handle_show_processing_timing_event),
         inputs=[
             app_content.processing_summary_state,
             language_selector.dropdown,
@@ -1302,21 +1349,21 @@ def setup_app_event_handlers(
         )
 
     visualization_info_modal_close_button.click(
-        fn=handle_hide_visualization_info_event,
+        fn=(handle_hide_visualization_info_event),
         inputs=[],
         outputs=(visualization_info_modal_components),
-        js=MODAL_CLOSE_ANIMATION_JS,
+        js=(MODAL_CLOSE_ANIMATION_JS),
         queue=False,
         show_progress="hidden",
     )
 
     processing_modal_close_button.click(
-        fn=handle_hide_processing_modal,
+        fn=(handle_hide_processing_modal),
         inputs=[],
         outputs=[
             app_content.processing_modal,
         ],
-        js=MODAL_CLOSE_ANIMATION_JS,
+        js=(MODAL_CLOSE_ANIMATION_JS),
         queue=False,
         show_progress="hidden",
     )
