@@ -1,5 +1,10 @@
 /* Requirements tab */
 
+#tab-requirements {
+    --requirements-text-secondary: color-mix(in srgb, var(--body-text-color) 72%, transparent);
+    --requirements-current-color: color-mix(in srgb, #16a34a 84%, var(--body-text-color));
+}
+
 #tab-requirements > div.column {
     gap: 0 !important;
 }
@@ -16,19 +21,22 @@ div.requirements-title h3 {
 }
 
 div.requirements-description {
-    margin: 0 0 16px !important;
+    margin: 0 0 8px !important;
 }
 
 div.requirements-description p {
     max-width: 1100px !important;
     margin: 0 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--requirements-text-secondary) !important;
 }
 
+#requirements-content,
 div.requirements-content,
 div.requirements-content > div {
     width: 100% !important;
     max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 .requirements-shell {
@@ -43,7 +51,7 @@ div.requirements-content > div {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
     width: 100%;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .requirements-summary-card {
@@ -62,7 +70,7 @@ div.requirements-content > div {
     font-size: 0.75rem;
     font-weight: 650;
     line-height: 1.2;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
     letter-spacing: 0.02em;
 }
 
@@ -86,7 +94,7 @@ div.requirements-content > div {
     text-overflow: ellipsis;
     font-size: 0.72rem;
     line-height: 1.25;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
     white-space: nowrap;
 }
 
@@ -99,7 +107,7 @@ div.requirements-content > div {
     width: fit-content;
     color: var(--body-text-color) !important;
     text-decoration: none !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 42%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--requirements-text-secondary) 42%, transparent);
     transition:
         color 150ms ease,
         border-color 150ms ease !important;
@@ -158,9 +166,9 @@ div.requirements-content > div {
     font-size: inherit;
     font-weight: 650;
     line-height: inherit;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--requirements-text-secondary) !important;
     text-decoration: none !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 38%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--requirements-text-secondary) 38%, transparent);
     transition:
         color 150ms ease,
         border-color 150ms ease !important;
@@ -192,7 +200,7 @@ div.requirements-content > div {
 
 .requirements-source-separator {
     margin: 0 4px;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
 }
 
 /* Dependency table card */
@@ -250,7 +258,7 @@ div.requirements-content > div {
     font-size: 0.71rem !important;
     font-weight: 750 !important;
     line-height: 1.2 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--requirements-text-secondary) !important;
     text-align: left !important;
     letter-spacing: 0.03em !important;
     white-space: nowrap !important;
@@ -293,7 +301,7 @@ div.requirements-content > div {
 .requirements-purpose-cell {
     width: 25%;
     min-width: 230px;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
 }
 
 .requirements-version-cell {
@@ -317,7 +325,7 @@ div.requirements-content > div {
     line-height: 1.25;
     color: var(--body-text-color) !important;
     text-decoration: none !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--body-text-color-subdued) 38%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--requirements-text-secondary) 38%, transparent);
     transition:
         color 150ms ease,
         border-color 150ms ease !important;
@@ -389,7 +397,7 @@ div.requirements-content > div {
 
 .requirements-value-unavailable {
     font-size: 0.82rem;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
 }
 
 /* Status badges */
@@ -418,9 +426,14 @@ div.requirements-content > div {
 }
 
 .requirements-status-badge.is-current {
-    color: #16a34a;
-    background: color-mix(in srgb, #16a34a 9%, transparent);
-    border-color: color-mix(in srgb, #16a34a 30%, var(--border-color-primary));
+    color: var(--requirements-current-color);
+    background: color-mix(in srgb, var(--requirements-current-color) 9%, transparent);
+    border-color: color-mix(in srgb, var(--requirements-current-color) 30%, var(--border-color-primary));
+}
+
+.requirements-status-badge.is-current .requirements-status-dot {
+    background: var(--requirements-current-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--requirements-current-color) 16%, transparent);
 }
 
 .requirements-status-badge.is-update {
@@ -431,7 +444,7 @@ div.requirements-content > div {
 
 .requirements-status-badge.is-constrained,
 .requirements-status-badge.is-unavailable {
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
     background: color-mix(in srgb, var(--body-text-color) 4%, transparent);
     border-color: var(--border-color-primary);
 }
@@ -457,7 +470,7 @@ div.requirements-content > div {
     width: 18px;
     height: 18px;
     vertical-align: middle;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
 }
 
 .requirements-version-loader::before {
@@ -532,14 +545,14 @@ div.requirements-content > div {
     margin: 0 !important;
     font-size: 0.72rem !important;
     line-height: 1.4 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--requirements-text-secondary) !important;
 }
 
 .requirements-last-checked {
     flex: 0 0 auto;
     font-size: 0.72rem;
     line-height: 1.4;
-    color: var(--body-text-color-subdued);
+    color: var(--requirements-text-secondary);
     white-space: nowrap;
 }
 

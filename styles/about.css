@@ -1,5 +1,9 @@
 /* About tab */
 
+#tab-about-app {
+    --about-text-secondary: color-mix(in srgb, var(--body-text-color) 72%, transparent);
+}
+
 #tab-about-app > div.column {
     gap: 0 !important;
 }
@@ -22,7 +26,7 @@ div.about-description {
 div.about-description p {
     max-width: 1040px !important;
     margin: 0 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--about-text-secondary) !important;
 }
 
 #about-content,
@@ -121,7 +125,7 @@ div.about-content > div {
 
 .about-status-chip {
     gap: 7px;
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
     background: color-mix(in srgb, var(--background-fill-primary) 80%, transparent);
 }
 
@@ -129,7 +133,7 @@ div.about-content > div {
     flex: 0 0 6px;
     width: 6px;
     height: 6px;
-    background: var(--body-text-color-subdued);
+    background: var(--about-text-secondary);
     border-radius: 50%;
 }
 
@@ -148,7 +152,7 @@ div.about-content > div {
     margin: 12px 0 0 !important;
     font-size: 0.88rem !important;
     line-height: 1.55 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--about-text-secondary) !important;
 }
 
 .about-hero-actions {
@@ -206,7 +210,7 @@ div.about-content > div {
 }
 
 .about-open-source {
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
     background: transparent;
 }
 
@@ -241,7 +245,7 @@ div.about-content > div {
     font-size: 0.72rem;
     font-weight: 700;
     line-height: 1.25;
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
     text-align: center;
     background: color-mix(in srgb, var(--background-fill-secondary) 88%, transparent);
     border: 1px solid var(--border-color-primary);
@@ -257,7 +261,7 @@ div.about-content > div {
 .about-flow-arrow {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
 }
 
 /* Capabilities */
@@ -293,13 +297,13 @@ div.about-content > div {
 
 .about-feature-index {
     display: inline-block;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.67rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1;
     color: var(--waves-color-accent);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.07em;
 }
 
 .about-feature-title {
@@ -315,7 +319,7 @@ div.about-content > div {
     margin: 7px 0 0 !important;
     font-size: 0.78rem !important;
     line-height: 1.5 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--about-text-secondary) !important;
 }
 
 /* Model snapshot */
@@ -352,12 +356,12 @@ div.about-content > div {
     margin: 5px 0 0 !important;
     font-size: 0.74rem !important;
     line-height: 1.45 !important;
-    color: var(--body-text-color-subdued) !important;
+    color: var(--about-text-secondary) !important;
 }
 
 .about-benchmark-note {
     flex: 0 0 auto;
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
     background: color-mix(in srgb, var(--background-fill-primary) 76%, transparent);
 }
 
@@ -393,7 +397,7 @@ div.about-content > div {
     font-size: 0.69rem;
     font-weight: 650;
     line-height: 1.2;
-    color: var(--body-text-color-subdued);
+    color: var(--about-text-secondary);
 }
 
 /* Entrance */
