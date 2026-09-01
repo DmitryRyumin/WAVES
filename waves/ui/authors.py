@@ -18,6 +18,7 @@ from waves.config import (
     get_config_str_list,
     get_config_str_mapping,
 )
+from waves.localization import get_localized_text
 
 AUTHOR_LINK_ORDER: Final[
     tuple[
@@ -36,21 +37,21 @@ AUTHOR_LINK_ORDER: Final[
     "LINK_EMAIL",
 )
 
-AUTHOR_LINK_LABELS: Final[
+AUTHOR_LINK_LABEL_KEYS: Final[
     dict[
         str,
         str,
     ]
 ] = {
-    "LINK_GITHUB": "GitHub",
-    "LINK_WEBSITE": "Website",
-    "LINK_WEB_OF_SCIENCE": "Web of Science",
-    "LINK_SCOPUS": "Scopus",
-    "LINK_GOOGLE_SCHOLAR": "Google Scholar",
-    "LINK_ORCID": "ORCID",
-    "LINK_HUGGING_FACE": "Hugging Face",
-    "LINK_TELEGRAM": "Telegram",
-    "LINK_EMAIL": "Email",
+    "LINK_GITHUB": "Authors_LINK_GITHUB",
+    "LINK_WEBSITE": "Authors_LINK_WEBSITE",
+    "LINK_WEB_OF_SCIENCE": "Authors_LINK_WEB_OF_SCIENCE",
+    "LINK_SCOPUS": "Authors_LINK_SCOPUS",
+    "LINK_GOOGLE_SCHOLAR": "Authors_LINK_GOOGLE_SCHOLAR",
+    "LINK_ORCID": "Authors_LINK_ORCID",
+    "LINK_HUGGING_FACE": "Authors_LINK_HUGGING_FACE",
+    "LINK_TELEGRAM": "Authors_LINK_TELEGRAM",
+    "LINK_EMAIL": "Authors_LINK_EMAIL",
 }
 
 
@@ -70,14 +71,30 @@ class AuthorLink:
     slots=True,
 )
 class AuthorProfile:
-    """One WAVES author profile."""
+    """One localized WAVES author profile."""
 
     name: str
+    degree: str
     initials: str
     links: tuple[
         AuthorLink,
         ...,
     ]
+
+    @property
+    def display_name(
+        self,
+    ) -> str:
+        """Return the author name with the localized academic degree."""
+
+        return " ".join(
+            part
+            for part in (
+                self.degree.strip(),
+                self.name.strip(),
+            )
+            if part
+        )
 
 
 @dataclass(
@@ -93,12 +110,19 @@ class AuthorsTabComponents:
 def _create_author_link_label(
     config_key: str,
     url: str,
+    language_index: int,
 ) -> str:
-    """Create the visible label for one author profile link."""
+    """Create the localized visible label for one author profile link."""
 
-    label = AUTHOR_LINK_LABELS.get(
-        config_key,
-        config_key,
+    localization_key = AUTHOR_LINK_LABEL_KEYS.get(config_key)
+
+    label = (
+        get_localized_text(
+            localization_key,
+            language_index,
+        )
+        if localization_key is not None
+        else config_key
     )
 
     if config_key != "LINK_ORCID":
@@ -121,16 +145,22 @@ def _create_author_link_label(
 
 def _get_author_profile(
     author_key: str,
+    language_index: int,
 ) -> AuthorProfile:
-    """Load one author profile from config.toml."""
+    """Load one localized author profile from config.toml."""
 
     section_name = f"Author_{author_key}"
 
     values = get_config_str_mapping(section_name)
 
-    name = values.get(
-        "NAME",
-        "",
+    name = get_localized_text(
+        f"Authors_NAME_{author_key}",
+        language_index,
+    ).strip()
+
+    degree = get_localized_text(
+        f"Authors_DEGREE_{author_key}",
+        language_index,
     ).strip()
 
     initials = values.get(
@@ -139,7 +169,7 @@ def _get_author_profile(
     ).strip()
 
     if not name:
-        msg = f"Author configuration section '{section_name}' must define NAME."
+        msg = f"Author '{author_key}' must define Authors_NAME_{author_key}."
 
         raise ValueError(msg)
 
@@ -165,6 +195,7 @@ def _get_author_profile(
                     _create_author_link_label(
                         config_key,
                         url,
+                        language_index,
                     )
                 ),
                 url=url,
@@ -173,16 +204,19 @@ def _get_author_profile(
 
     return AuthorProfile(
         name=name,
+        degree=degree,
         initials=initials,
         links=tuple(links),
     )
 
 
-def get_author_profiles() -> tuple[
+def get_author_profiles(
+    language_index: int,
+) -> tuple[
     AuthorProfile,
     ...,
 ]:
-    """Return WAVES authors in configured display order."""
+    """Return localized WAVES authors in configured display order."""
 
     author_keys = get_config_str_list(
         "Authors_ORDER",
@@ -194,7 +228,13 @@ def get_author_profiles() -> tuple[
 
         raise ValueError(msg)
 
-    return tuple(_get_author_profile(author_key) for author_key in author_keys)
+    return tuple(
+        _get_author_profile(
+            author_key,
+            language_index,
+        )
+        for author_key in author_keys
+    )
 
 
 def _create_author_link_html(
@@ -236,7 +276,7 @@ def _create_author_card_html(
 ) -> str:
     """Render one WAVES author card."""
 
-    name = escape(profile.name)
+    display_name = escape(profile.display_name)
 
     initials = escape(profile.initials)
 
@@ -259,7 +299,7 @@ def _create_author_card_html(
 
             <div class="author-profile-identity">
                 <h3 class="author-profile-name">
-                    {name}
+                    {display_name}
                 </h3>
             </div>
         </div>
@@ -269,10 +309,12 @@ def _create_author_card_html(
     """
 
 
-def create_authors_content_html() -> str:
-    """Create the complete WAVES author-card grid."""
+def create_authors_content_html(
+    language_index: int,
+) -> str:
+    """Create the complete localized WAVES author-card grid."""
 
-    profiles = get_author_profiles()
+    profiles = get_author_profiles(language_index)
 
     cards = "".join(
         _create_author_card_html(
@@ -297,14 +339,12 @@ def create_authors_content_html() -> str:
 def create_authors_tab(
     language_index: int = 0,
 ) -> AuthorsTabComponents:
-    """Create the WAVES Authors tab."""
-
-    del language_index
+    """Create the localized WAVES Authors tab."""
 
     content = gr.HTML(
-        value=create_authors_content_html(),
+        value=(create_authors_content_html(language_index)),
         elem_id="authors-content",
-        elem_classes="authors-content",
+        elem_classes=("authors-content"),
     )
 
     return AuthorsTabComponents(

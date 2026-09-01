@@ -34,6 +34,9 @@ from waves.ui.about import (
 from waves.ui.application import (
     create_application_title_markdown,
 )
+from waves.ui.authors import (
+    create_authors_content_html,
+)
 from waves.ui.language_selector import (
     create_language_flag_html,
 )
@@ -83,6 +86,7 @@ class LanguageChangeUpdates:
     about_app_title: Any
     about_app_description: Any
     about_app_placeholder: Any
+    authors_content: Any
 
     requirements_title: Any
     requirements_description: Any
@@ -308,6 +312,11 @@ def handle_language_change(
         about_app_placeholder=(
             gr.update(
                 value=(create_about_content_html(language_index)),
+            )
+        ),
+        authors_content=(
+            gr.update(
+                value=(create_authors_content_html(language_index)),
             )
         ),
         requirements_title=(

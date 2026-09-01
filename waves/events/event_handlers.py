@@ -49,6 +49,7 @@ from waves.events.visualization_info import (
 from waves.logger import get_logger
 from waves.routing import RoutingTelemetry
 from waves.ui.application import ApplicationTabComponents
+from waves.ui.authors import AuthorsTabComponents
 from waves.ui.client_scripts import (
     CLEAR_EXAMPLE_SELECTION_JS,
     EXAMPLES_UI_JS,
@@ -187,6 +188,11 @@ def setup_app_event_handlers(
         app_tabs.tab_contents["ABOUT_APP"],
     )
 
+    authors_content = cast(
+        AuthorsTabComponents,
+        app_tabs.tab_contents["AUTHORS"],
+    )
+
     requirements_content = cast(
         RequirementsTabComponents,
         app_tabs.tab_contents["REQUIREMENTS"],
@@ -309,6 +315,7 @@ def setup_app_event_handlers(
             about_app_content.title: (updates.about_app_title),
             about_app_content.description: (updates.about_app_description),
             about_app_content.placeholder: (updates.about_app_placeholder),
+            authors_content.content: (updates.authors_content),
             requirements_content.title: (updates.requirements_title),
             requirements_content.description: (updates.requirements_description),
             requirements_content.content: (updates.requirements_content),
@@ -902,6 +909,7 @@ def setup_app_event_handlers(
         about_app_content.title,
         about_app_content.description,
         about_app_content.placeholder,
+        authors_content.content,
         requirements_content.title,
         requirements_content.description,
         requirements_content.content,

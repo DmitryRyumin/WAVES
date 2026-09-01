@@ -113,15 +113,34 @@ AUDIO = [
 [Authors]
 ORDER = [ "KSENIA_ZOLINA", "DMITRY_RYUMIN", "DENIS_IVANKO", "ALEXEY_KARPOV" ]
 
+NAME_KSENIA_ZOLINA = [ "Ksenia Zolina", "Ксения Золина" ]
+DEGREE_KSENIA_ZOLINA = [ "", "" ]
+
+NAME_DMITRY_RYUMIN = [ "Dmitry Ryumin", "Дмитрий Рюмин" ]
+DEGREE_DMITRY_RYUMIN = [ "Dr.", "к.т.н." ]
+
+NAME_DENIS_IVANKO = [ "Denis Ivanko", "Денис Иванько" ]
+DEGREE_DENIS_IVANKO = [ "Dr.", "к.т.н." ]
+
+NAME_ALEXEY_KARPOV = [ "Alexey Karpov", "Алексей Карпов" ]
+DEGREE_ALEXEY_KARPOV = [ "D.Sc.", "д.т.н." ]
+
+LINK_GITHUB = [ "GitHub", "GitHub" ]
+LINK_WEBSITE = [ "Website", "Веб-сайт" ]
+LINK_WEB_OF_SCIENCE = [ "Web of Science", "Web of Science" ]
+LINK_SCOPUS = [ "Scopus", "Scopus" ]
+LINK_GOOGLE_SCHOLAR = [ "Google Scholar", "Google Scholar" ]
+LINK_ORCID = [ "ORCID", "ORCID" ]
+LINK_HUGGING_FACE = [ "Hugging Face", "Hugging Face" ]
+LINK_TELEGRAM = [ "Telegram", "Telegram" ]
+LINK_EMAIL = [ "Email", "Эл. почта" ]
 
 [Author_KSENIA_ZOLINA]
-NAME = "Ksenia Zolina"
 INITIALS = "KZ"
 LINK_GITHUB = "https://github.com/nixiieee"
 
 
 [Author_DMITRY_RYUMIN]
-NAME = "Dr. Dmitry Ryumin"
 INITIALS = "DR"
 
 LINK_GITHUB = "https://github.com/DmitryRyumin"
@@ -136,7 +155,6 @@ LINK_EMAIL = "mailto:neweraairesearch@gmail.com"
 
 
 [Author_DENIS_IVANKO]
-NAME = "Dr. Denis Ivanko"
 INITIALS = "DI"
 
 LINK_WEB_OF_SCIENCE = "https://www.webofscience.com/wos/author/record/663220"
@@ -146,7 +164,6 @@ LINK_ORCID = "https://orcid.org/0000-0003-0412-7765"
 
 
 [Author_ALEXEY_KARPOV]
-NAME = "D.Sc. Alexey Karpov"
 INITIALS = "AK"
 
 LINK_WEB_OF_SCIENCE = "https://www.webofscience.com/wos/author/record/1377380"

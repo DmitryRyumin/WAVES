@@ -17,8 +17,9 @@ div.authors-content > div {
 .authors-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
     gap: 14px;
-    align-items: start;
+    align-items: stretch;
     width: 100%;
 }
 
@@ -27,8 +28,11 @@ div.authors-content > div {
 .author-profile-card {
     position: relative;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     min-width: 0;
+    height: 100%;
     padding: 18px;
     overflow: hidden;
     background: color-mix(in srgb, var(--background-fill-secondary) 90%, transparent);
@@ -118,7 +122,8 @@ div.authors-content > div {
     flex-wrap: wrap;
     gap: 7px;
     width: 100%;
-    margin-top: 16px;
+    padding-top: 16px;
+    margin-top: auto;
 }
 
 .author-profile-link {
@@ -201,10 +206,12 @@ div.authors-content > div {
 @media (width <= 820px) {
     .authors-grid {
         grid-template-columns: 1fr;
+        grid-auto-rows: auto;
         gap: 10px;
     }
 
     .author-profile-card {
+        height: auto;
         padding: 16px;
         border-radius: var(--waves-radius-lg);
     }
@@ -232,7 +239,7 @@ div.authors-content > div {
 
     .author-profile-links {
         gap: 6px;
-        margin-top: 14px;
+        padding-top: 14px;
     }
 
     .author-profile-link {
