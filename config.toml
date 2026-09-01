@@ -138,6 +138,9 @@ LINK_EMAIL = [ "Email", "Эл. почта" ]
 [Author_KSENIA_ZOLINA]
 INITIALS = "KZ"
 LINK_GITHUB = "https://github.com/nixiieee"
+LINK_ORCID = "https://orcid.org/0009-0006-0503-4041"
+LINK_TELEGRAM = "https://t.me/toujours_s"
+LINK_EMAIL = "mailto:xenz5240@gmail.com"
 
 
 [Author_DMITRY_RYUMIN]
@@ -208,21 +211,21 @@ APP_TITLE = [ "WAVES", "WAVES" ]
 
 APP_SUBTITLE = [
     "WAVES: Weighted Adaptive Variance-aware Expert Selection for Speech Enhancement",
-    "WAVES: взвешенный адаптивный выбор экспертов с учетом вариативности для улучшения качества речи",
+    "WAVES: Weighted Adaptive Variance-aware Expert Selection for Speech Enhancement",
 ]
 
 ABOUT_TITLE = [ "About WAVES", "О WAVES" ]
 
 ABOUT_DESCRIPTION = [
     "Interactive speech enhancement and sparse Mixture-of-Experts routing analysis.",
-    "Интерактивное улучшение качества речи и анализ разреженной маршрутизации экспертов.",
+    "Интерактивное улучшение качества речи и анализ Mixture-of-Experts.",
 ]
 
 REQUIREMENTS_TITLE = [ "Requirements", "Среда и зависимости" ]
 
 STATUS_READY = [
-    "Ready. Upload or record a noisy speech sample to start.",
-    "Готово. Загрузите или запишите зашумленный речевой сигнал.",
+    "Upload or record a noisy speech sample to start.",
+    "Загрузите или запишите зашумленный речевой сигнал.",
 ]
 
 STATUS_PROCESSING = [ "Speech enhancement is running.", "Выполняется улучшение качества речи." ]
