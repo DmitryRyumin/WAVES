@@ -183,7 +183,7 @@ APP = [ "⭐ Application", "⭐ Приложение" ]
 SETTINGS = [ "⚙️ Settings", "⚙️ Настройки" ]
 ABOUT_APP = [ "💡 About", "💡 О WAVES" ]
 AUTHORS = [ "🎭 About the Authors", "🎭 Об авторах" ]
-REQUIREMENTS = [ "📋 Requirements", "📋 Системные требования" ]
+REQUIREMENTS = [ "📋 Requirements", "📋 Среда и зависимости" ]
 
 
 [TabCreators]
@@ -207,33 +207,33 @@ REQUIREMENTS = "enabled"
 APP_TITLE = [ "WAVES", "WAVES" ]
 
 APP_SUBTITLE = [
-    "WAVES: Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
-    "WAVES: взвешенный адаптивный выбор экспертов с учетом вариативности для повышения качества речи",
+    "WAVES: Weighted Adaptive Variance-aware Expert Selection for Speech Enhancement",
+    "WAVES: взвешенный адаптивный выбор экспертов с учетом вариативности для улучшения качества речи",
 ]
 
 ABOUT_TITLE = [ "About WAVES", "О WAVES" ]
 
 ABOUT_DESCRIPTION = [
     "Interactive speech enhancement and sparse Mixture-of-Experts routing analysis.",
-    "Интерактивное повышение качества речи и анализ маршрутизации разреженной Mixture-of-Experts.",
+    "Интерактивное улучшение качества речи и анализ разреженной маршрутизации экспертов.",
 ]
 
-REQUIREMENTS_TITLE = [ "Requirements", "Системные требования" ]
+REQUIREMENTS_TITLE = [ "Requirements", "Среда и зависимости" ]
 
 STATUS_READY = [
     "Ready. Upload or record a noisy speech sample to start.",
     "Готово. Загрузите или запишите зашумленный речевой сигнал.",
 ]
 
-STATUS_PROCESSING = [ "Speech enhancement is running.", "Выполняется повышение качества речи." ]
+STATUS_PROCESSING = [ "Speech enhancement is running.", "Выполняется улучшение качества речи." ]
 
-STATUS_COMPLETED = [ "Speech enhancement completed successfully.", "Повышение качества речи успешно завершено." ]
+STATUS_COMPLETED = [ "Speech enhancement completed successfully.", "Улучшение качества речи успешно завершено." ]
 
-STATUS_ENHANCEMENT_FAILED = [ "Speech enhancement failed.", "Не удалось выполнить повышение качества речи." ]
+STATUS_ENHANCEMENT_FAILED = [ "Speech enhancement failed.", "Не удалось выполнить улучшение качества речи." ]
 
 SETTINGS_TITLE = [ "Settings", "Настройки" ]
 
-SETTINGS_DESCRIPTION = [ "Runtime and model settings for WAVES.", "Параметры выполнения и конфигурации модели WAVES." ]
+SETTINGS_DESCRIPTION = [ "Runtime and model settings for WAVES.", "Параметры работы и модели WAVES." ]
 
 SETTINGS_PLACEHOLDER = [ "Application settings will be added here.", "Настройки приложения будут добавлены позже." ]
 
@@ -241,7 +241,7 @@ EXAMPLES_PLACEHOLDER = [ "No example audio files are available.", "Пример�
 
 STATUS_AUDIO_READY = [
     "Audio sample is ready. Run speech enhancement.",
-    "Речевой сигнал готов к обработке. Запустите повышение качества речи.",
+    "Речевой сигнал готов к обработке. Запустите улучшение качества речи.",
 ]
 
 STATUS_AUDIO_INVALID = [ "The audio sample cannot be processed.", "Речевой сигнал не может быть обработан." ]
@@ -250,7 +250,7 @@ AUDIO_INFO_UNAVAILABLE = [ "Audio information is unavailable.", "Информа�
 
 AUDIO_VALIDATION_OK = [
     "The audio sample is valid for speech enhancement.",
-    "Речевой сигнал соответствует требованиям для обработки.",
+    "Речевой сигнал соответствует требованиям для улучшения качества речи.",
 ]
 
 AUDIO_VALIDATION_FILE_NOT_FOUND = [ "The audio file was not found.", "Аудиофайл не найден." ]
@@ -266,12 +266,12 @@ AUDIO_VALIDATION_DURATION_UNAVAILABLE = [
 
 AUDIO_VALIDATION_TOO_SHORT = [
     "Audio duration ({actual} s) is shorter than the minimum allowed duration ({expected} s).",
-    "Длительность аудиосигнала ({actual} с) меньше минимально допустимой ({expected} с).",
+    "Длительность аудиосигнала ({actual} с) меньше минимально допустимого значения ({expected} с).",
 ]
 
 AUDIO_VALIDATION_TOO_LONG = [
     "Audio duration ({actual} s) exceeds the maximum allowed duration ({expected} s).",
-    "Длительность аудиосигнала ({actual} с) превышает максимально допустимую ({expected} с).",
+    "Длительность аудиосигнала ({actual} с) превышает максимально допустимое значение ({expected} с).",
 ]
 
 AUDIO_VALIDATION_SAMPLE_RATE_UNAVAILABLE = [
@@ -280,107 +280,110 @@ AUDIO_VALIDATION_SAMPLE_RATE_UNAVAILABLE = [
 ]
 
 AUDIO_VALIDATION_SAMPLE_RATE_WARNING = [
-    "The input sample rate is {actual} Hz; it will be converted to {expected} Hz.",
+    "The input sample rate is {actual} Hz; the audio will be resampled to {expected} Hz.",
     "Частота дискретизации входного сигнала составляет {actual} Гц; сигнал будет передискретизирован до {expected} Гц.",
 ]
 
 AUDIO_VALIDATION_CHANNELS_UNAVAILABLE = [
     "The number of audio channels could not be determined.",
-    "Не удалось определить количество аудиоканалов.",
+    "Не удалось определить число аудиоканалов.",
 ]
 
 AUDIO_VALIDATION_CHANNELS_WARNING = [
-    "The input contains {actual} channel(s); it will be converted to {expected} channel(s).",
-    "Входной сигнал содержит {actual} канал(а); число каналов будет преобразовано к {expected}.",
+    "The input audio has {actual} channel(s); it will be converted to {expected}-channel audio.",
+    "Входной сигнал содержит {actual} канал(а); он будет преобразован в {expected}-канальный сигнал.",
 ]
 
-PROGRESS_RUNNING_TITLE = [ "Enhancing speech...", "Повышение качества речи..." ]
+PROGRESS_RUNNING_TITLE = [ "Enhancing speech ...", "Улучшение качества речи ..." ]
 
 PROGRESS_RUNNING_SUBTITLE = [
-    "The WAVES processing pipeline is running. The interface is temporarily locked.",
-    "Выполняется обработка WAVES. Интерфейс временно заблокирован.",
+    "WAVES is processing the speech signal. The interface is temporarily locked.",
+    "WAVES обрабатывает речевой сигнал. Интерфейс временно заблокирован.",
 ]
 
 PROGRESS_COMPLETED_TITLE = [
     "Speech enhancement completed successfully.",
-    "Повышение качества речи успешно завершено.",
+    "Улучшение качества речи успешно завершено.",
 ]
 
 PROGRESS_COMPLETED_SUBTITLE = [ "Stage timings", "Время выполнения этапов" ]
 
 PROGRESS_FOOTER = [
-    "Processing time is measured for the current run and may vary with the device and input duration.",
-    "Время обработки измерено для текущего запуска и может зависеть от устройства и длительности сигнала.",
+    "Processing time is measured for the current run and may vary depending on the device and input duration.",
+    "Время обработки измеряется для текущего запуска и может зависеть от устройства и длительности входного сигнала.",
 ]
 
-PROGRESS_DETAIL_VALIDATION = [ "Checking input audio...", "Проверка входного аудиосигнала..." ]
+PROGRESS_DETAIL_VALIDATION = [ "Checking input audio ...", "Проверка входного аудиосигнала ..." ]
 
-PROGRESS_DETAIL_AUDIO_DECODING = [ "Decoding waveform...", "Декодирование аудиосигнала..." ]
+PROGRESS_DETAIL_AUDIO_DECODING = [ "Decoding audio ...", "Декодирование аудиосигнала ..." ]
 
-PROGRESS_DETAIL_PREPROCESSING = [ "Preparing model input...", "Подготовка входных данных модели..." ]
+PROGRESS_DETAIL_PREPROCESSING = [ "Preparing model input ...", "Подготовка входных данных модели ..." ]
 
-PROGRESS_DETAIL_MODEL_LOADING = [ "Preparing the WAVES model...", "Подготовка модели WAVES..." ]
+PROGRESS_DETAIL_MODEL_LOADING = [ "Loading the WAVES model ...", "Загрузка модели WAVES ..." ]
 
-PROGRESS_DETAIL_ENHANCEMENT = [ "Enhancing speech...", "Повышение качества речи..." ]
+PROGRESS_DETAIL_ENHANCEMENT = [ "Enhancing speech ...", "Улучшение качества речи ..." ]
 
-PROGRESS_DETAIL_POSTPROCESSING = [ "Restoring the output waveform...", "Восстановление выходного аудиосигнала..." ]
+PROGRESS_DETAIL_POSTPROCESSING = [ "Post-processing enhanced audio ...", "Постобработка улучшенного аудиосигнала ..." ]
 
-PROGRESS_DETAIL_WAV_ENCODING = [ "Writing enhanced audio...", "Запись обработанного аудиосигнала..." ]
+PROGRESS_DETAIL_WAV_ENCODING = [ "Encoding enhanced audio ...", "Кодирование улучшенного аудиосигнала ..." ]
 
-PROGRESS_DETAIL_SPECTROGRAM_RENDERING = [ "Rendering spectrograms...", "Построение спектрограмм..." ]
+PROGRESS_DETAIL_SPECTROGRAM_RENDERING = [ "Rendering spectrograms ...", "Построение спектрограмм ..." ]
 
-PROGRESS_DETAIL_ROUTING_VISUALIZATION = [ "Rendering expert routing...", "Построение маршрутизации экспертов..." ]
+PROGRESS_DETAIL_ROUTING_VISUALIZATION = [
+    "Rendering expert-routing visualizations ...",
+    "Построение визуализаций маршрутизации экспертов ...",
+]
 
 [About]
 
 BADGE = [ "Research application", "Исследовательское приложение" ]
 
 FULL_NAME = [
-    "Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
-    "Weighted Adaptive Variance-Aware Expert Selection for Speech Enhancement",
+    "Weighted Adaptive Variance-aware Expert Selection for Speech Enhancement",
+    "Взвешенный адаптивный выбор экспертов с учетом вариативности для улучшения качества речи",
 ]
 
 HERO_DESCRIPTION = [
-    "WAVES enhances noisy speech with adaptive sparse Mixture-of-Experts routing and exposes how experts are used for each input.",
-    "WAVES повышает качество зашумленной речи с помощью адаптивной разреженной маршрутизации Mixture-of-Experts и показывает, как эксперты используются для каждого входного сигнала.",
+    "WAVES enhances noisy speech using adaptive sparse expert routing and shows how experts are selected for each input signal.",
+    "WAVES улучшает качество зашумленной речи с помощью адаптивной разреженной маршрутизации экспертов и показывает, как эксперты выбираются для каждого входного сигнала.",
 ]
 
 OPEN_SOURCE = [ "Open source", "Открытый исходный код" ]
 
-MANUSCRIPT_STATUS = [ "Journal manuscript · under review", "Статья в журнале · на рецензировании" ]
+MANUSCRIPT_STATUS = [ "Journal manuscript · under review", "Статья · на рецензировании" ]
 
 FLOW_INPUT = [ "Noisy speech", "Зашумленная речь" ]
 
-FLOW_MODEL = [ "WAVES · Sparse MoE", "WAVES · Sparse MoE" ]
+FLOW_MODEL = [ "WAVES · Sparse MoE", "WAVES · Разреженная MoE" ]
 
-FLOW_OUTPUT = [ "Enhanced speech", "Речь после обработки" ]
+FLOW_OUTPUT = [ "Enhanced speech", "Улучшенная речь" ]
 
-FEATURE_ENHANCE_TITLE = [ "Enhance speech", "Повышение качества речи" ]
+FEATURE_ENHANCE_TITLE = [ "Enhance speech", "Улучшение качества речи" ]
 
 FEATURE_ENHANCE_TEXT = [
-    "Upload or record noisy speech and obtain the enhanced waveform.",
-    "Загрузите или запишите зашумленную речь и получите обработанный сигнал.",
+    "Upload or record noisy speech and obtain the enhanced speech signal.",
+    "Загрузите или запишите зашумленную речь и получите улучшенный речевой сигнал.",
 ]
 
-FEATURE_COMPARE_TITLE = [ "Compare the signal", "Сравнение сигнала" ]
+FEATURE_COMPARE_TITLE = [ "Compare signals", "Сравнение сигналов" ]
 
 FEATURE_COMPARE_TEXT = [
     "Compare noisy and enhanced spectrograms and inspect the spectral change map.",
-    "Сравните спектрограммы до и после обработки и оцените карту спектральных изменений.",
+    "Сравните спектрограммы зашумленной и улучшенной речи и оцените карту спектральных изменений.",
 ]
 
-FEATURE_ROUTING_TITLE = [ "Inspect expert routing", "Анализ маршрутизации" ]
+FEATURE_ROUTING_TITLE = [ "Analyze expert routing", "Анализ маршрутизации экспертов" ]
 
 FEATURE_ROUTING_TEXT = [
     "Explore expert utilization across time, frequency, layers, and processing axes.",
-    "Исследуйте загрузку экспертов во времени, по частоте, слоям и направлениям обработки.",
+    "Исследуйте использование экспертов во времени, по частоте, слоям и направлениям обработки.",
 ]
 
 SNAPSHOT_TITLE = [ "Model snapshot", "Конфигурация модели" ]
 
 SNAPSHOT_NOTE = [
-    "Final configuration uses MoE in the last TS block with spectral mean/std noise conditioning.",
-    "Финальная конфигурация использует MoE в последнем TS-блоке с учетом среднего и стандартного отклонения спектра.",
+    "The final configuration uses MoE in the last TS block, with the router conditioned on the spectral mean and standard deviation.",
+    "В финальной конфигурации MoE используется в последнем TS-блоке, а маршрутизатор учитывает среднее и стандартное отклонение спектра.",
 ]
 
 BENCHMARK_NOTE = [ "VoiceBank+DEMAND test set", "Тестовая выборка VoiceBank+DEMAND" ]
@@ -407,30 +410,44 @@ CODE_URL = "https://github.com/DmitryRyumin/WAVES"
 
 [Requirements]
 DESCRIPTION = [
-    "Runtime environment and core Python dependencies used by WAVES. Installed versions are read from the active environment; latest releases are checked against PyPI once per page load.",
-    "Среда выполнения и основные Python-зависимости WAVES. Установленные версии определяются из активного окружения, а актуальные релизы проверяются через PyPI один раз при загрузке страницы.",
+    "Runtime environment and core Python dependencies used by WAVES. Installed versions are obtained from the active environment; latest versions are checked against PyPI once per page load.",
+    "Среда выполнения и основные Python-зависимости WAVES. Установленные версии определяются из активной среды, а актуальные версии проверяются через PyPI один раз при загрузке страницы.",
 ]
 
-SUMMARY_PYTHON = [ "Python runtime", "Среда Python" ]
-SUMMARY_DEPENDENCIES = [ "Runtime dependencies", "Зависимости среды" ]
+SUMMARY_PYTHON = [ "Python runtime", "Среда выполнения Python" ]
+
+SUMMARY_DEPENDENCIES = [ "Runtime dependencies", "Зависимости среды выполнения" ]
+
 SUMMARY_SOURCE = [ "Version source", "Источник версий" ]
-SUMMARY_SOURCE_META = [ "active environment", "активное окружение" ]
+
+SUMMARY_SOURCE_META = [ "active environment", "активная среда" ]
+
 REQUIRED = [ "Required", "Требуется" ]
 
 COLUMN_PACKAGE = [ "Package", "Пакет" ]
+
 COLUMN_PURPOSE = [ "Purpose in WAVES", "Назначение в WAVES" ]
-COLUMN_REQUIREMENT = [ "WAVES requirement", "Требование WAVES" ]
-COLUMN_INSTALLED = [ "Installed", "Установлено" ]
+
+COLUMN_REQUIREMENT = [ "Required version", "Требуемая версия" ]
+
+COLUMN_INSTALLED = [ "Installed", "Установленная" ]
+
 COLUMN_LATEST = [ "Latest", "Актуальная" ]
+
 COLUMN_STATUS = [ "Status", "Статус" ]
 
 LAST_CHECKED = [ "Last checked", "Последняя проверка" ]
 
 STATUS_CURRENT = [ "Current", "Актуально" ]
+
 STATUS_UPDATE_AVAILABLE = [ "Update available", "Доступно обновление" ]
-STATUS_CONSTRAINED = [ "Version constrained", "Ограничено диапазоном" ]
+
+STATUS_CONSTRAINED = [ "Version constrained", "Версия ограничена диапазоном" ]
+
 STATUS_MISSING = [ "Missing", "Не установлено" ]
+
 STATUS_INCOMPATIBLE = [ "Incompatible", "Несовместимо" ]
+
 STATUS_UNAVAILABLE = [ "Unavailable", "Недоступно" ]
 
 CHECKING_LATEST = [ "Checking latest version", "Проверка актуальной версии" ]
@@ -438,27 +455,27 @@ CHECKING_LATEST = [ "Checking latest version", "Проверка актуаль�
 VALUE_UNAVAILABLE = [ "—", "—" ]
 
 FOOTER = [
-    "Installed versions come from the active WAVES environment. Latest releases are checked against PyPI once when this page is loaded. Reload the page to run a new check.",
-    "Установленные версии определяются из активного окружения WAVES. Актуальные релизы проверяются через PyPI один раз при загрузке страницы. Для новой проверки перезагрузите страницу.",
+    "Installed versions are obtained from the active WAVES environment. Latest versions are checked against PyPI once per page load. Reload the page to run a new check.",
+    "Установленные версии определяются из активной среды WAVES. Актуальные версии проверяются через PyPI один раз при загрузке страницы. Для повторной проверки перезагрузите страницу.",
 ]
 
 PURPOSE_GRADIO = [ "Web application interface", "Веб-интерфейс приложения" ]
 
-PURPOSE_LIBROSA = [ "Audio and spectral processing", "Обработка аудио и спектральный анализ" ]
+PURPOSE_LIBROSA = [ "Audio processing and spectral analysis", "Обработка аудиосигналов и спектральный анализ" ]
 
 PURPOSE_NUMPY = [ "Numerical computation", "Численные вычисления" ]
 
-PURPOSE_PACKAGING = [ "PEP 440/508 version validation", "Проверка версий по PEP 440/508" ]
+PURPOSE_PACKAGING = [ "PEP 440/508 requirement validation", "Проверка требований по PEP 440/508" ]
 
-PURPOSE_PLOTLY = [ "Interactive visualizations and PDF export", "Интерактивные визуализации и экспорт PDF" ]
+PURPOSE_PLOTLY = [ "Interactive visualizations and PDF export", "Интерактивные визуализации и экспорт в PDF" ]
 
 PURPOSE_PSUTIL = [ "Runtime system information", "Информация о системных ресурсах" ]
 
 PURPOSE_PYYAML = [ "Model configuration loading", "Загрузка конфигурации модели" ]
 
-PURPOSE_SAFETENSORS = [ "Safe model-weight loading", "Безопасная загрузка весов модели" ]
+PURPOSE_SAFETENSORS = [ "Safe loading of model weights", "Безопасная загрузка весов модели" ]
 
-PURPOSE_TORCH = [ "Neural speech-enhancement inference", "Нейросетевой инференс повышения качества речи" ]
+PURPOSE_TORCH = [ "Neural speech enhancement inference", "Нейросетевое улучшение качества речи" ]
 
 PURPOSE_TORCHCODEC = [ "Audio decoding and encoding", "Декодирование и кодирование аудио" ]
 
@@ -466,70 +483,83 @@ PURPOSE_GENERIC = [ "Runtime dependency", "Зависимость среды в�
 
 [Labels]
 NOISY_AUDIO = [ "Noisy speech", "Зашумленная речь" ]
-ENHANCED_AUDIO = [ "Enhanced speech", "Речь после обработки" ]
 
-RUN = [ "Enhance speech", "Повысить качество речи" ]
+ENHANCED_AUDIO = [ "Enhanced speech", "Улучшенная речь" ]
+
+RUN = [ "Enhance speech", "Улучшить качество речи" ]
+
 CLEAR = [ "Clear", "Очистить" ]
 
 SPECTROGRAM = [ "Spectrogram comparison", "Сравнение спектрограмм" ]
 
-ROUTING_LAYERS = [ "Routing by layer and axis", "Маршрутизация по слоям и направлениям" ]
+ROUTING_LAYERS = [ "Expert routing by layer and axis", "Маршрутизация экспертов по слоям и направлениям" ]
 
 ROUTING_LOAD = [ "Expert load over time", "Загрузка экспертов во времени" ]
 
 ROUTING_TIME_SUBTITLE = [
-    "Aggregated per overlapping inference window",
-    "Агрегация по перекрывающимся окнам инференса",
+    "Aggregated within each overlapping inference window",
+    "Агрегировано для каждого перекрывающегося окна обработки",
 ]
 
 ROUTING_WINDOW = [ "Window", "Окно" ]
 
-ROUTING_WINDOW_RANGE = [ "Window range", "Временной диапазон окна" ]
+ROUTING_WINDOW_RANGE = [ "Window time range", "Временной диапазон окна" ]
 
-ROUTING_WINDOW_CENTER = [ "Window center", "Центр окна" ]
+ROUTING_WINDOW_CENTER = [ "Window center time", "Время центра окна" ]
 
 EXAMPLES = [ "Examples", "Примеры" ]
 
 AUDIO_INFO_TITLE = [ "Audio information", "Информация об аудиосигнале" ]
 
-AUDIO_INFO_FILENAME = [ "File", "Файл" ]
+AUDIO_INFO_FILENAME = [ "File name", "Имя файла" ]
+
 AUDIO_INFO_DURATION = [ "Duration", "Длительность" ]
+
 AUDIO_INFO_SAMPLE_RATE = [ "Sample rate", "Частота дискретизации" ]
+
 AUDIO_INFO_CHANNELS = [ "Channels", "Число каналов" ]
+
 AUDIO_INFO_CODEC = [ "Codec", "Кодек" ]
+
 AUDIO_INFO_BIT_RATE = [ "Bit rate", "Битрейт" ]
-AUDIO_INFO_FORMAT = [ "Sample format", "Формат отсчетов" ]
+
+AUDIO_INFO_FORMAT = [ "Sample format", "Формат аудиоданных" ]
+
 AUDIO_INFO_SIZE = [ "File size", "Размер файла" ]
 
 AUDIO_VALIDATION_TITLE = [ "Audio validation", "Проверка аудиосигнала" ]
 
 AUDIO_VALIDATION_ERRORS = [ "Errors", "Ошибки" ]
+
 AUDIO_VALIDATION_WARNINGS = [ "Warnings", "Предупреждения" ]
 
 SPECTROGRAM_TIME = [ "Time, s", "Время, с" ]
+
 SPECTROGRAM_FREQUENCY = [ "Frequency, kHz", "Частота, кГц" ]
 
-SPECTROGRAM_POWER = [ "Spectral energy, dB", "Спектральная энергия, дБ" ]
+SPECTROGRAM_POWER = [ "Spectral power, dB", "Спектральная мощность, дБ" ]
 
-SPECTROGRAM_DELTA = [ "Change, dB", "Изменение, дБ" ]
+SPECTROGRAM_DELTA = [ "Spectral power change, dB", "Изменение спектральной мощности, дБ" ]
 
-SPECTROGRAM_EFFECT = [ "Spectral change after enhancement", "Изменение спектра после обработки" ]
+SPECTROGRAM_EFFECT = [ "Spectral change after enhancement", "Изменение спектра после улучшения качества речи" ]
 
-SPECTROGRAM_CHANGE_REDUCED = [ "Reduced", "Уменьшение" ]
+SPECTROGRAM_CHANGE_REDUCED = [ "Reduced", "Снижение" ]
+
 SPECTROGRAM_CHANGE_NONE = [ "No change", "Без изменений" ]
+
 SPECTROGRAM_CHANGE_INCREASED = [ "Increased", "Увеличение" ]
 
-ROUTING_OCCUPANCY = [ "Expert occupancy balance", "Распределение нагрузки между экспертами" ]
+ROUTING_OCCUPANCY = [ "Expert load balance", "Распределение нагрузки между экспертами" ]
 
 ROUTING_EXPERT = [ "Expert", "Эксперт" ]
 
-ROUTING_OCCUPANCY_SHARE = [ "Occupancy", "Доля назначений" ]
+ROUTING_OCCUPANCY_SHARE = [ "Expert selection share", "Доля выбора эксперта" ]
 
-ROUTING_DEVIATION_FROM_UNIFORM = [ "Δ from uniform", "Δ относительно равномерного распределения" ]
+ROUTING_DEVIATION_FROM_UNIFORM = [ "Deviation from uniform", "Отклонение от равномерного распределения" ]
 
-ROUTING_RELATIVE_DEVIATION = [ "Relative Δ", "Относительное отклонение" ]
+ROUTING_RELATIVE_DEVIATION = [ "Relative deviation", "Относительное отклонение" ]
 
-ROUTING_WINDOW_SD = [ "Window SD", "СКО по окнам" ]
+ROUTING_WINDOW_SD = [ "SD across windows", "Стандартное отклонение по окнам" ]
 
 ROUTING_UNIFORM_SHORT = [ "Uniform", "Равномерное распределение" ]
 
@@ -538,26 +568,26 @@ ROUTING_WINDOWS_SHORT = [ "Windows", "Окна" ]
 ROUTING_MAX_DELTA = [ "Max |Δ|", "Макс. |Δ|" ]
 
 ROUTING_LAYER_AXIS_SUBTITLE = [
-    "Cell = Δ from uniform; parentheses = occupancy",
-    "Ячейка — Δ относительно равномерного распределения; в скобках — доля назначений",
+    "Cell = deviation from uniform; parentheses = expert selection share",
+    "Ячейка — отклонение от равномерного распределения; в скобках — доля выбора эксперта",
 ]
 
 ROUTING_LAYER = [ "TS Block", "TS-блок" ]
 
-ROUTING_TIME_AXIS = [ "Time", "Временное направление" ]
+ROUTING_TIME_AXIS = [ "Time axis", "Временная ось" ]
 
-ROUTING_FREQUENCY_AXIS = [ "Frequency", "Частотное направление" ]
+ROUTING_FREQUENCY_AXIS = [ "Frequency axis", "Частотная ось" ]
 
 ROUTING_ASSIGNMENTS = [ "Assignments", "Число назначений" ]
 
 ROUTING_FREQUENCY = [ "Expert load by frequency", "Загрузка экспертов по частоте" ]
 
 ROUTING_FREQUENCY_SUBTITLE = [
-    "Color = Δ from uniform occupancy",
-    "Цвет — отклонение от равномерного распределения нагрузки",
+    "Color = deviation from uniform expert load",
+    "Цвет — отклонение от равномерного распределения нагрузки между экспертами",
 ]
 
-ROUTING_FREQUENCY_CENTER = [ "Encoded frequency, kHz", "Частота в скрытом представлении, кГц" ]
+ROUTING_FREQUENCY_CENTER = [ "Encoded frequency, kHz", "Частота скрытого представления, кГц" ]
 
 ROUTING_FREQUENCY_POSITION = [ "Encoded position", "Позиция в частотном представлении" ]
 
@@ -567,9 +597,9 @@ PROCESSING_TIME = [ "Processing time", "Время обработки" ]
 
 PROGRESS_CURRENT_STAGE = [ "Current stage", "Текущий этап" ]
 
-PROGRESS_ELAPSED = [ "Elapsed", "Прошло" ]
+PROGRESS_ELAPSED = [ "Elapsed", "Затрачено времени" ]
 
-PROGRESS_PROGRESS = [ "Progress", "Прогресс" ]
+PROGRESS_PROGRESS = [ "Progress", "Выполнение" ]
 
 PROGRESS_DEVICE = [ "Device", "Устройство" ]
 
@@ -581,21 +611,21 @@ PROGRESS_WINDOW = [ "Window", "Окно" ]
 
 PROGRESS_STAGE_VALIDATION = [ "Validation", "Проверка" ]
 
-PROGRESS_STAGE_AUDIO_DECODING = [ "Audio decoding", "Декодирование аудио" ]
+PROGRESS_STAGE_AUDIO_DECODING = [ "Audio decoding", "Декодирование аудиосигнала" ]
 
 PROGRESS_STAGE_PREPROCESSING = [ "Preprocessing", "Предобработка" ]
 
 PROGRESS_STAGE_MODEL_LOADING = [ "WAVES model loading", "Загрузка модели WAVES" ]
 
-PROGRESS_STAGE_ENHANCEMENT = [ "WAVES enhancement", "Обработка WAVES" ]
+PROGRESS_STAGE_ENHANCEMENT = [ "Speech enhancement", "Улучшение качества речи" ]
 
-PROGRESS_STAGE_POSTPROCESSING = [ "Audio postprocessing", "Постобработка аудио" ]
+PROGRESS_STAGE_POSTPROCESSING = [ "Audio postprocessing", "Постобработка аудиосигнала" ]
 
-PROGRESS_STAGE_WAV_ENCODING = [ "WAV encoding", "Кодирование WAV" ]
+PROGRESS_STAGE_WAV_ENCODING = [ "WAV encoding", "Кодирование в WAV" ]
 
 PROGRESS_STAGE_SPECTROGRAM_RENDERING = [ "Spectrogram rendering", "Построение спектрограмм" ]
 
-PROGRESS_STAGE_ROUTING_VISUALIZATION = [ "Routing visualization", "Визуализация маршрутизации" ]
+PROGRESS_STAGE_ROUTING_VISUALIZATION = [ "Expert routing visualization", "Визуализация маршрутизации экспертов" ]
 
 [VisualizationInfoLabels]
 
@@ -615,102 +645,102 @@ SETTINGS = [ "Current settings", "Текущие параметры" ]
 
 IMPORTANT = [ "Important", "Важно" ]
 
-X_AXIS = [ "X axis", "Ось X" ]
+X_AXIS = [ "X-axis", "Ось X" ]
 
-Y_AXIS = [ "Y axis", "Ось Y" ]
+Y_AXIS = [ "Y-axis", "Ось Y" ]
 
 COLOR = [ "Color", "Цвет" ]
 
-DASHED_LINE = [ "Dashed line", "Пунктир" ]
+DASHED_LINE = [ "Dashed line", "Пунктирная линия" ]
 
 
 [VisualizationInfoSpectrogram]
 
 SUBTITLE = [
     "Time-frequency comparison of the input and enhanced speech signals.",
-    "Сравнение входного и обработанного речевых сигналов во временно-частотной области.",
+    "Сравнение входного и улучшенного речевых сигналов во временно-частотной области.",
 ]
 
 SHOWS = [
-    "Three aligned Mel power maps: input speech, enhanced speech, and the spectral power change introduced by enhancement.",
-    "Три согласованные Mel-карты мощности: входной сигнал, обработанный сигнал и изменение спектральной мощности после обработки.",
+    "Three aligned Mel-domain maps showing input spectral power, enhanced spectral power, and the spectral power change after enhancement.",
+    "Три согласованные карты в мел-шкале, показывающие спектральную мощность входного и улучшенного сигналов, а также ее изменение после улучшения качества речи.",
 ]
 
 READ_X = [ "Time in seconds.", "Время в секундах." ]
 
-READ_Y = [ "Mel-band center frequency in kHz.", "Центральная частота Mel-полосы в кГц." ]
+READ_Y = [ "Mel-band center frequency in kHz.", "Центральная частота мел-полосы в кГц." ]
 
-READ_SIGNAL_COLOR_LABEL = [ "Input / enhanced color", "Цвет входа / результата" ]
+READ_SIGNAL_COLOR_LABEL = [ "Input and enhanced signal color", "Цвет входного и улучшенного сигналов" ]
 
 READ_SIGNAL_COLOR = [
-    "Power in dB relative to one shared reference level.",
-    "Мощность в дБ относительно одного общего опорного уровня.",
+    "Spectral power in dB relative to the maximum power across the input and enhanced Mel maps.",
+    "Спектральная мощность в дБ относительно максимальной мощности на входной и улучшенной мел-картах.",
 ]
 
-READ_CHANGE_COLOR_LABEL = [ "Change color", "Цвет изменения" ]
+READ_CHANGE_COLOR_LABEL = [ "Spectral change color", "Цвет спектрального изменения" ]
 
 READ_CHANGE_COLOR = [
     "Negative values indicate reduced power, values near zero indicate little change, and positive values indicate increased power.",
-    "Отрицательные значения соответствуют уменьшению мощности, значения около нуля — малому изменению, положительные — увеличению мощности.",
+    "Отрицательные значения соответствуют снижению мощности, значения около нуля — небольшим изменениям, а положительные — увеличению мощности.",
 ]
 
-NOTATION_X = [ "Input waveform.", "Входной временной сигнал." ]
+NOTATION_X = [ "Input waveform.", "Входной сигнал во временной области." ]
 
-NOTATION_T = [ "Time-frame index.", "Индекс временного кадра." ]
+NOTATION_T = [ "Time-frame index.", "Индекс временной позиции спектрограммы." ]
 
-NOTATION_M = [ "Mel-frequency band index.", "Индекс Mel-частотной полосы." ]
+NOTATION_M = [ "Mel-band index.", "Индекс мел-полосы." ]
 
 NOTATION_P = [ "Spectral power.", "Спектральная мощность." ]
 
 NOTATION_P_REF = [
-    "Shared reference power: the maximum power observed across the input and enhanced Mel maps.",
-    "Общая опорная мощность: максимальная мощность среди входной и обработанной Mel-карт.",
+    "Shared reference power equal to the maximum power across the input and enhanced Mel spectrograms.",
+    "Общая опорная мощность, равная максимальной мощности на мел-спектрограммах входного и улучшенного сигналов.",
 ]
 
 NOTATION_P_IN = [ "Input-signal spectral power.", "Спектральная мощность входного сигнала." ]
 
-NOTATION_P_ENH = [ "Enhanced-signal spectral power.", "Спектральная мощность обработанного сигнала." ]
+NOTATION_P_ENH = [ "Enhanced-signal spectral power.", "Спектральная мощность улучшенного сигнала." ]
 
 NOTATION_S_DB = [
-    "Spectral power expressed in decibels relative to the shared reference.",
-    "Спектральная мощность в децибелах относительно общей опорной мощности.",
+    "Spectral power level in decibels relative to the shared reference power.",
+    "Уровень спектральной мощности в децибелах относительно общей опорной мощности.",
 ]
 
 NOTATION_DELTA_DB = [
-    "Enhanced-to-input spectral power change in decibels.",
-    "Изменение спектральной мощности обработанного сигнала относительно входного в децибелах.",
+    "Change in spectral power level between the enhanced and input signals in decibels.",
+    "Изменение уровня спектральной мощности улучшенного сигнала относительно входного в децибелах.",
 ]
 
 INTERPRETATION_1 = [
-    "Compare the input and enhanced maps to locate spectral components suppressed or preserved by WAVES.",
-    "Сравнивайте входную и обработанную карты, чтобы определить, какие спектральные компоненты WAVES подавляет или сохраняет.",
+    "Compare the input and enhanced spectrograms to identify spectral components suppressed or preserved by WAVES.",
+    "Сравните спектрограммы входного и улучшенного сигналов, чтобы определить спектральные компоненты, которые WAVES подавляет или сохраняет.",
 ]
 
 INTERPRETATION_2 = [
-    "Use the change map to identify where enhancement modifies spectral power.",
-    "Используйте карту изменения, чтобы определить области спектра, в которых обработка изменяет мощность.",
+    "Use the spectral change map to identify regions where enhancement changes spectral power.",
+    "Используйте карту спектральных изменений, чтобы определить области, в которых улучшение качества речи изменяет спектральную мощность.",
 ]
 
 NOTE = [
-    "A positive or negative spectral change is not, by itself, evidence of better or worse speech quality.",
+    "A positive or negative spectral change alone does not indicate better or worse speech quality.",
     "Положительное или отрицательное изменение спектра само по себе не означает улучшение или ухудшение качества речи.",
 ]
 
-SETTING_FFT = [ "FFT size", "Размер FFT" ]
+SETTING_FFT = [ "FFT size", "Размер быстрого преобразования Фурье" ]
 
-SETTING_HOP = [ "Hop length", "Шаг" ]
+SETTING_HOP = [ "Hop length", "Шаг между окнами" ]
 
-SETTING_MELS = [ "Mel bands", "Mel-полосы" ]
+SETTING_MELS = [ "Mel bands", "Мел-полосы" ]
 
 SETTING_MAX_FREQUENCY = [ "Maximum frequency", "Максимальная частота" ]
 
 SETTING_RANGE = [ "Display range", "Диапазон отображения" ]
 
-SETTING_MAX_DELTA = [ "Maximum spectral change", "Максимальное изменение спектра" ]
+SETTING_MAX_DELTA = [ "Maximum spectral power change", "Максимальное изменение спектральной мощности" ]
 
 NOTATION_MEL_POWER = [
-    "Mel-frequency spectral power transform applied to the input waveform.",
-    "Преобразование входного временного сигнала в спектральную мощность в Mel-частотном представлении.",
+    "Mel-frequency spectral power representation of the input waveform.",
+    "Представление спектральной мощности входного сигнала в мел-частотной области.",
 ]
 
 NOTATION_LOG10 = [ "Base-10 logarithm.", "Логарифм по основанию 10." ]
@@ -719,28 +749,31 @@ NOTATION_LOG10 = [ "Base-10 logarithm.", "Логарифм по основани
 [VisualizationInfoExpertOccupancy]
 
 SUBTITLE = [
-    "Global share of routing assignments received by each WAVES expert.",
-    "Глобальная доля маршрутизационных назначений, полученных каждым экспертом WAVES.",
+    "Overall share of expert selections received by each WAVES expert.",
+    "Общая доля выборов, приходящаяся на каждого эксперта WAVES.",
 ]
 
 SHOWS = [
-    "How routing assignments for the complete enhanced utterance are distributed between the available Mixture-of-Experts experts.",
-    "Как маршрутизационные назначения для всего обработанного сигнала распределяются между доступными экспертами Mixture-of-Experts.",
+    "How expert selections for the complete enhanced utterance are distributed across the available experts.",
+    "Как выбор экспертов для всего улучшенного речевого сигнала распределяется между доступными экспертами.",
 ]
 
-READ_EXPERT = [ "One routed WAVES expert.", "Один маршрутизируемый эксперт WAVES." ]
+READ_EXPERT = [ "One WAVES expert.", "Один эксперт WAVES." ]
 
-READ_MARKER_LABEL = [ "Marker", "Маркер" ]
+READ_MARKER_LABEL = [ "Point", "Точка" ]
 
-READ_MARKER = [ "Observed global occupancy share.", "Наблюдаемая глобальная доля назначений." ]
+READ_MARKER = [ "Observed overall expert selection share.", "Наблюдаемая общая доля выбора эксперта." ]
 
-READ_DASHED = [ "Uniform-routing reference.", "Ориентир равномерной маршрутизации." ]
+READ_DASHED = [
+    "Reference level for uniform expert selection.",
+    "Уровень, соответствующий равномерному выбору экспертов.",
+]
 
-READ_WHISKER_LABEL = [ "Whisker", "Интервал" ]
+READ_WHISKER_LABEL = [ "Standard deviation interval", "Интервал стандартного отклонения" ]
 
 READ_WHISKER = [
-    "Population standard deviation of the expert occupancy across inference windows.",
-    "Генеральное стандартное отклонение доли эксперта по окнам инференса.",
+    "Standard deviation of the expert selection share across processing windows.",
+    "Стандартное отклонение доли выбора эксперта по окнам обработки.",
 ]
 
 NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
@@ -748,54 +781,54 @@ NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
 NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
 
 NOTATION_A_E = [
-    "Assignment-count-weighted load accumulated for expert e.",
-    "Нагрузка эксперта e, накопленная с учетом числа назначений.",
+    "Accumulated load of expert e weighted by the number of selections.",
+    "Накопленная нагрузка эксперта e с учетом числа его выборов.",
 ]
 
-NOTATION_P_E = [ "Normalized global occupancy of expert e.", "Нормированная глобальная доля эксперта e." ]
+NOTATION_P_E = [ "Normalized overall selection share of expert e.", "Нормированная общая доля выбора эксперта e." ]
 
 NOTATION_U = [
-    "Uniform occupancy expected when all experts receive equal routing load.",
-    "Равномерная доля при одинаковой маршрутизационной нагрузке всех экспертов.",
+    "Uniform selection share expected when all experts are selected equally often.",
+    "Равномерная доля выбора при одинаковой частоте выбора всех экспертов.",
 ]
 
-NOTATION_U_PERCENT = [ "Uniform occupancy expressed as a percentage.", "Равномерная доля, выраженная в процентах." ]
+NOTATION_U_PERCENT = [
+    "Uniform selection share expressed as a percentage.",
+    "Равномерная доля выбора, выраженная в процентах.",
+]
 
 NOTATION_DELTA_E = [
-    "Deviation of expert e from uniform occupancy.",
-    "Отклонение доли эксперта e от равномерного распределения.",
+    "Deviation of expert e selection share from the uniform share.",
+    "Отклонение доли выбора эксперта e от равномерной доли.",
 ]
 
 NOTATION_H_N = [
-    "Normalized Shannon entropy of the global expert-occupancy distribution.",
-    "Нормированная энтропия Шеннона глобального распределения нагрузки экспертов.",
+    "Normalized Shannon entropy of the overall expert selection distribution.",
+    "Нормированная энтропия Шеннона общего распределения выбора экспертов.",
 ]
 
-NOTATION_SIGMA = [
-    "Population standard deviation of expert occupancy.",
-    "Генеральное стандартное отклонение долей экспертов.",
-]
+NOTATION_SIGMA = [ "Standard deviation of expert selection shares.", "Стандартное отклонение долей выбора экспертов." ]
 
 NOTATION_CV = [
-    "Coefficient of variation relative to uniform occupancy.",
-    "Коэффициент вариации относительно равномерной доли.",
+    "Coefficient of variation relative to the uniform selection share.",
+    "Коэффициент вариации относительно равномерной доли выбора.",
 ]
 
 NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
 
 INTERPRETATION_1 = [
-    "An expert above the uniform reference is selected more often than under perfectly balanced routing.",
-    "Эксперт выше равномерного уровня выбирается чаще, чем при полностью сбалансированной маршрутизации.",
+    "An expert above the uniform reference is selected more often than expected under perfectly balanced routing.",
+    "Эксперт выше равномерного уровня выбирается чаще, чем ожидается при полностью сбалансированной маршрутизации.",
 ]
 
 INTERPRETATION_2 = [
-    "Higher normalized entropy and lower coefficient of variation indicate a more even distribution of routing assignments.",
-    "Более высокая нормированная энтропия и более низкий коэффициент вариации соответствуют более равномерному распределению назначений.",
+    "Higher normalized entropy and lower coefficient of variation indicate a more even distribution of expert selections.",
+    "Более высокая нормированная энтропия и более низкий коэффициент вариации указывают на более равномерное распределение выбора экспертов.",
 ]
 
 NOTE = [
-    "Balanced routing is a routing property, not a direct speech-quality metric.",
-    "Сбалансированность маршрутизации характеризует работу роутера, а не качество речи напрямую.",
+    "Balanced routing characterizes expert selection behavior and does not directly indicate speech quality.",
+    "Сбалансированность маршрутизации характеризует распределение выбора экспертов и напрямую не указывает на качество речи.",
 ]
 
 NOTATION_J_INDEX = [ "Summation index over experts.", "Индекс суммирования по экспертам." ]
@@ -806,18 +839,18 @@ NOTATION_LN = [ "Natural logarithm.", "Натуральный логарифм."
 [VisualizationInfoLayerRouting]
 
 SUBTITLE = [
-    "Expert specialization across TS blocks and routing directions.",
-    "Специализация экспертов по TS-блокам и направлениям маршрутизации.",
+    "Expert specialization across TS blocks and routing axes.",
+    "Специализация экспертов по TS-блокам и осям маршрутизации.",
 ]
 
 SHOWS = [
-    "For every TS block, the heatmap separates time-axis and frequency-axis routing and compares each expert with the uniform-routing reference.",
-    "Для каждого TS-блока тепловая карта отдельно показывает маршрутизацию по времени и частоте и сравнивает каждого эксперта с равномерным распределением.",
+    "For each TS block, the heatmap separately shows routing along the time and frequency axes and compares each expert selection share with the uniform reference.",
+    "Для каждого TS-блока тепловая карта отдельно показывает маршрутизацию по временной и частотной осям и сравнивает долю выбора каждого эксперта с равномерным уровнем.",
 ]
 
 READ_ROWS_LABEL = [ "Rows", "Строки" ]
 
-READ_ROWS = [ "TS block and routing axis.", "TS-блок и направление маршрутизации." ]
+READ_ROWS = [ "TS block and routing axis.", "TS-блок и ось маршрутизации." ]
 
 READ_COLUMNS_LABEL = [ "Columns", "Столбцы" ]
 
@@ -826,20 +859,20 @@ READ_COLUMNS = [ "Experts.", "Эксперты." ]
 READ_CELL_LABEL = [ "Cell value", "Значение ячейки" ]
 
 READ_CELL = [
-    "Deviation from uniform routing in percentage points; occupancy is shown in parentheses.",
-    "Отклонение от равномерной маршрутизации в процентных пунктах; в скобках указана доля назначений.",
+    "Deviation from the uniform selection share in percentage points, with the observed expert selection share shown in parentheses.",
+    "Отклонение от равномерной доли выбора в процентных пунктах, в скобках указана наблюдаемая доля выбора эксперта.",
 ]
 
 READ_COLOR = [
-    "Negative values are below uniform, values near zero are close to uniform, and positive values are above uniform.",
-    "Отрицательные значения ниже равномерного уровня, значения около нуля близки к нему, положительные значения выше равномерного уровня.",
+    "Negative values are below the uniform level, values near zero are close to it, and positive values are above it.",
+    "Отрицательные значения ниже равномерного уровня, значения около нуля близки к нему, а положительные значения выше равномерного уровня.",
 ]
 
 NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
 
 NOTATION_LAYER = [ "TS-block index.", "Индекс TS-блока." ]
 
-NOTATION_AXIS = [ "Routing axis: time or frequency.", "Направление маршрутизации: время или частота." ]
+NOTATION_AXIS = [ "Routing axis, either time or frequency.", "Ось маршрутизации по времени или частоте." ]
 
 NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
 
@@ -853,61 +886,61 @@ NOTATION_L_O_E = [
 ]
 
 NOTATION_P = [
-    "Assignment-weighted occupancy of expert e for TS block l and routing axis a.",
-    "Взвешенная по назначениям доля эксперта e для TS-блока l и направления a.",
+    "Assignment-weighted selection share of expert e for TS block l and routing axis a.",
+    "Взвешенная по числу назначений доля выбора эксперта e для TS-блока l и оси маршрутизации a.",
 ]
 
-NOTATION_U = [ "Uniform expert occupancy.", "Равномерная доля эксперта." ]
+NOTATION_U = [ "Uniform expert selection share.", "Равномерная доля выбора эксперта." ]
 
-NOTATION_DELTA = [ "Deviation from uniform routing.", "Отклонение от равномерной маршрутизации." ]
+NOTATION_DELTA = [ "Deviation from the uniform selection share.", "Отклонение от равномерной доли выбора." ]
 
 NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
 
 INTERPRETATION_1 = [
-    "Persistent positive values for one expert may indicate layer- or axis-specific specialization.",
-    "Устойчивые положительные значения у одного эксперта могут указывать на специализацию по слою или направлению.",
+    "Persistent positive values for one expert may indicate specialization within a particular TS block or routing axis.",
+    "Устойчивые положительные значения для одного эксперта могут указывать на специализацию в определенном TS-блоке или по определенной оси маршрутизации.",
 ]
 
 INTERPRETATION_2 = [
-    "Different time- and frequency-axis patterns indicate that the router uses experts differently along the two axes.",
-    "Различия между временными и частотными направлениями показывают, что роутер по-разному использует экспертов вдоль двух осей.",
+    "Different patterns along the time and frequency axes indicate that the router uses experts differently along these axes.",
+    "Различия между временной и частотной осями показывают, что маршрутизатор по-разному использует экспертов вдоль этих осей.",
 ]
 
 NOTE = [
-    "Heatmap color represents deviation from uniform routing, not enhancement quality.",
-    "Цвет тепловой карты показывает отклонение от равномерной маршрутизации, а не качество обработки.",
+    "Heatmap color represents deviation from uniform expert selection and does not directly indicate speech enhancement quality.",
+    "Цвет тепловой карты показывает отклонение от равномерного выбора экспертов и напрямую не указывает на качество улучшения речи.",
 ]
 
 
 [VisualizationInfoFrequencyRouting]
 
 SUBTITLE = [
-    "How WAVES distributes encoded frequency positions between experts.",
+    "How WAVES distributes encoded frequency positions across experts.",
     "Как WAVES распределяет позиции частотного представления между экспертами.",
 ]
 
 SHOWS = [
-    "Expert occupancy across encoded frequency positions, expressed as deviation from the uniform expert share.",
-    "Долю экспертов по позициям частотного представления, выраженную как отклонение от равномерной доли.",
+    "Expert selection shares across encoded frequency positions, expressed as deviations from the uniform selection share.",
+    "Доли выбора экспертов по позициям частотного представления, выраженные как отклонения от равномерной доли выбора.",
 ]
 
 READ_X = [
-    "Encoded frequency position mapped linearly to kHz.",
-    "Позиция частотного представления, линейно отображенная в кГц.",
+    "Encoded frequency position linearly mapped to kHz.",
+    "Позиция частотного представления, линейно преобразованная в частоту в кГц.",
 ]
 
 READ_Y = [ "Expert.", "Эксперт." ]
 
 READ_COLOR = [
-    "Deviation from uniform occupancy in percentage points.",
-    "Отклонение от равномерной доли в процентных пунктах.",
+    "Deviation from the uniform selection share in percentage points.",
+    "Отклонение от равномерной доли выбора в процентных пунктах.",
 ]
 
 READ_PERCENTILES_LABEL = [ "P1-P99", "P1-P99" ]
 
 READ_PERCENTILES = [
-    "Robust percentiles used only to determine the displayed color range.",
-    "Робастные процентили, используемые только для определения отображаемого диапазона цвета.",
+    "The P1 and P99 percentiles are used only to determine the displayed color range.",
+    "Процентили P1 и P99 используются только для определения отображаемого диапазона цветовой шкалы.",
 ]
 
 NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
@@ -922,124 +955,145 @@ NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
 
 NOTATION_W_O = [ "Weight assigned to routing observation o.", "Вес наблюдения маршрутизации o." ]
 
-NOTATION_S_O = [ "Sequence count in routing observation o.", "Число последовательностей в наблюдении маршрутизации o." ]
+NOTATION_S_O = [
+    "Number of sequences in routing observation o.",
+    "Число последовательностей в наблюдении маршрутизации o.",
+]
 
 NOTATION_K_O = [
     "Top-k value used by the router for observation o.",
-    "Значение top-k, используемое роутером для наблюдения o.",
+    "Значение top-k, используемое маршрутизатором для наблюдения o.",
 ]
 
 NOTATION_L = [
-    "Position-level load of expert e at encoded position j.",
+    "Load of expert e at encoded frequency position j.",
     "Нагрузка эксперта e в позиции j частотного представления.",
 ]
 
 NOTATION_P = [
-    "Aggregated occupancy of expert e at encoded position j.",
-    "Агрегированная доля эксперта e в позиции j.",
+    "Aggregated selection share of expert e at encoded frequency position j.",
+    "Агрегированная доля выбора эксперта e в позиции j частотного представления.",
 ]
 
 NOTATION_SAMPLE_RATE = [ "Audio sample rate.", "Частота дискретизации аудиосигнала." ]
 
 NOTATION_F_J = [
-    "Displayed center frequency associated with encoded position j.",
-    "Отображаемая центральная частота, соответствующая позиции j.",
+    "Displayed frequency associated with encoded position j.",
+    "Отображаемая частота, соответствующая позиции j частотного представления.",
 ]
 
-NOTATION_DELTA = [ "Deviation from uniform expert occupancy.", "Отклонение от равномерной доли экспертов." ]
+NOTATION_DELTA = [
+    "Deviation from the uniform expert selection share.",
+    "Отклонение от равномерной доли выбора эксперта.",
+]
 
 NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
 
 INTERPRETATION_1 = [
     "Concentrated positive regions may indicate frequency-dependent expert specialization.",
-    "Сосредоточенные положительные области могут указывать на частотно-зависимую специализацию экспертов.",
+    "Выраженные положительные области могут указывать на специализацию экспертов по частоте.",
 ]
 
 INTERPRETATION_2 = [
-    "Broad regions near zero indicate routing closer to the uniform reference.",
-    "Широкие области около нуля соответствуют маршрутизации, близкой к равномерной.",
+    "Broad regions near zero indicate routing close to the uniform reference.",
+    "Широкие области около нуля соответствуют маршрутизации, близкой к равномерному распределению.",
 ]
 
 NOTE = [
-    "The kHz axis is a linear visualization mapping of encoded frequency positions and should not be interpreted as an independent physical filterbank measurement.",
-    "Ось в кГц является линейным отображением позиций скрытого частотного представления и не должна интерпретироваться как независимое физическое измерение полос фильтра.",
+    "The kHz axis is a linear visualization mapping of encoded frequency positions and does not represent frequencies measured by a physical filter bank.",
+    "Ось в кГц представляет собой линейное отображение позиций частотного представления и не соответствует частотам, непосредственно измеренным физическим банком фильтров.",
 ]
 
 
 [VisualizationInfoLoadOverTime]
 
 SUBTITLE = [
-    "How expert utilization changes across overlapping inference windows.",
-    "Как использование экспертов изменяется по перекрывающимся окнам инференса.",
+    "How expert utilization changes across overlapping processing windows.",
+    "Как использование экспертов изменяется по перекрывающимся окнам обработки.",
 ]
 
 SHOWS = [
-    "One trajectory per expert showing its normalized routing occupancy in each sliding inference window.",
-    "По одной траектории на эксперта, показывающей его нормированную долю маршрутизации в каждом скользящем окне инференса.",
+    "One trajectory per expert showing its normalized selection share in each sliding processing window.",
+    "По одной траектории для каждого эксперта, показывающей его нормированную долю выбора в каждом скользящем окне обработки.",
 ]
 
-READ_X = [ "Center time of each inference window.", "Время центра каждого окна инференса." ]
+READ_X = [ "Center time of each processing window.", "Время центра каждого окна обработки." ]
 
-READ_Y = [ "Expert occupancy in that window.", "Доля эксперта в этом окне." ]
+READ_Y = [ "Expert selection share in that window.", "Доля выбора эксперта в этом окне." ]
 
 READ_LINE_LABEL = [ "Line", "Линия" ]
 
-READ_LINE = [ "One expert across successive inference windows.", "Один эксперт по последовательным окнам инференса." ]
+READ_LINE = [
+    "One expert across successive processing windows.",
+    "Изменение доли выбора одного эксперта по последовательным окнам обработки.",
+]
 
-READ_DASHED = [ "Uniform-routing reference.", "Ориентир равномерной маршрутизации." ]
+READ_DASHED = [
+    "Reference level for uniform expert selection.",
+    "Уровень, соответствующий равномерному выбору экспертов.",
+]
 
 NOTATION_E_COUNT = [ "Number of experts.", "Число экспертов." ]
 
-NOTATION_WINDOW = [ "Inference-window index.", "Индекс окна инференса." ]
+NOTATION_WINDOW = [ "Processing-window index.", "Индекс окна обработки." ]
 
 NOTATION_OBSERVATION = [
-    "Routing observation contained in inference window w.",
-    "Наблюдение маршрутизации, относящееся к окну инференса w.",
+    "Routing observation contained in processing window w.",
+    "Наблюдение маршрутизации, относящееся к окну обработки w.",
 ]
 
 NOTATION_E_INDEX = [ "Expert index.", "Индекс эксперта." ]
 
 NOTATION_J = [
-    "Expert index used in normalization over all experts.",
-    "Индекс эксперта при нормировании по всем экспертам.",
+    "Expert index used for normalization over all experts.",
+    "Индекс эксперта, используемый при нормировании по всем экспертам.",
 ]
 
-NOTATION_N_O = [ "Assignment count of routing observation o.", "Число назначений в наблюдении маршрутизации o." ]
+NOTATION_N_O = [ "Number of assignments in routing observation o.", "Число назначений в наблюдении маршрутизации o." ]
 
-NOTATION_L = [ "Observed load of expert e in observation o.", "Наблюдаемая нагрузка эксперта e в наблюдении o." ]
+NOTATION_L = [
+    "Observed load of expert e in routing observation o.",
+    "Наблюдаемая нагрузка эксперта e в наблюдении маршрутизации o.",
+]
 
 NOTATION_A = [
-    "Assignment-weighted load of expert e inside inference window w.",
-    "Взвешенная по назначениям нагрузка эксперта e внутри окна w.",
+    "Assignment-weighted load of expert e within processing window w.",
+    "Нагрузка эксперта e в окне обработки w, взвешенная по числу назначений.",
 ]
 
-NOTATION_P = [ "Normalized occupancy of expert e in inference window w.", "Нормированная доля эксперта e в окне w." ]
+NOTATION_P = [
+    "Normalized selection share of expert e in processing window w.",
+    "Нормированная доля выбора эксперта e в окне обработки w.",
+]
 
-NOTATION_START = [ "Start sample of inference window w.", "Начальный отсчет окна инференса w." ]
+NOTATION_START = [ "Start sample of processing window w.", "Первый отсчет окна обработки w." ]
 
-NOTATION_END = [ "End sample of inference window w.", "Конечный отсчет окна инференса w." ]
+NOTATION_END = [ "End sample of processing window w.", "Последний отсчет окна обработки w." ]
 
-NOTATION_SAMPLE_RATE = [ "Audio sample rate.", "Частота дискретизации." ]
+NOTATION_SAMPLE_RATE = [ "Audio sample rate.", "Частота дискретизации аудиосигнала." ]
 
-NOTATION_TIME = [ "Center time of inference window w.", "Время центра окна инференса w." ]
+NOTATION_TIME = [ "Center time of processing window w.", "Время центра окна обработки w." ]
 
-NOTATION_DELTA = [ "Deviation from uniform expert occupancy.", "Отклонение от равномерной доли экспертов." ]
+NOTATION_DELTA = [
+    "Deviation from the uniform expert selection share.",
+    "Отклонение от равномерной доли выбора эксперта.",
+]
 
 NOTATION_PP = [ "Percentage points.", "Процентные пункты." ]
 
 INTERPRETATION_1 = [
     "A nearly flat trajectory indicates relatively stable utilization of that expert.",
-    "Почти горизонтальная траектория соответствует относительно стабильному использованию эксперта.",
+    "Почти горизонтальная траектория указывает на относительно стабильное использование эксперта.",
 ]
 
 INTERPRETATION_2 = [
-    "Local rises and falls indicate time-dependent changes in expert routing.",
-    "Локальные подъемы и спады показывают изменение маршрутизации экспертов во времени.",
+    "Local rises and falls indicate time-dependent changes in expert selection.",
+    "Локальные подъемы и спады указывают на изменение выбора экспертов во времени.",
 ]
 
 NOTE = [
-    "Adjacent points come from overlapping inference windows and therefore are not independent observations.",
-    "Соседние точки получены из перекрывающихся окон инференса и поэтому не являются независимыми наблюдениями.",
+    "Adjacent points are obtained from overlapping processing windows and therefore are not independent observations.",
+    "Соседние точки получены из перекрывающихся окон обработки и поэтому не являются независимыми наблюдениями.",
 ]
 
 [Units]
