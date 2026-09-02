@@ -270,7 +270,7 @@ def create_expert_occupancy_figure(
             reverse=True,
         )
 
-    expert_names = [f"{expert_label} {expert_index + 1}" for expert_index in expert_indices]
+    expert_names = [f"{expert_label} {expert_index}" for expert_index in expert_indices]
 
     displayed_occupancy = [occupancy_percent[expert_index] for expert_index in expert_indices]
 
@@ -904,13 +904,7 @@ def create_layer_routing_figure(
         language_index,
     )
 
-    expert_names = [
-        f"{expert_label} {index}"
-        for index in range(
-            1,
-            num_experts + 1,
-        )
-    ]
+    expert_names = [f"{expert_label} {index}" for index in range(num_experts)]
 
     row_names: list[str] = []
     occupancy_matrix: list[list[float]] = []
@@ -1431,13 +1425,7 @@ def create_frequency_routing_figure(
         language_index,
     )
 
-    expert_names = [
-        (f"{expert_label} {expert_index}")
-        for expert_index in range(
-            1,
-            num_experts + 1,
-        )
-    ]
+    expert_names = [(f"{expert_label} {expert_index}") for expert_index in range(num_experts)]
 
     hover_text_matrix = [
         [
@@ -1859,7 +1847,7 @@ def create_load_over_time_figure(
     figure = go.Figure()
 
     for expert_index in range(num_experts):
-        expert_name = f"{expert_label} {expert_index + 1}"
+        expert_name = f"{expert_label} {expert_index}"
 
         occupancies = occupancy_matrix[expert_index]
 
